@@ -1,0 +1,5 @@
+float64 position_along_x_east_axis
+float64 position_along_y_north_axis
+float64 orientation_around_z_up_axis
+float64 curvature_along_path
+float64 dot_curvature_along_path

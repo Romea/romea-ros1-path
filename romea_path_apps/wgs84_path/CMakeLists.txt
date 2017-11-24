@@ -7,6 +7,8 @@ set(${PROJECT_NAME}_CATKIN_DEPS
     roscpp
     tf
     romea_util
+    romea_ros_util
+    romea_localisation_util
     )
 
 ## Find catkin macros and libraries
@@ -64,20 +66,19 @@ include_directories(
 ## either from message generation or dynamic reconfigure
 # add_dependencies(trackbod_driver ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
-## Declare a C++ executable
-#add_executable(
-#    wgs84_robot_localisation
-#    src/wgs84_localisation.cpp
-#    src/wgs84_localisation_diagnostic.cpp
-#    src/wgs84_localisation_system.cpp
-#)
+# Declare a C++ executable
+add_executable(
+    wgs84_path
+    src/wgs84_path.cpp
+    src/wgs84_path_system.cpp
+)
 
 ## Add cmake target dependencies of the executable
 ## same as for the library above
 # add_dependencies(trackbod_driver_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 ## Specify libraries to link a library or executable target against
-#target_link_libraries(wgs84_robot_localisation ${catkin_LIBRARIES})
+target_link_libraries(wgs84_path ${catkin_LIBRARIES})
 
 
 #############

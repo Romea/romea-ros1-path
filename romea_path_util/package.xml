@@ -15,6 +15,6 @@
   <buildtool_depend>catkin</buildtool_depend>
   <depend>roscpp</depend>
   <depend>romea_util</depend>
-  <depend>romea_localisation</depend>
+  <depend>romea_localisation_util</depend>
 
 </package>

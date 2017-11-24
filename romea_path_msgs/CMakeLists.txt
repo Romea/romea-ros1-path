@@ -13,5 +13,8 @@ add_message_files(
   ENUPathMatchedPoint2DStamped.msg
   )
 
-# Generate added messages and services with any dependencies listed here
 generate_messages(DEPENDENCIES std_msgs)
+
+catkin_package(
+   CATKIN_DEPENDS ${${PROJECT_NAME}_CATKIN_DEPS}
+)

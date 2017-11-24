@@ -1,5 +1,5 @@
-#ifndef romea_WGS84KalmanLocalisationFilter_hpp
-#define romea_WGS84KalmanLocalisationFilter_hpp
+#ifndef romea_WGS84Path2D_hpp
+#define romea_WGS84Path2D_hpp
 
 //romea
 #include "ENUPath2D.hpp"

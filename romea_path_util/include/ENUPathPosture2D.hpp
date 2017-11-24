@@ -5,6 +5,8 @@
 #include <Eigen/Core>
 #include <Eigen/Geometry>
 
+//std
+#include <ostream>
 
 namespace romea {
 
@@ -35,9 +37,9 @@ public :
 
 
   Eigen::Vector2d getPosition() const;
-  double  getPositionAlongXAxis() const;
-  double  getPositionAlongYAxis() const;
-  double  getOrientationAroundZAxis() const;
+  double  getPositionAlongXEastAxis() const;
+  double  getPositionAlongYNorthAxis() const;
+  double  getOrientationAroundZUpAxis() const;
   double  getCurvatureAlongPath() const;
   double  getDotCurvatureAlongPath() const;
 
@@ -50,6 +52,7 @@ protected:
 
 };
 
+std::ostream& operator<<(std::ostream & os, const ENUPathPosture2D & posture);
 
 }
 

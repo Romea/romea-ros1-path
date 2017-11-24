@@ -42,6 +42,8 @@ private :
   Eigen::Matrix3d covariance_;
 };
 
+std::ostream& operator<<(std::ostream & os, const ENUPathFrenetPose2D & frenetPose);
+
 }
 
 #endif

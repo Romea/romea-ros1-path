@@ -49,5 +49,16 @@ void ENUPathFrenetPose2D::operator+=(const double & curvilinearAbscissaOffset)
   curvilinearAbscissa_+=curvilinearAbscissaOffset;
 }
 
+//-----------------------------------------------------------------------------
+std::ostream& operator<<(std::ostream & os, const ENUPathFrenetPose2D & frenetPose)
+{
+  os << "Frenet pose "<< std::endl;
+  os << " curvilinear abscissa = " << frenetPose.getCurvilinearAbscissa() <<std::endl;
+  os << " lateral deviation = " << frenetPose.getLateralDeviation() <<std::endl;
+  os << " course deviation = " << frenetPose.getCourseDeviation() <<std::endl;
+  os << " Covariance " <<std::endl;
+  os << frenetPose.getCovariance() <<std::endl;
+  return os;
+}
 
 }

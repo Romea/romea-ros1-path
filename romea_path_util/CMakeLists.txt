@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.8.3)
-project(romea_path)
+project(romea_path_util)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -std=c++11")
 
@@ -12,7 +12,7 @@ set(${PROJECT_NAME}_CATKIN_DEPS roscpp romea_util romea_localisation)
 find_package(catkin REQUIRED COMPONENTS ${${PROJECT_NAME}_CATKIN_DEPS})
 
 ## System dependencies are found with CMake's conventions
-# find_package(Boost REQUIRED COMPONENTS system)
+find_package(Boost REQUIRED COMPONENTS system)
 
 
 
@@ -52,7 +52,7 @@ include_directories(
 # add_dependencies(trackbod_driver ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 # Declare a C++ library
-add_library(romea_path
+add_library(romea_path_util
   src/ENUPath2D.cpp
   src/ENUPathCurve2D.cpp
   src/ENUPathFrenetPose2D.cpp
@@ -63,7 +63,7 @@ add_library(romea_path
 
 
 ## Specify libraries to link a library or executable target against
-#target_link_libraries(tag ${catkin_LIBRARIES})
+target_link_libraries(romea_path_util ${catkin_LIBRARIES} gsl blas)
 
 
 #############
@@ -105,15 +105,14 @@ add_library(romea_path
 ## Testing ##
 #############
 
-# Add gtest based cpp test target and link libraries
-#if(CATKIN_ENABLE_TESTING)
+get_filename_component(TEST_WITH_DATA_TEST_DIR "test/data" ABSOLUTE)
+configure_file(test/test_helper.h.in test/test_helper.h)
+include_directories(${CMAKE_CURRENT_BINARY_DIR}/test)
+if(CATKIN_ENABLE_TESTING)
 
-#catkin_add_gtest(${PROJECT_NAME}-test test/test.cpp)
-# if(TARGET ${PROJECT_NAME}-test)
-#   target_link_libraries(${PROJECT_NAME}-test ${PROJECT_NAME} ${catkin_LIBRARIES})
-# endif()
+ catkin_add_gtest(${PROJECT_NAME}_test_path test/test_path.cpp )
+ target_link_libraries(${PROJECT_NAME}_test_path ${PROJECT_NAME})
 
-#endif(CATKIN_ENABLE_TESTING)
 
-## Add folders to be run by python nosetests
-# catkin_add_nosetests(test)
+endif(CATKIN_ENABLE_TESTING)
+

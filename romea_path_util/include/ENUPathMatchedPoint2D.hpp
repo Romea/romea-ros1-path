@@ -4,6 +4,7 @@
 //romea
 #include "ENUPathPosture2D.hpp"
 #include "ENUPathFrenetPose2D.hpp"
+#include <time/Time.hpp>
 
 //boost to replace by std optional
 #include <boost/optional/optional.hpp>
@@ -16,6 +17,7 @@ public :
 
   typedef std::shared_ptr<ENUPathMatchedPoint2D> Ptr;
   typedef boost::optional<ENUPathMatchedPoint2D> Opt;
+  typedef StampedWrapper<Duration,ENUPathMatchedPoint2D> Stamped;
 
 public :
 
@@ -51,6 +53,7 @@ private :
 
 };
 
+std::ostream& operator<<(std::ostream & os, const ENUPathMatchedPoint2D & matchedPoint);
 
 }//End of namespace romea
 

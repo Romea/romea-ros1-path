@@ -13,6 +13,11 @@ class ENUPathMatching2D
 
 public :
 
+  ENUPathMatching2D();
+
+  ENUPathMatching2D(const double & maximalResearchRadius,
+                    const double & interpolationWindowLength);
+
   void setMaximalResearchRadius(const double & maximalResearchRadius);
 
   void setInterpolationWindowLength(const double & interpolationWindowLength);
@@ -27,18 +32,20 @@ public :
 private :
 
 
+
+
+
   size_t findNearestPointIndex_(const ENUPath2D & path,
                                 const Eigen::Vector2d & vehiclePosition,
                                 const Range<size_t> indexRange)const;
 
-  Range<size_t> computeInterpolationWindowIndexRange_(const ENUPath2D & path,
-                                                      const size_t & pointIndex,
-                                                      const double &expectedTravelledDistance);
+  Range<size_t> findIndexRange_(const ENUPath2D & path,
+                                const size_t & pointIndex,
+                                const double & researchIntervalLength);
 
   boost::optional<ENUPathMatchedPoint2D> findMatchedPoint_(const ENUPath2D & path,
                                                            const ENUPose2D &vehiclePose,
-                                                           const Range<size_t> &indexRange,
-                                                           double nearestCurvilinearAbscissa);
+                                                           const size_t & nearestPointIndex);
 
 private:
 

@@ -5,6 +5,23 @@
 namespace romea {
 
 //-----------------------------------------------------------------------------
+ENUPathMatching2D::ENUPathMatching2D():
+  ENUPathMatching2D(0,0)
+{
+
+}
+
+
+//-----------------------------------------------------------------------------
+ENUPathMatching2D::ENUPathMatching2D(const double & maximalResearchRadius,
+                                     const double & interpolationWindowLength):
+  maximalResearchRadius_(maximalResearchRadius),
+  interpolationWindowLength_(interpolationWindowLength)
+{
+
+}
+
+//-----------------------------------------------------------------------------
 void ENUPathMatching2D::setMaximalResearchRadius(const double & maximalResearchRadius)
 {
   maximalResearchRadius_=maximalResearchRadius;
@@ -19,9 +36,9 @@ void ENUPathMatching2D::setInterpolationWindowLength(const double & interpolatio
 
 
 //-----------------------------------------------------------------------------
-Range<size_t> ENUPathMatching2D::computeInterpolationWindowIndexRange_(const ENUPath2D & path,
-                                                                       const size_t & pointIndex,
-                                                                       const double & expectedTravelledDistance)
+Range<size_t> ENUPathMatching2D::findIndexRange_(const ENUPath2D & path,
+                                                 const size_t & pointIndex,
+                                                 const double & researchIntervalLength)
 
 {
   const auto & curvilinearAbscissas = path.getCurvilinearAbscissa();
@@ -29,16 +46,16 @@ Range<size_t> ENUPathMatching2D::computeInterpolationWindowIndexRange_(const ENU
 
   size_t minimalIndex = pointIndex;
   size_t maximalIndex = pointIndex;
-  double pointCurvilinearAbscissa = expectedTravelledDistance+curvilinearAbscissas[pointIndex];
+  double pointCurvilinearAbscissa = curvilinearAbscissas[pointIndex];
 
   while(minimalIndex !=0 &&
-        pointCurvilinearAbscissa - curvilinearAbscissas[minimalIndex] < interpolationWindowLength_/2.)
+        pointCurvilinearAbscissa - curvilinearAbscissas[minimalIndex] < researchIntervalLength/2.)
   {
     minimalIndex--;
   }
 
   while(maximalIndex != curvilinearAbscissas.size()-1 &&
-        curvilinearAbscissas[minimalIndex] - pointCurvilinearAbscissa < interpolationWindowLength_/2.)
+        curvilinearAbscissas[maximalIndex] - pointCurvilinearAbscissa < researchIntervalLength/2.)
   {
     maximalIndex++;
   }
@@ -50,14 +67,16 @@ Range<size_t> ENUPathMatching2D::computeInterpolationWindowIndexRange_(const ENU
 //-----------------------------------------------------------------------------
 boost::optional<ENUPathMatchedPoint2D> ENUPathMatching2D::findMatchedPoint_(const ENUPath2D & path,
                                                                             const ENUPose2D & vehiclePose,
-                                                                            const Range<size_t> & indexRange,
-                                                                            double nearestCurvilinearAbscissa)
+                                                                            const size_t & nearestPointIndex)
 {
-  boost::optional<ENUPathMatchedPoint2D> matchedPoint;
 
-  Eigen::Map<const Eigen::ArrayXd> X(path.getX().data()+indexRange.getMin(),indexRange.interval());
-  Eigen::Map<const Eigen::ArrayXd> Y(path.getY().data()+indexRange.getMin(),indexRange.interval());
-  Eigen::Map<const Eigen::ArrayXd> S(path.getCurvilinearAbscissa().data()+indexRange.getMin(),indexRange.interval());
+  Range<size_t> indexRange = findIndexRange_(path,nearestPointIndex,interpolationWindowLength_);
+  double nearestCurvilinearAbscissa = path.getCurvilinearAbscissa()[nearestPointIndex];
+
+  boost::optional<ENUPathMatchedPoint2D> matchedPoint;
+  Eigen::Map<const Eigen::ArrayXd> X(path.getX().data()+indexRange.getMin(),indexRange.interval()+1);
+  Eigen::Map<const Eigen::ArrayXd> Y(path.getY().data()+indexRange.getMin(),indexRange.interval()+1);
+  Eigen::Map<const Eigen::ArrayXd> S(path.getCurvilinearAbscissa().data()+indexRange.getMin(),indexRange.interval()+1);
 
   if(interpolatedPath_.estimate(X,Y,S) &&
      interpolatedPath_.findNearestCurvilinearAbscissa(vehiclePose.getPosition(),nearestCurvilinearAbscissa))
@@ -113,10 +132,10 @@ size_t ENUPathMatching2D::findNearestPointIndex_(const ENUPath2D & path,
   const auto X = path.getX();
   const auto Y = path.getY();
 
-  size_t nearestPointIndex= X.size();
+  size_t nearestPointIndex= indexRange.getMax();
   double minimalDistance = maximalResearchRadius_;
 
-  for(size_t n=indexRange.getMin();n<X.size();indexRange.getMax())
+  for(size_t n=indexRange.getMin();n<indexRange.getMax();n++)
   {
     double distance = (vehiclePosition-Eigen::Vector2d(X[n],Y[n])).norm();
     if(distance < minimalDistance){
@@ -142,14 +161,9 @@ boost::optional<ENUPathMatchedPoint2D> ENUPathMatching2D::match(const ENUPath2D 
   //compute matched point
   if(nearestPointIndex!=numberOfPoints)
   {
-
-    Range<size_t> rangeIndex = computeInterpolationWindowIndexRange_(path,nearestPointIndex,0);
-    double nearestCurvilinearAbscissa = path.getCurvilinearAbscissa()[nearestPointIndex];
-
     matchedPoint = findMatchedPoint_(path,
                                      vehiclePose,
-                                     rangeIndex,
-                                     nearestCurvilinearAbscissa);
+                                     nearestPointIndex);
 
   }
 
@@ -164,18 +178,18 @@ boost::optional<ENUPathMatchedPoint2D> ENUPathMatching2D::match(const ENUPath2D 
 {
 
 
-  const size_t nearestPointIndex = previousMatchedPoint.getNearestPointIndex();
+  Range<size_t> rangeIndex = findIndexRange_(path,
+                                             previousMatchedPoint.getNearestPointIndex(),
+                                             expectedTravelledDistance);
 
-  Range<size_t> rangeIndex = computeInterpolationWindowIndexRange_(path,
-                                                                   nearestPointIndex,
-                                                                   expectedTravelledDistance);
+  size_t nearestPointIndex = findNearestPointIndex_(path,
+                                                    vehiclePose.getPosition(),
+                                                    rangeIndex);
 
-  double nearestCurvilinearAbscissa = previousMatchedPoint.getFrenetPose().getCurvilinearAbscissa();
 
   return findMatchedPoint_(path,
                            vehiclePose,
-                           rangeIndex,
-                           nearestCurvilinearAbscissa);
+                           nearestPointIndex);
 
 }
 

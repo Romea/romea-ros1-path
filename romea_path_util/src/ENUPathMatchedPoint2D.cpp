@@ -57,6 +57,16 @@ const size_t & ENUPathMatchedPoint2D::getNearestPointIndex() const
   return neareastPointIndex_;
 }
 
+//-----------------------------------------------------------------------------
+std::ostream& operator<<(std::ostream & os, const ENUPathMatchedPoint2D & matchedPoint)
+{
+  os << "Matched point "<< std::endl;
+  os << matchedPoint.getENUPosture();
+  os << matchedPoint.getFrenetPose();
+  os << "nearest point index " << matchedPoint.getNearestPointIndex() << std::endl;
+  return os;
+}
+
 
 }//End of namespace romea
 

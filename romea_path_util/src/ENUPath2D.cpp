@@ -30,13 +30,13 @@ void ENUPath2D::load(const VectorOfEigenVector<Eigen::Vector2d> &points)
   curvilinearAbscissa_.resize(numberOfPoints,0);
 
   X_[0]=points[0].x();
-  Y_[0]=points[0].x();
+  Y_[0]=points[0].y();
 
   for(size_t n=1;n<numberOfPoints;++n)
   {
     X_[n]=points[n].x();
-    Y_[n]=points[n].x();
-    curvilinearAbscissa_[n] = (points[n]-points[n-1]).norm();
+    Y_[n]=points[n].y();
+    curvilinearAbscissa_[n] = curvilinearAbscissa_[n-1]+(points[n]-points[n-1]).norm();
   }
 }
 

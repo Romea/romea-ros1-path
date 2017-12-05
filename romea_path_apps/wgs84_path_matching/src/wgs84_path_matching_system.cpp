@@ -1,5 +1,5 @@
 //romea
-#include "wgs84_path_system.hpp"
+#include "wgs84_path_matching_system.hpp"
 #include <ros_path_utils.hpp>
 #include <ros_transform_util.hpp>
 #include <ros_localisation_util.hpp>
@@ -12,7 +12,7 @@ const double DEFAULT_INTERPOLATION_WINDOW_LENGTH =10;
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
-WGS84PathSystem::WGS84PathSystem(ros::NodeHandle node, ros::NodeHandle private_nh):
+WGS84PathMatchingSystem::WGS84PathMatchingSystem(ros::NodeHandle node, ros::NodeHandle private_nh):
   wgs84_path_(),
   enu_path_matching_(),
   display_(false),
@@ -48,14 +48,15 @@ WGS84PathSystem::WGS84PathSystem(ros::NodeHandle node, ros::NodeHandle private_n
   tf_world_to_path_msg_.header.frame_id = "world";
   tf_world_to_path_msg_.child_frame_id = "path";
 
-  odom_sub_ = node.subscribe<nav_msgs::Odometry>("/odometry", 10, &WGS84PathSystem::processOdom,this);
-  timer_ = node.createTimer(ros::Rate(1), &WGS84PathSystem::publishTf_, this);
+  odom_sub_ = node.subscribe<nav_msgs::Odometry>("/odometry", 10, &WGS84PathMatchingSystem::processOdom,this);
+  match_pub_ = node.advertise<romea_path_msgs::ENUPathMatchedPoint2DStamped>("/path_matched_pooint",1);
+  timer_ = node.createTimer(ros::Rate(1), &WGS84PathMatchingSystem::publishTf_, this);
 
 
 }
 
 //-----------------------------------------------------------------------------
-void WGS84PathSystem::loadPath_(const std::string & path_filename)
+void WGS84PathMatchingSystem::loadPath_(const std::string & path_filename)
 {
 
   enu_matched_point_.reset();
@@ -96,41 +97,46 @@ void WGS84PathSystem::loadPath_(const std::string & path_filename)
 }
 
 //-----------------------------------------------------------------------------
-void WGS84PathSystem::publishTf_(const ros::TimerEvent & event)
+void WGS84PathMatchingSystem::publishTf_(const ros::TimerEvent & event)
 {
-  tf_broadcaster_.sendTransform(tf_world_to_path_msg_);
 
+  tf_broadcaster_.sendTransform(tf_world_to_path_msg_);
 }
 
 //-----------------------------------------------------------------------------
-void WGS84PathSystem::processOdom(const nav_msgs::Odometry::ConstPtr &msg)
+void WGS84PathMatchingSystem::processOdom(const nav_msgs::Odometry::ConstPtr &msg)
 {
 
   std::string frame_id, frame_child_id;
   romea::ENUPoseAndBodyTwist3D::Stamped  enuPoseAndBodyTwist3D=romea::toRomea(*msg,frame_id,frame_child_id);
-  romea::ENUPoseAndBodyTwist2D vehiclePoseAndBodyTwist = enuPoseAndBodyTwist3D.data.toENUPoseAndBodyTwist2D();
 
   try{
 
     tf_listener_.lookupTransform(frame_id,"/world",msg->header.stamp,tf_world_to_map_);
-    //TODO changer de référentiel
-    //TODO diag
-
-    tf_map_to_path_=tf_world_to_map_.inverseTimes(tf_world_to_path_);
+    tf::transformTFToEigen(tf_world_to_map_.inverseTimes(tf_world_to_path_),tf_map_to_path_);
+    romea::ENUPose2D vehiclePose2D = (tf_map_to_path_*enuPoseAndBodyTwist3D.data.getPose()).toPose2D();
 
     if(enu_matched_point_)
     {
       enu_matched_point_ = enu_path_matching_.match(wgs84_path_.enuPath,
-                                                    vehiclePoseAndBodyTwist.getPose(),
+                                                    vehiclePose2D,
                                                     *enu_matched_point_,
                                                     10);
     }
     else
     {
-      enu_matched_point_ = enu_path_matching_.match(wgs84_path_.enuPath,
-                                                    vehiclePoseAndBodyTwist.getPose());
+      enu_matched_point_ = enu_path_matching_.match(wgs84_path_.enuPath,vehiclePose2D);
     }
 
+
+    if(enu_matched_point_)
+    {
+      match_pub_.publish(romea::toROSMsg(msg->header.stamp,*enu_matched_point_));
+    }
+    else
+    {
+      //TODO diag
+    }
   }
   catch (tf::TransformException ex)
   {

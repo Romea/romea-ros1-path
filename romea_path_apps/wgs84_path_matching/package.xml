@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 <package format="2">
-  <name>wgs84_path</name>
+  <name>wgs84_path_matching</name>
   <version>0.0.0</version>
-  <description>The wgs84_path package</description>
+  <description>The wgs84_path_matching package</description>
 
   <author email="jean.laneurit@irstea.fr">Jean Laneurit</author>
   <maintainer email="jean.laneurit@irstea.fr">Jean Laneurit</maintainer>

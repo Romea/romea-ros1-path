@@ -1,9 +1,9 @@
-#ifndef __WGS84PathSystem_HPP__
-#define __WGS84PathSystem_HPP__
+#ifndef __WGS84PathMatchingSystem_HPP__
+#define __WGS84PathMatchingSystem_HPP__
 
 
 //local
-#include "wgs84_path_diagnostic.hpp"
+#include "wgs84_path_matching_diagnostic.hpp"
 
 //ros
 #include <ros/ros.h>
@@ -21,12 +21,12 @@
 //#include <ros_diagnostic_util.hpp>
 
 
-class WGS84PathSystem
+class WGS84PathMatchingSystem
 {
 
 public :
 
-  WGS84PathSystem(ros::NodeHandle node, ros::NodeHandle private_nh);
+  WGS84PathMatchingSystem(ros::NodeHandle node, ros::NodeHandle private_nh);
 
   void processOdom(const nav_msgs::Odometry::ConstPtr &msg);
 
@@ -49,7 +49,7 @@ protected:
   ros::Publisher match_pub_;
   ros::Timer timer_;
 
-  tf::Transform tf_map_to_path_;
+  Eigen::Affine3d tf_map_to_path_;
   tf::Transform tf_world_to_path_;
   tf::StampedTransform tf_world_to_map_;
   tf::TransformListener tf_listener_;

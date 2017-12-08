@@ -1,10 +1,10 @@
-#include "ENUPath2D.hpp"
+#include "Path2D.hpp"
 
 namespace romea {
 
 
 //-----------------------------------------------------------------------------
-ENUPath2D::ENUPath2D():
+Path2D::Path2D():
   X_(),
   Y_(),
   curvilinearAbscissa_()
@@ -13,14 +13,14 @@ ENUPath2D::ENUPath2D():
 }
 
 //-----------------------------------------------------------------------------
-ENUPath2D::ENUPath2D(const VectorOfEigenVector<Eigen::Vector2d> & points):
-  ENUPath2D::ENUPath2D()
+Path2D::Path2D(const VectorOfEigenVector<Eigen::Vector2d> & points):
+  Path2D::Path2D()
 {
   load(points);
 }
 
 //-----------------------------------------------------------------------------
-void ENUPath2D::load(const VectorOfEigenVector<Eigen::Vector2d> &points)
+void Path2D::load(const VectorOfEigenVector<Eigen::Vector2d> &points)
 {
   size_t numberOfPoints = points.size();
   assert(numberOfPoints>=2);
@@ -41,19 +41,19 @@ void ENUPath2D::load(const VectorOfEigenVector<Eigen::Vector2d> &points)
 }
 
 //-----------------------------------------------------------------------------
-const ENUPath2D::Vector & ENUPath2D::getX()const
+const Path2D::Vector & Path2D::getX()const
 {
   return X_;
 }
 
 //-----------------------------------------------------------------------------
-const ENUPath2D::Vector & ENUPath2D::getY()const
+const Path2D::Vector & Path2D::getY()const
 {
   return Y_;
 }
 
 //-----------------------------------------------------------------------------
-const ENUPath2D::Vector & ENUPath2D::getCurvilinearAbscissa()const
+const Path2D::Vector & Path2D::getCurvilinearAbscissa()const
 {
   return curvilinearAbscissa_;
 }

@@ -7,12 +7,12 @@ find_package(catkin REQUIRED COMPONENTS ${${PROJECT_NAME}_CATKIN_DEPS})
 add_message_files(
   DIRECTORY msg
   FILES
-  ENUPathPosture2D.msg
-  ENUPathFrenetPose2D.msg
-  ENUPathMatchedPoint2D.msg
-  ENUPathMatchedPoint2DStamped.msg
-  ENUPathMatchedPointAndBodyTwist2D.msg
-  ENUPathMatchedPointAndBodyTwist2DStamped.msg
+  PathPosture2D.msg
+  PathFrenetPose2D.msg
+  PathMatchedPoint2D.msg
+  PathMatchedPoint2DStamped.msg
+  PathMatchedPointAndTwist2D.msg
+  PathMatchedPointAndTwist2DStamped.msg
 
   )
 

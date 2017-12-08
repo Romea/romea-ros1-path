@@ -14,8 +14,8 @@
 
 
 //romea
-#include <ENUPoseAndBodyTwist3D.hpp>
-#include <ENUPathMatching2D.hpp>
+#include <PoseAndTwist3D.hpp>
+#include <PathMatching2D.hpp>
 #include <WGS84Path2D.hpp>
 #include <ros_visual_util.hpp>
 //#include <ros_diagnostic_util.hpp>
@@ -42,8 +42,8 @@ protected:
 protected:
 
   romea::WGS84Path2D wgs84_path_;
-  romea::ENUPathMatching2D enu_path_matching_;
-  romea::ENUPathMatchedPoint2D::Opt enu_matched_point_;
+  romea::PathMatching2D enu_path_matching_;
+  romea::PathMatchedPoint2D::Opt enu_matched_point_;
 
   ros::Subscriber odom_sub_;
   ros::Publisher match_pub_;

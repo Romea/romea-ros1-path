@@ -2,18 +2,18 @@
 #define romea_ENUPathCurve2D_hpp
 
 //romea
-#include <ENUPathPosture2D.hpp>
-#include <ENUPathFrenetPose2D.hpp>
+#include <PathPosture2D.hpp>
+#include <PathFrenetPose2D.hpp>
 
 namespace romea {
 
 
-class ENUPathCurve2D
+class PathCurve2D
 {
 
 public :
 
-  ENUPathCurve2D();
+  PathCurve2D();
 
   bool estimate(const Eigen::ArrayXd & x,const Eigen::ArrayXd & y, const Eigen::ArrayXd & cuvilinerAbscissas);
 

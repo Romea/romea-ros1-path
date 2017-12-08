@@ -1,2 +1,0 @@
-Header header
-ENUPathMatchedPoint2D matched_point

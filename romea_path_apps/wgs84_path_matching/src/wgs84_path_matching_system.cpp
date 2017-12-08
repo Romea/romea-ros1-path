@@ -49,7 +49,7 @@ WGS84PathMatchingSystem::WGS84PathMatchingSystem(ros::NodeHandle node, ros::Node
   tf_world_to_path_msg_.child_frame_id = "path";
 
   odom_sub_ = node.subscribe<nav_msgs::Odometry>("/odometry", 10, &WGS84PathMatchingSystem::processOdom,this);
-  match_pub_ = node.advertise<romea_path_msgs::ENUPathMatchedPoint2DStamped>("/path_matched_pooint",1);
+  match_pub_ = node.advertise<romea_path_msgs::PathMatchedPoint2DStamped>("/path_matched_pooint",1);
   timer_ = node.createTimer(ros::Rate(1), &WGS84PathMatchingSystem::publishTf_, this);
 
 
@@ -108,13 +108,13 @@ void WGS84PathMatchingSystem::processOdom(const nav_msgs::Odometry::ConstPtr &ms
 {
 
   std::string frame_id, frame_child_id;
-  romea::ENUPoseAndBodyTwist3D::Stamped  enuPoseAndBodyTwist3D=romea::toRomea(*msg,frame_id,frame_child_id);
+  romea::PoseAndTwist3D::Stamped  enuPoseAndBodyTwist3D=romea::toRomea(*msg,frame_id,frame_child_id);
 
   try{
 
     tf_listener_.lookupTransform(frame_id,"/world",msg->header.stamp,tf_world_to_map_);
     tf::transformTFToEigen(tf_world_to_map_.inverseTimes(tf_world_to_path_),tf_map_to_path_);
-    romea::ENUPose2D vehiclePose2D = (tf_map_to_path_*enuPoseAndBodyTwist3D.data.getPose()).toPose2D();
+    romea::Pose2D vehiclePose2D = (tf_map_to_path_*enuPoseAndBodyTwist3D.data.getPose()).toPose2D();
 
     if(enu_matched_point_)
     {

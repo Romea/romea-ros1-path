@@ -2,7 +2,7 @@
 #define romea_WGS84Path2D_hpp
 
 //romea
-#include "ENUPath2D.hpp"
+#include "Path2D.hpp"
 #include <geodesy/ENUConverter.hpp>
 
 namespace romea {
@@ -19,7 +19,7 @@ struct WGS84Path2D
 
   void setAnchor(const WGS84Coordinates & anchor);
 
-  ENUPath2D enuPath;
+  Path2D enuPath;
 
   ENUConverter enuCoordinateSystems;
 

@@ -53,12 +53,12 @@ include_directories(
 
 # Declare a C++ library
 add_library(romea_path_util
-  src/ENUPath2D.cpp
-  src/ENUPathCurve2D.cpp
-  src/ENUPathFrenetPose2D.cpp
-  src/ENUPathMatchedPoint2D.cpp
-  src/ENUPathMatching2D.cpp
-  src/ENUPathPosture2D.cpp
+  src/Path2D.cpp
+  src/PathCurve2D.cpp
+  src/PathFrenetPose2D.cpp
+  src/PathMatchedPoint2D.cpp
+  src/PathMatching2D.cpp
+  src/PathPosture2D.cpp
   src/WGS84Path2D.cpp
   )
 

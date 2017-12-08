@@ -1,20 +1,20 @@
 //romea
-#include "ENUPathMatching2D.hpp"
+#include "PathMatching2D.hpp"
 #include <math/EulerAngles.hpp>
 
 namespace romea {
 
 //-----------------------------------------------------------------------------
-ENUPathMatching2D::ENUPathMatching2D():
-  ENUPathMatching2D(0,0)
+PathMatching2D::PathMatching2D():
+  PathMatching2D(0,0)
 {
 
 }
 
 
 //-----------------------------------------------------------------------------
-ENUPathMatching2D::ENUPathMatching2D(const double & maximalResearchRadius,
-                                     const double & interpolationWindowLength):
+PathMatching2D::PathMatching2D(const double & maximalResearchRadius,
+                               const double & interpolationWindowLength):
   maximalResearchRadius_(maximalResearchRadius),
   interpolationWindowLength_(interpolationWindowLength)
 {
@@ -22,23 +22,23 @@ ENUPathMatching2D::ENUPathMatching2D(const double & maximalResearchRadius,
 }
 
 //-----------------------------------------------------------------------------
-void ENUPathMatching2D::setMaximalResearchRadius(const double & maximalResearchRadius)
+void PathMatching2D::setMaximalResearchRadius(const double & maximalResearchRadius)
 {
   maximalResearchRadius_=maximalResearchRadius;
 }
 
 
 //-----------------------------------------------------------------------------
-void ENUPathMatching2D::setInterpolationWindowLength(const double & interpolationWindowLength)
+void PathMatching2D::setInterpolationWindowLength(const double & interpolationWindowLength)
 {
   interpolationWindowLength_=interpolationWindowLength;
 }
 
 
 //-----------------------------------------------------------------------------
-Range<size_t> ENUPathMatching2D::findIndexRange_(const ENUPath2D & path,
-                                                 const size_t & pointIndex,
-                                                 const double & researchIntervalLength)
+Range<size_t> PathMatching2D::findIndexRange_(const Path2D & path,
+                                              const size_t & pointIndex,
+                                              const double & researchIntervalLength)
 
 {
   const auto & curvilinearAbscissas = path.getCurvilinearAbscissa();
@@ -65,15 +65,15 @@ Range<size_t> ENUPathMatching2D::findIndexRange_(const ENUPath2D & path,
 
 
 //-----------------------------------------------------------------------------
-boost::optional<ENUPathMatchedPoint2D> ENUPathMatching2D::findMatchedPoint_(const ENUPath2D & path,
-                                                                            const ENUPose2D & vehiclePose,
-                                                                            const size_t & nearestPointIndex)
+boost::optional<PathMatchedPoint2D> PathMatching2D::findMatchedPoint_(const Path2D & path,
+                                                                      const Pose2D & vehiclePose,
+                                                                      const size_t & nearestPointIndex)
 {
 
   Range<size_t> indexRange = findIndexRange_(path,nearestPointIndex,interpolationWindowLength_);
   double nearestCurvilinearAbscissa = path.getCurvilinearAbscissa()[nearestPointIndex];
 
-  boost::optional<ENUPathMatchedPoint2D> matchedPoint;
+  boost::optional<PathMatchedPoint2D> matchedPoint;
   Eigen::Map<const Eigen::ArrayXd> X(path.getX().data()+indexRange.getMin(),indexRange.interval()+1);
   Eigen::Map<const Eigen::ArrayXd> Y(path.getY().data()+indexRange.getMin(),indexRange.interval()+1);
   Eigen::Map<const Eigen::ArrayXd> S(path.getCurvilinearAbscissa().data()+indexRange.getMin(),indexRange.interval()+1);
@@ -88,7 +88,7 @@ boost::optional<ENUPathMatchedPoint2D> ENUPathMatching2D::findMatchedPoint_(cons
 
     const double & xv = vehiclePose.getPosition().x();
     const double & yv = vehiclePose.getPosition().y();
-    const double & o = vehiclePose.getOrientationAroundZDownAxis();
+    const double & o = vehiclePose.getCourse();
     const double & cost= std::cos(tangent);
     const double & sint = std::sin(tangent);
 
@@ -107,25 +107,25 @@ boost::optional<ENUPathMatchedPoint2D> ENUPathMatching2D::findMatchedPoint_(cons
       curvature = 0;
     }
 
-    matchedPoint = ENUPathMatchedPoint2D(xp,
-                                         yp,
-                                         tangent,
-                                         curvature,
-                                         0,
-                                         nearestCurvilinearAbscissa,
-                                         lateralDeviation,
-                                         courseDeviation,
-                                         frenetPoseCovariance,
-                                         nearestPointIndex);
+    matchedPoint = PathMatchedPoint2D(xp,
+                                      yp,
+                                      tangent,
+                                      curvature,
+                                      0,
+                                      nearestCurvilinearAbscissa,
+                                      lateralDeviation,
+                                      courseDeviation,
+                                      frenetPoseCovariance,
+                                      nearestPointIndex);
   }
 
   return matchedPoint;
 }
 
 //-----------------------------------------------------------------------------
-size_t ENUPathMatching2D::findNearestPointIndex_(const ENUPath2D & path,
-                                                 const Eigen::Vector2d & vehiclePosition,
-                                                 const Range<size_t> indexRange)const
+size_t PathMatching2D::findNearestPointIndex_(const Path2D & path,
+                                              const Eigen::Vector2d & vehiclePosition,
+                                              const Range<size_t> indexRange)const
 {
 
   //find neareast point on path
@@ -148,11 +148,11 @@ size_t ENUPathMatching2D::findNearestPointIndex_(const ENUPath2D & path,
 }
 
 //-----------------------------------------------------------------------------
-boost::optional<ENUPathMatchedPoint2D> ENUPathMatching2D::match(const ENUPath2D & path,
-                                                                const ENUPose2D & vehiclePose)
+boost::optional<PathMatchedPoint2D> PathMatching2D::match(const Path2D & path,
+                                                          const Pose2D & vehiclePose)
 {
 
-  boost::optional<ENUPathMatchedPoint2D> matchedPoint;
+  boost::optional<PathMatchedPoint2D> matchedPoint;
 
   //find neareast point on path
   size_t numberOfPoints = path.getX().size();
@@ -171,10 +171,10 @@ boost::optional<ENUPathMatchedPoint2D> ENUPathMatching2D::match(const ENUPath2D 
 }
 
 //-----------------------------------------------------------------------------
-boost::optional<ENUPathMatchedPoint2D> ENUPathMatching2D::match(const ENUPath2D & path,
-                                                                const ENUPose2D & vehiclePose,
-                                                                const ENUPathMatchedPoint2D & previousMatchedPoint,
-                                                                const double & expectedTravelledDistance)
+boost::optional<PathMatchedPoint2D> PathMatching2D::match(const Path2D & path,
+                                                          const Pose2D & vehiclePose,
+                                                          const PathMatchedPoint2D & previousMatchedPoint,
+                                                          const double & expectedTravelledDistance)
 {
 
 

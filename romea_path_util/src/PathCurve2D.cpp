@@ -1,5 +1,5 @@
 //romea
-#include "ENUPathCurve2D.hpp"
+#include "PathCurve2D.hpp"
 
 //Eigen
 #include <unsupported/Eigen/Polynomials>
@@ -67,7 +67,7 @@ inline bool computeSecondDegreePolynomialRegressionLight(const Eigen::ArrayXd &X
 namespace romea {
 
 //-----------------------------------------------------------------------------
-ENUPathCurve2D::ENUPathCurve2D():
+PathCurve2D::PathCurve2D():
   fxPolynomCoefficient_(Eigen::Array3d::Zero()),
   fyPolynomCoefficient_(Eigen::Array3d::Zero())
 {
@@ -75,9 +75,9 @@ ENUPathCurve2D::ENUPathCurve2D():
 }
 
 //-----------------------------------------------------------------------------
-bool ENUPathCurve2D::estimate(const Eigen::ArrayXd &X,
-                              const Eigen::ArrayXd &Y,
-                              const Eigen::ArrayXd &S)
+bool PathCurve2D::estimate(const Eigen::ArrayXd &X,
+                           const Eigen::ArrayXd &Y,
+                           const Eigen::ArrayXd &S)
 {
 
   assert(S.rows()>2);
@@ -92,8 +92,8 @@ bool ENUPathCurve2D::estimate(const Eigen::ArrayXd &X,
 }
 
 //-----------------------------------------------------------------------------
-bool ENUPathCurve2D::findNearestCurvilinearAbscissa(const Eigen::Vector2d & vehiclePosition,
-                                                    double & curvilinearAbscissa)const
+bool PathCurve2D::findNearestCurvilinearAbscissa(const Eigen::Vector2d & vehiclePosition,
+                                                 double & curvilinearAbscissa)const
 {
 
   assert(curvilinearAbscissa >= minimalCurvilinearAbscissa_ &&
@@ -172,7 +172,7 @@ bool ENUPathCurve2D::findNearestCurvilinearAbscissa(const Eigen::Vector2d & vehi
 
 
 //-----------------------------------------------------------------------------
-double ENUPathCurve2D::computeX(const double & curvilinearAbscissa)const
+double PathCurve2D::computeX(const double & curvilinearAbscissa)const
 {
   return fxPolynomCoefficient_[2]*std::pow(curvilinearAbscissa,2)+
       fxPolynomCoefficient_[1]*curvilinearAbscissa+
@@ -180,7 +180,7 @@ double ENUPathCurve2D::computeX(const double & curvilinearAbscissa)const
 }
 
 //-----------------------------------------------------------------------------
-double ENUPathCurve2D::computeY(const double & curvilinearAbscissa)const
+double PathCurve2D::computeY(const double & curvilinearAbscissa)const
 {
   return fyPolynomCoefficient_[2]*std::pow(curvilinearAbscissa,2) +
       fyPolynomCoefficient_[1]*curvilinearAbscissa +
@@ -188,7 +188,7 @@ double ENUPathCurve2D::computeY(const double & curvilinearAbscissa)const
 }
 
 //-----------------------------------------------------------------------------
-double ENUPathCurve2D::computeTangent(const double & curvilinearAbscissa)const
+double PathCurve2D::computeTangent(const double & curvilinearAbscissa)const
 {
   return std::atan2((2*fyPolynomCoefficient_[2]*curvilinearAbscissa +fyPolynomCoefficient_[1]) ,
       (2*fxPolynomCoefficient_[2]*curvilinearAbscissa +fxPolynomCoefficient_[1]));
@@ -196,30 +196,30 @@ double ENUPathCurve2D::computeTangent(const double & curvilinearAbscissa)const
 }
 
 //-----------------------------------------------------------------------------
-double ENUPathCurve2D::computeCurvature(const double & curvilinearAbscissa)const
+double PathCurve2D::computeCurvature(const double & curvilinearAbscissa)const
 {
-    double cy = fyPolynomCoefficient_[2];
-    double by = fyPolynomCoefficient_[1];
+  double cy = fyPolynomCoefficient_[2];
+  double by = fyPolynomCoefficient_[1];
 
-    double cx = fxPolynomCoefficient_[2];
-    double bx = fxPolynomCoefficient_[1];
+  double cx = fxPolynomCoefficient_[2];
+  double bx = fxPolynomCoefficient_[1];
 
-    double Xdot         = bx+(2*cx* curvilinearAbscissa);
-    double Ydot         = by+(2*cy* curvilinearAbscissa);
-    double Xdotdot      = 2*cx;
-    double Ydotdot      = 2*cy;
-    double denominator = Xdot*Ydotdot-Ydot*Xdotdot;
+  double Xdot         = bx+(2*cx* curvilinearAbscissa);
+  double Ydot         = by+(2*cy* curvilinearAbscissa);
+  double Xdotdot      = 2*cx;
+  double Ydotdot      = 2*cy;
+  double denominator = Xdot*Ydotdot-Ydot*Xdotdot;
 
-    if(std::abs(denominator) <= std::numeric_limits<double>::epsilon())
-    {
-      return 0;
-    }
-    else
-    {
-      double tempo = sqrt(Xdot*Xdot+Ydot*Ydot);
-      double radius = (tempo*tempo*tempo)/denominator;
-      return 1/radius;
-    }
+  if(std::abs(denominator) <= std::numeric_limits<double>::epsilon())
+  {
+    return 0;
+  }
+  else
+  {
+    double tempo = sqrt(Xdot*Xdot+Ydot*Ydot);
+    double radius = (tempo*tempo*tempo)/denominator;
+    return 1/radius;
+  }
 }
 
 }

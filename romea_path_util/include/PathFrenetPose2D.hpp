@@ -12,16 +12,16 @@
 
 namespace romea {
 
-class ENUPathFrenetPose2D {
+class PathFrenetPose2D {
 
 public :
 
-  typedef boost::optional<ENUPathFrenetPose2D> Opt;
-  typedef std::shared_ptr<ENUPathFrenetPose2D> Ptr;
+  typedef boost::optional<PathFrenetPose2D> Opt;
+  typedef std::shared_ptr<PathFrenetPose2D> Ptr;
 
 public :
 
-  ENUPathFrenetPose2D(const double &curvilinearAbscissa,
+  PathFrenetPose2D(const double &curvilinearAbscissa,
                       const double &lateralDeviation,
                       const double &courseDeviation,
                       const Eigen::Matrix3d &covariance);
@@ -42,7 +42,7 @@ private :
   Eigen::Matrix3d covariance_;
 };
 
-std::ostream& operator<<(std::ostream & os, const ENUPathFrenetPose2D & frenetPose);
+std::ostream& operator<<(std::ostream & os, const PathFrenetPose2D & frenetPose);
 
 }
 

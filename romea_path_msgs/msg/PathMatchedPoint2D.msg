@@ -1,0 +1,3 @@
+PathPosture2D posture
+PathFrenetPose2D frenet_pose
+int64 nearest_point_index

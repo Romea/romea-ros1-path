@@ -1,3 +1,0 @@
-ENUPathPosture2D posture
-ENUPathFrenetPose2D frenet_pose
-int64 nearest_point_index

@@ -3,7 +3,7 @@
 #include "test_helper.h"
 
 //romea
-#include "ENUPathMatching2D.hpp"
+#include "PathMatching2D.hpp"
 //#include <Tools/Path/trajectory2d/trajectory2d.hpp>
 
 //std
@@ -35,24 +35,24 @@ TEST(TestPath, testMatching)
   const double maximalResearchRadius=10;
   const double interpolationWindowLength=3;
 
-  romea::ENUPose2D firstVehiclePose(-8.2,16.1,120/180.*M_PI,Eigen::Matrix3d::Zero());
-  romea::ENUPose2D secondVehiclePose(-9.3,17.2,130/180.*M_PI,Eigen::Matrix3d::Zero());
+  romea::Pose2D firstVehiclePose(-8.2,16.1,120/180.*M_PI,Eigen::Matrix3d::Zero());
+  romea::Pose2D secondVehiclePose(-9.3,17.2,130/180.*M_PI,Eigen::Matrix3d::Zero());
 
-  romea::ENUPathMatching2D pathmatching(maximalResearchRadius,interpolationWindowLength);
+  romea::PathMatching2D pathmatching(maximalResearchRadius,interpolationWindowLength);
 
   //load path
   romea::VectorOfEigenVector<Eigen::Vector2d> points= loadPath("/path.txt");
-  romea::ENUPath2D rPath(points);
+  romea::Path2D rPath(points);
 
 
   //match romea
-  boost::optional<romea::ENUPathMatchedPoint2D>  rFirstMatchedPoint = pathmatching.match(rPath,firstVehiclePose);
+  boost::optional<romea::PathMatchedPoint2D>  rFirstMatchedPoint = pathmatching.match(rPath,firstVehiclePose);
   ASSERT_EQ(rFirstMatchedPoint.is_initialized(),true);
 
   EXPECT_NEAR(rFirstMatchedPoint->getENUPosture().getPositionAlongXEastAxis(),-8.10917,0.001);
   EXPECT_NEAR(rFirstMatchedPoint->getENUPosture().getPositionAlongYNorthAxis(),16.2537,0.001);
   EXPECT_NEAR(rFirstMatchedPoint->getENUPosture().getOrientationAroundZUpAxis(),2.60782,0.001);
-  EXPECT_NEAR(rFirstMatchedPoint->getENUPosture().getCurvatureAlongPath(),0.0816672,0.001);
+  EXPECT_NEAR(rFirstMatchedPoint->getENUPosture().getCurvature(),0.0816672,0.001);
 
   EXPECT_NEAR(rFirstMatchedPoint->getFrenetPose().getCurvilinearAbscissa(),17.1109,0.001);
   EXPECT_NEAR(rFirstMatchedPoint->getFrenetPose().getLateralDeviation(),0.17852,0.001);
@@ -61,13 +61,13 @@ TEST(TestPath, testMatching)
   EXPECT_EQ(rFirstMatchedPoint->getNearestPointIndex(),177);
 
 
-  boost::optional<romea::ENUPathMatchedPoint2D>  rSecondMatchedPoint = pathmatching.match(rPath,secondVehiclePose,*rFirstMatchedPoint,10.)  ;
+  boost::optional<romea::PathMatchedPoint2D>  rSecondMatchedPoint = pathmatching.match(rPath,secondVehiclePose,*rFirstMatchedPoint,10.)  ;
   ASSERT_EQ(rSecondMatchedPoint.is_initialized(),true);
 
   EXPECT_NEAR(rSecondMatchedPoint->getENUPosture().getPositionAlongXEastAxis(),-9.41664,0.001);
   EXPECT_NEAR(rSecondMatchedPoint->getENUPosture().getPositionAlongYNorthAxis(),16.9346,0.001);
   EXPECT_NEAR(rSecondMatchedPoint->getENUPosture().getOrientationAroundZUpAxis(),2.72756,0.001);
-  EXPECT_NEAR(rSecondMatchedPoint->getENUPosture().getCurvatureAlongPath(),0.104456,0.001);
+  EXPECT_NEAR(rSecondMatchedPoint->getENUPosture().getCurvature(),0.104456,0.001);
 
   EXPECT_NEAR(rSecondMatchedPoint->getFrenetPose().getCurvilinearAbscissa(), 18.5847,0.001);
   EXPECT_NEAR(rSecondMatchedPoint->getFrenetPose().getLateralDeviation(),-0.289936,0.001);

@@ -10,7 +10,7 @@
 
 namespace romea {
 
-class ENUPath2D
+class Path2D
 {
 public:
 
@@ -18,9 +18,9 @@ public:
 
 public:
 
-  ENUPath2D();
+  Path2D();
 
-  ENUPath2D(const VectorOfEigenVector<Eigen::Vector2d> & points);
+  Path2D(const VectorOfEigenVector<Eigen::Vector2d> & points);
 
   void load(const VectorOfEigenVector<Eigen::Vector2d> & points);
 

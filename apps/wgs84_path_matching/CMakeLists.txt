@@ -7,7 +7,7 @@ set(${PROJECT_NAME}_CATKIN_DEPS
     roscpp
     tf
     romea_util
-    romea_ros_util
+    romea_path_util
     romea_localisation_util
     )
 
@@ -71,6 +71,7 @@ add_executable(
     wgs84_path_matching
     src/wgs84_path_matching.cpp
     src/wgs84_path_matching_system.cpp
+    src/wgs84_path_matching_diagnostic.cpp
 )
 
 ## Add cmake target dependencies of the executable

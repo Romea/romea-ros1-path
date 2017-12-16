@@ -18,7 +18,6 @@
   <depend>roscpp</depend>
   <depend>tf</depend>
   <depend>romea_util</depend>
-  <depend>romea_ros_util</depend>
   <depend>romea_localisation_util</depend>
-  <depend></depend>
+  <depend>romea_path_util</depend>
 </package>

@@ -1,8 +1,9 @@
 //romea
 #include "wgs84_path_matching_system.hpp"
-#include <ros_path_utils.hpp>
-#include <ros_transform_util.hpp>
-#include <ros_localisation_util.hpp>
+#include <ros/MatchedPointConversions.hpp>
+#include <ros/TransformConversions.hpp>
+#include <ros/Pose2DRvizDisplay.hpp>
+#include <ros/OdomConversions.hpp>
 
 //std
 #include <fstream>
@@ -16,8 +17,8 @@ WGS84PathMatchingSystem::WGS84PathMatchingSystem(ros::NodeHandle node, ros::Node
   wgs84_path_(),
   enu_path_matching_(),
   display_(false),
-  rviz_util_("map","communications")
-//  diagnostics_()
+  rviz_util_("map","communications"),
+  diagnostics_()
 {
 
   //init visual tools
@@ -56,12 +57,12 @@ WGS84PathMatchingSystem::WGS84PathMatchingSystem(ros::NodeHandle node, ros::Node
 }
 
 //-----------------------------------------------------------------------------
-void WGS84PathMatchingSystem::loadPath_(const std::string & path_filename)
+void WGS84PathMatchingSystem::loadPath_(const std::string & filename)
 {
 
   enu_matched_point_.reset();
 
-  std::ifstream file(path_filename);
+  std::ifstream file(filename);
   if(file.is_open())
   {
     double reference_latitude;
@@ -94,6 +95,8 @@ void WGS84PathMatchingSystem::loadPath_(const std::string & path_filename)
 
     wgs84_path_.enuPath.load(points);
   }
+
+  diagnostics_.updatePathStatus(filename,file.is_open());
 }
 
 //-----------------------------------------------------------------------------
@@ -109,12 +112,14 @@ void WGS84PathMatchingSystem::processOdom(const nav_msgs::Odometry::ConstPtr &ms
 
   std::string frame_id, frame_child_id;
   romea::PoseAndTwist3D::Stamped  enuPoseAndBodyTwist3D=romea::toRomea(*msg,frame_id,frame_child_id);
+  diagnostics_.updateOdomRate(romea::toRomeaDuration(msg->header.stamp));
 
   try{
 
     tf_listener_.lookupTransform(frame_id,"/world",msg->header.stamp,tf_world_to_map_);
     tf::transformTFToEigen(tf_world_to_map_.inverseTimes(tf_world_to_path_),tf_map_to_path_);
     romea::Pose2D vehiclePose2D = (tf_map_to_path_*enuPoseAndBodyTwist3D.data.getPose()).toPose2D();
+    diagnostics_.updateLookupTransformStatus(true);
 
     if(enu_matched_point_)
     {
@@ -137,11 +142,14 @@ void WGS84PathMatchingSystem::processOdom(const nav_msgs::Odometry::ConstPtr &ms
     {
       //TODO diag
     }
+
+    diagnostics_.updateMatchingStatus(enu_matched_point_.is_initialized());
   }
   catch (tf::TransformException ex)
   {
-    //TODO diag
+    diagnostics_.updateLookupTransformStatus(false);
   }
+
 
 }
 

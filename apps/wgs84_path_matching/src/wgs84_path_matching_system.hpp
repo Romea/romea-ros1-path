@@ -17,9 +17,7 @@
 #include <PoseAndTwist3D.hpp>
 #include <PathMatching2D.hpp>
 #include <WGS84Path2D.hpp>
-#include <ros_visual_util.hpp>
-//#include <ros_diagnostic_util.hpp>
-
+#include <ros/Pose2DRvizDisplay.hpp>
 
 class WGS84PathMatchingSystem
 {
@@ -32,7 +30,7 @@ public :
 
 protected:
 
-  void loadPath_(const std::string & path_filename);
+  void loadPath_(const std::string & filename);
 
   void publishTf_(const ros::TimerEvent & event);
 
@@ -61,7 +59,7 @@ protected:
   rviz_visual_tools::RvizVisualTools rviz_util_;
 
 
-//  WGS84PathDiagnostic diagnostics_;
+  WGS84PathMatchingDiagnostic diagnostics_;
 
 };
 

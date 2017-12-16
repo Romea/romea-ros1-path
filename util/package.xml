@@ -16,5 +16,6 @@
   <depend>roscpp</depend>
   <depend>romea_util</depend>
   <depend>romea_localisation_util</depend>
+  <depend>romea_path_msgs</depend>
 
 </package>

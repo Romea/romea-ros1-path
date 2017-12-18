@@ -29,10 +29,10 @@ public :
                                             const Pose2D & vehiclePose,
                                             const PathMatchedPoint2D & previousMatchedPoint,
                                             const double & expectedTravelledDistance);
+
+  const PathCurve2D & getInterpolatedPath() const;
+
 private :
-
-
-
 
 
   size_t findNearestPointIndex_(const Path2D & path,

@@ -27,6 +27,10 @@ public :
 
   double computeCurvature(const double & curvilinearAbscissa)const;
 
+  const double & getMinimalCurvilinearAbscissa()const;
+
+  const double & getMaximalCurvilinearAbscissa()const;
+
 private :
 
   Eigen::Array3d fxPolynomCoefficient_;

@@ -222,4 +222,17 @@ double PathCurve2D::computeCurvature(const double & curvilinearAbscissa)const
   }
 }
 
+//-----------------------------------------------------------------------------
+const double & PathCurve2D::getMinimalCurvilinearAbscissa()const
+{
+   return minimalCurvilinearAbscissa_;
+}
+
+//-----------------------------------------------------------------------------
+const double & PathCurve2D::getMaximalCurvilinearAbscissa()const
+{
+  return maximalCurvilinearAbscissa_;
+}
+
+
 }

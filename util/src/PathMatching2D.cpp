@@ -193,4 +193,10 @@ boost::optional<PathMatchedPoint2D> PathMatching2D::match(const Path2D & path,
 
 }
 
+//-----------------------------------------------------------------------------
+const PathCurve2D & PathMatching2D::getInterpolatedPath() const
+{
+  return interpolatedPath_;
+}
+
 }

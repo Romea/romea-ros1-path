@@ -57,6 +57,8 @@ protected:
 
   bool display_;
   rviz_visual_tools::RvizVisualTools rviz_util_;
+  romea::VectorOfEigenVector<Eigen::Vector3d> path3d_;
+  romea::VectorOfEigenVector<Eigen::Vector3d> interpolatedPath3d_;
 
 
   WGS84PathMatchingDiagnostic diagnostics_;

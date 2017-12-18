@@ -18,6 +18,8 @@ WGS84PathMatchingSystem::WGS84PathMatchingSystem(ros::NodeHandle node, ros::Node
   enu_path_matching_(),
   display_(false),
   rviz_util_("map","communications"),
+  path3d_(),
+  interpolatedPath3d_(30),
   diagnostics_()
 {
 
@@ -84,13 +86,16 @@ void WGS84PathMatchingSystem::loadPath_(const std::string & filename)
     size_t numberOfPoints;
     file >> numberOfPoints;
 
-    Eigen::Vector2d point;
     romea::VectorOfEigenVector<Eigen::Vector2d> points;
+    points.reserve(numberOfPoints);
+    path3d_.reserve(numberOfPoints);
 
+    double x,y;
     while(!file.eof())
     {
-      file >> point[0] >> point[1];
-      points.push_back(point);
+      file >> x >> y;
+      points.emplace_back(Eigen::Vector2d(x,y));
+      path3d_.emplace_back(Eigen::Vector3d(x,y,0));
     }
 
     wgs84_path_.enuPath.load(points);
@@ -138,18 +143,37 @@ void WGS84PathMatchingSystem::processOdom(const nav_msgs::Odometry::ConstPtr &ms
     {
       match_pub_.publish(romea::toROSMsg(msg->header.stamp,*enu_matched_point_));
     }
-    else
-    {
-      //TODO diag
-    }
 
     diagnostics_.updateMatchingStatus(enu_matched_point_.is_initialized());
+
+    if(display_)
+    {
+      rviz_util_.deleteAllMarkers();
+
+      //rviz_util_.publishSpheres(path3d_,rviz_visual_tools::WHITE,rviz_visual_tools::XXLARGE);
+      rviz_util_.publishPath(path3d_,rviz_visual_tools::WHITE,rviz_visual_tools::XXLARGE);
+
+      const romea::PathCurve2D pathCurve = enu_path_matching_.getInterpolatedPath();
+      double ss=pathCurve.getMinimalCurvilinearAbscissa();
+      double ds=(pathCurve.getMaximalCurvilinearAbscissa()-ss)/30.;
+
+      for(size_t n=0; n<30; n++)
+      {
+        double s = ss+ n*ds;
+        interpolatedPath3d_[n].x()=pathCurve.computeX(s);
+        interpolatedPath3d_[n].y()=pathCurve.computeY(s);
+      }
+
+      rviz_util_.publishPath(interpolatedPath3d_,rviz_visual_tools::RED,rviz_visual_tools::XXLARGE);
+      romea::publish(rviz_util_,vehiclePose2D,rviz_visual_tools::GREEN);
+
+    }
+
   }
   catch (tf::TransformException ex)
   {
     diagnostics_.updateLookupTransformStatus(false);
   }
-
 
 }
 

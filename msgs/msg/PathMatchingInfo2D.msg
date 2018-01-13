@@ -1,2 +1,4 @@
+Header header
 PathMatchedPoint2D matched_point
+float64 future_curvature
 romea_localisation_msgs/Twist2D twist

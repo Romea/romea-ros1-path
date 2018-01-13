@@ -60,7 +60,7 @@ add_library(romea_path_util
   src/PathMatching2D.cpp
   src/PathPosture2D.cpp
   src/WGS84Path2D.cpp
-  src/ros/MatchedPointConversions.cpp
+  src/ros/PathMatchingInfoConversions.cpp
   )
 
 

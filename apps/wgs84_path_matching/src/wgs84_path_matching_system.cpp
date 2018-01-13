@@ -1,6 +1,6 @@
 //romea
 #include "wgs84_path_matching_system.hpp"
-#include <ros/MatchedPointConversions.hpp>
+#include <ros/PathMatchingInfoConversions.hpp>
 #include <ros/TransformConversions.hpp>
 #include <ros/Pose2DRvizDisplay.hpp>
 #include <ros/OdomConversions.hpp>
@@ -52,7 +52,7 @@ WGS84PathMatchingSystem::WGS84PathMatchingSystem(ros::NodeHandle node, ros::Node
   tf_world_to_path_msg_.child_frame_id = "path";
 
   odom_sub_ = node.subscribe<nav_msgs::Odometry>("/odometry", 10, &WGS84PathMatchingSystem::processOdom,this);
-  match_pub_ = node.advertise<romea_path_msgs::PathMatchedPoint2DStamped>("/path_matched_pooint",1);
+  match_pub_ = node.advertise<romea_path_msgs::PathMatchingInfo2D>("/path_matching_info",1);
   timer_ = node.createTimer(ros::Rate(1), &WGS84PathMatchingSystem::publishTf_, this);
 
 
@@ -124,6 +124,8 @@ void WGS84PathMatchingSystem::processOdom(const nav_msgs::Odometry::ConstPtr &ms
     tf_listener_.lookupTransform(frame_id,"/world",msg->header.stamp,tf_world_to_map_);
     tf::transformTFToEigen(tf_world_to_map_.inverseTimes(tf_world_to_path_),tf_map_to_path_);
     romea::Pose2D vehiclePose2D = (tf_map_to_path_*enuPoseAndBodyTwist3D.data.getPose()).toPose2D();
+    romea::Twist2D vehicleTwist2D = enuPoseAndBodyTwist3D.data.getTwist().toTwist2D();
+
     diagnostics_.updateLookupTransformStatus(true);
 
     if(enu_matched_point_)
@@ -135,13 +137,23 @@ void WGS84PathMatchingSystem::processOdom(const nav_msgs::Odometry::ConstPtr &ms
     }
     else
     {
-      enu_matched_point_ = enu_path_matching_.match(wgs84_path_.enuPath,vehiclePose2D);
+      enu_matched_point_ = enu_path_matching_.match(wgs84_path_.enuPath,
+                                                    vehiclePose2D);
     }
 
 
     if(enu_matched_point_)
     {
-      match_pub_.publish(romea::toROSMsg(msg->header.stamp,*enu_matched_point_));
+
+      double future_curvature = enu_path_matching_.computeFutureCurvature(wgs84_path_.enuPath,
+                                                                          *enu_matched_point_,
+                                                                          msg->twist.twist.linear.x);
+
+      match_pub_.publish(romea::toROSMsg(msg->header.stamp,
+                                         *enu_matched_point_,
+                                         future_curvature,
+                                         vehicleTwist2D));
+
     }
 
     diagnostics_.updateMatchingStatus(enu_matched_point_.is_initialized());

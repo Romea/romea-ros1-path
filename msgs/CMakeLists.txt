@@ -10,10 +10,7 @@ add_message_files(
   PathPosture2D.msg
   PathFrenetPose2D.msg
   PathMatchedPoint2D.msg
-  PathMatchedPoint2DStamped.msg
-  PathMatchedPointAndTwist2D.msg
-  PathMatchedPointAndTwist2DStamped.msg
-
+  PathMatchingInfo2D.msg
   )
 
 generate_messages(DEPENDENCIES std_msgs romea_localisation_msgs)

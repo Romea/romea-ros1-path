@@ -2,6 +2,9 @@
 #include "PathMatching2D.hpp"
 #include <math/EulerAngles.hpp>
 
+//std
+#include <iterator>
+
 namespace romea {
 
 //-----------------------------------------------------------------------------
@@ -85,6 +88,7 @@ boost::optional<PathMatchedPoint2D> PathMatching2D::findMatchedPoint_(const Path
     double yp = interpolatedPath_.computeY(nearestCurvilinearAbscissa);
     double tangent = interpolatedPath_.computeTangent(nearestCurvilinearAbscissa);
     double curvature = interpolatedPath_.computeCurvature(nearestCurvilinearAbscissa);
+    //double futureCurvature = in
 
     const double & xv = vehiclePose.getPosition().x();
     const double & yv = vehiclePose.getPosition().y();
@@ -145,6 +149,50 @@ size_t PathMatching2D::findNearestPointIndex_(const Path2D & path,
   }
 
   return nearestPointIndex;
+}
+
+//-----------------------------------------------------------------------------
+double PathMatching2D::computeFutureCurvature(const Path2D & path,
+                                              const PathMatchedPoint2D & matchedPoint,
+                                              const double & linear_speed)
+{
+
+
+  double futureCurvilinearAbscissa = matchedPoint.getFrenetPose().getCurvilinearAbscissa()+ linear_speed* 0.5;
+
+  size_t futurePointIndex;
+  if(futureCurvilinearAbscissa<=0)
+  {
+    futurePointIndex=0;
+  }
+  else if(futureCurvilinearAbscissa>=path.getCurvilinearAbscissa().back())
+  {
+    futurePointIndex = path.getCurvilinearAbscissa().size()-1;
+  }
+  else
+  {
+    auto c = path.getCurvilinearAbscissa();
+    auto it = std::lower_bound(c.begin(), c.end(), futureCurvilinearAbscissa);
+    futurePointIndex = std::distance(c.begin(),it);
+  }
+
+
+  Range<size_t> futureIndexRange = findIndexRange_(path,futurePointIndex,interpolationWindowLength_);
+  Eigen::Map<const Eigen::ArrayXd> X(path.getX().data()+futureIndexRange.getMin(),futureIndexRange.interval()+1);
+  Eigen::Map<const Eigen::ArrayXd> Y(path.getY().data()+futureIndexRange.getMin(),futureIndexRange.interval()+1);
+  Eigen::Map<const Eigen::ArrayXd> S(path.getCurvilinearAbscissa().data()+futureIndexRange.getMin(),futureIndexRange.interval()+1);
+
+  PathCurve2D futureInterpolatedPath;
+  if(futureInterpolatedPath.estimate(X,Y,S))
+  {
+    return futureInterpolatedPath.computeCurvature(futureCurvilinearAbscissa);
+  }
+  else
+  {
+    return 0;
+  }
+
+
 }
 
 //-----------------------------------------------------------------------------

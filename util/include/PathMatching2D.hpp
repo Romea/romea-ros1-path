@@ -4,7 +4,7 @@
 #include "Path2D.hpp"
 #include "PathCurve2D.hpp"
 #include "PathMatchedPoint2D.hpp"
-#include <Pose2D.hpp>
+#include <PoseAndTwist2D.hpp>
 
 namespace romea {
 
@@ -29,6 +29,10 @@ public :
                                             const Pose2D & vehiclePose,
                                             const PathMatchedPoint2D & previousMatchedPoint,
                                             const double & expectedTravelledDistance);
+
+  double computeFutureCurvature(const Path2D & path,
+                                const PathMatchedPoint2D & matchedPoint,
+                                const double & linear_speed);
 
   const PathCurve2D & getInterpolatedPath() const;
 

@@ -1,4 +1,4 @@
-#include "ros/MatchedPointConversions.hpp"
+#include "ros/PathMatchingInfoConversions.hpp"
 
 
 namespace romea {
@@ -31,7 +31,7 @@ romea_path_msgs::PathFrenetPose2D toROSMsg(const PathFrenetPose2D & frenet_pose)
 }
 
 //-----------------------------------------------------------------------------
-romea_path_msgs::PathMatchedPoint2D toROSMsg(const PathMatchedPoint2D & matched_point)
+romea_path_msgs::PathMatchedPoint2D toROSMsg(const PathMatchedPoint2D &matched_point)
 {
   romea_path_msgs::PathMatchedPoint2D msg;
   msg.posture = toROSMsg(matched_point.getPosture());
@@ -41,19 +41,28 @@ romea_path_msgs::PathMatchedPoint2D toROSMsg(const PathMatchedPoint2D & matched_
 }
 
 //-----------------------------------------------------------------------------
-romea_path_msgs::PathMatchedPoint2DStamped toROSMsg(const Duration & duration,const PathMatchedPoint2D matched_point)
+romea_path_msgs::PathMatchingInfo2D toROSMsg(const Duration & duration,
+                                            const PathMatchedPoint2D matched_point,
+                                            const double & future_curvature,
+                                            const Twist2D & twist)
 {
-  return toROSMsg(toROSTime(duration),matched_point);
+  return toROSMsg(toROSTime(duration),matched_point,future_curvature,twist);
 }
 
 //-----------------------------------------------------------------------------
-romea_path_msgs::PathMatchedPoint2DStamped toROSMsg(const ros::Time & stamp,const PathMatchedPoint2D matched_point)
+romea_path_msgs::PathMatchingInfo2D toROSMsg(const ros::Time & stamp,
+                                             const PathMatchedPoint2D matched_point,
+                                             const double & future_curvature,
+                                             const Twist2D & twist)
 {
-  romea_path_msgs::PathMatchedPoint2DStamped msg;
+  romea_path_msgs::PathMatchingInfo2D msg;
   msg.header.frame_id="matched_point";
   msg.header.stamp = stamp;
   msg.matched_point = toROSMsg(matched_point);
+  msg.future_curvature = future_curvature;
+  msg.twist = toROSMsg(twist);
   return msg;
+
 }
 
 
@@ -84,11 +93,5 @@ PathMatchedPoint2D toRomea(const romea_path_msgs::PathMatchedPoint2D &matched_po
                             matched_point_msg.nearest_point_index);
 }
 
-//-----------------------------------------------------------------------------
-PathMatchedPoint2D::Stamped toRomea(const romea_path_msgs::PathMatchedPoint2DStamped &stamped_matched_point_msg)
-{
-  return PathMatchedPoint2D::Stamped(toRomeaDuration(stamped_matched_point_msg.header.stamp),
-                                     toRomea(stamped_matched_point_msg.matched_point));
-}
 
 }

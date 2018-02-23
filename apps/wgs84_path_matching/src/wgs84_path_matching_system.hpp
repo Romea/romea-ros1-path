@@ -18,19 +18,24 @@
 #include <PathMatching2D.hpp>
 #include <WGS84Path2D.hpp>
 #include <ros/Pose2DRvizDisplay.hpp>
+#include <romea_fsm_srvs/FSMService.h>
+
 
 class WGS84PathMatchingSystem
 {
 
 public :
 
-  WGS84PathMatchingSystem(ros::NodeHandle node, ros::NodeHandle private_nh);
+  WGS84PathMatchingSystem(ros::NodeHandle nh, ros::NodeHandle private_nh);
 
   void processOdom(const nav_msgs::Odometry::ConstPtr &msg);
 
 protected:
 
-  void loadPath_(const std::string & filename);
+  bool serviceCallback_(romea_fsm_srvs::FSMService::Request  &request,
+                        romea_fsm_srvs::FSMService::Response &response);
+
+  bool loadPath_(const std::string & filename);
 
   void publishTf_(const ros::TimerEvent & event);
 
@@ -43,6 +48,7 @@ protected:
   romea::PathMatching2D enu_path_matching_;
   romea::PathMatchedPoint2D::Opt enu_matched_point_;
 
+  ros::ServiceServer srv_server;
   ros::Subscriber odom_sub_;
   ros::Publisher match_pub_;
   ros::Timer timer_;

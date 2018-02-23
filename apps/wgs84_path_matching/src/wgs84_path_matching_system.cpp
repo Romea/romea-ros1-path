@@ -9,22 +9,22 @@
 #include <fstream>
 
 const double DEFAULT_MAXIMAL_REASEARCH_RADIUS =10;
-const double DEFAULT_INTERPOLATION_WINDOW_LENGTH =10;
+const double DEFAULT_INTERPOLATION_WINDOW_LENGTH =3;
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
-WGS84PathMatchingSystem::WGS84PathMatchingSystem(ros::NodeHandle node, ros::NodeHandle private_nh):
+WGS84PathMatchingSystem::WGS84PathMatchingSystem(ros::NodeHandle nh, ros::NodeHandle private_nh):
   wgs84_path_(),
   enu_path_matching_(),
-  display_(false),
-  rviz_util_("map","communications"),
+  display_(true),
+  rviz_util_("map","matching"),
   path3d_(),
   interpolatedPath3d_(30),
   diagnostics_()
 {
 
   //init visual tools
-  if(!private_nh.getParam("/r2hl/display",display_))
+  if(!private_nh.getParam("display",display_))
   {
     ROS_ERROR("Failed to read rviz display status from launch file ");
   }
@@ -36,6 +36,10 @@ WGS84PathMatchingSystem::WGS84PathMatchingSystem(ros::NodeHandle node, ros::Node
     rviz_util_.enableBatchPublishing();
   }
 
+
+  //autostart
+  bool autostart;
+  private_nh.param("auto_start",autostart,true);
 
   //maximal_researh_radius
   double maximal_researh_radius;
@@ -51,15 +55,48 @@ WGS84PathMatchingSystem::WGS84PathMatchingSystem(ros::NodeHandle node, ros::Node
   tf_world_to_path_msg_.header.frame_id = "world";
   tf_world_to_path_msg_.child_frame_id = "path";
 
-  odom_sub_ = node.subscribe<nav_msgs::Odometry>("/odometry", 10, &WGS84PathMatchingSystem::processOdom,this);
-  match_pub_ = node.advertise<romea_path_msgs::PathMatchingInfo2D>("/path_matching_info",1);
-  timer_ = node.createTimer(ros::Rate(1), &WGS84PathMatchingSystem::publishTf_, this);
+  loadPath_("/home/effibox/dev/catkin_ws/path.txt");
 
+  srv_server = nh.advertiseService(nh.resolveName("fsm_service"),&WGS84PathMatchingSystem::serviceCallback_,this);
+  odom_sub_ = nh.subscribe<nav_msgs::Odometry>(nh.resolveName("filtered_odom"), 10, &WGS84PathMatchingSystem::processOdom,this);
+  match_pub_ = nh.advertise<romea_path_msgs::PathMatchingInfo2D>(nh.resolveName("path_matching_info"),1);
+  timer_ = nh.createTimer(ros::Rate(1), &WGS84PathMatchingSystem::publishTf_, this,autostart);
 
 }
 
 //-----------------------------------------------------------------------------
-void WGS84PathMatchingSystem::loadPath_(const std::string & filename)
+bool WGS84PathMatchingSystem::serviceCallback_(romea_fsm_srvs::FSMService::Request  &request,
+                                               romea_fsm_srvs::FSMService::Response &response)
+{
+  if(request.id=="start")
+  {
+    timer_.start();
+    response.success=true;
+  }
+  else if(request.id=="stop")
+  {
+    timer_.stop();
+    response.success=true;
+  }
+  else if(request.id=="loadPath")
+  {
+    enu_matched_point_.reset();
+    response.success=loadPath_(request.arguments);
+    if(!response.success)
+    {
+      response.message= "file "+ request.arguments+ " cannot be loaded";
+    }
+  }
+  else
+  {
+    return false;
+  }
+
+  return true;
+}
+
+//-----------------------------------------------------------------------------
+bool WGS84PathMatchingSystem::loadPath_(const std::string & filename)
 {
 
   enu_matched_point_.reset();
@@ -90,24 +127,33 @@ void WGS84PathMatchingSystem::loadPath_(const std::string & filename)
     points.reserve(numberOfPoints);
     path3d_.reserve(numberOfPoints);
 
+    double n=0;
+    double R=100;
+    double theta=-M_PI_2;
     double x,y;
     while(!file.eof())
     {
       file >> x >> y;
-      points.emplace_back(Eigen::Vector2d(x,y));
-      path3d_.emplace_back(Eigen::Vector3d(x,y,0));
+      //      points.emplace_back(Eigen::Vector2d(x,y));
+      //      path3d_.emplace_back(Eigen::Vector3d(x,y,0));
+      //      points.emplace_back(Eigen::Vector2d(n,2));
+      //      path3d_.emplace_back(Eigen::Vector3d(n,2,0));
+      points.emplace_back(Eigen::Vector2d(R*std::cos(theta),R*std::sin(theta)+R));
+      path3d_.emplace_back(Eigen::Vector3d(R*std::cos(theta),R*std::sin(theta)+R,0));
+      n+=0.2;
+      theta+=0.1/R;
     }
 
     wgs84_path_.enuPath.load(points);
   }
 
   diagnostics_.updatePathStatus(filename,file.is_open());
+  return file.is_open();
 }
 
 //-----------------------------------------------------------------------------
 void WGS84PathMatchingSystem::publishTf_(const ros::TimerEvent & event)
 {
-
   tf_broadcaster_.sendTransform(tf_world_to_path_msg_);
 }
 
@@ -121,22 +167,32 @@ void WGS84PathMatchingSystem::processOdom(const nav_msgs::Odometry::ConstPtr &ms
 
   try{
 
-    tf_listener_.lookupTransform(frame_id,"/world",msg->header.stamp,tf_world_to_map_);
+    tf_listener_.lookupTransform("world",frame_id,msg->header.stamp,tf_world_to_map_);
     tf::transformTFToEigen(tf_world_to_map_.inverseTimes(tf_world_to_path_),tf_map_to_path_);
-    romea::Pose2D vehiclePose2D = (tf_map_to_path_*enuPoseAndBodyTwist3D.data.getPose()).toPose2D();
+
+    std::cout << "tf_map_to_path_ "<< std::endl;
+    std::cout << tf_map_to_path_.matrix() << std::endl;
+
+    //romea::Pose2D vehiclePose2D = (tf_map_to_path_*enuPoseAndBodyTwist3D.data.getPose()).toPose2D();
+    romea::Pose2D vehiclePose2D = (enuPoseAndBodyTwist3D.data.getPose()).toPose2D();
     romea::Twist2D vehicleTwist2D = enuPoseAndBodyTwist3D.data.getTwist().toTwist2D();
 
     diagnostics_.updateLookupTransformStatus(true);
 
     if(enu_matched_point_)
     {
+      std::cout << " local" << std::endl;
       enu_matched_point_ = enu_path_matching_.match(wgs84_path_.enuPath,
                                                     vehiclePose2D,
                                                     *enu_matched_point_,
                                                     10);
+
+
     }
     else
     {
+      std::cout << " global" << std::endl;
+
       enu_matched_point_ = enu_path_matching_.match(wgs84_path_.enuPath,
                                                     vehiclePose2D);
     }
@@ -145,14 +201,22 @@ void WGS84PathMatchingSystem::processOdom(const nav_msgs::Odometry::ConstPtr &ms
     if(enu_matched_point_)
     {
 
+      std::cout << " matching ok"<<std::endl;
       double future_curvature = enu_path_matching_.computeFutureCurvature(wgs84_path_.enuPath,
                                                                           *enu_matched_point_,
                                                                           msg->twist.twist.linear.x);
+
 
       match_pub_.publish(romea::toROSMsg(msg->header.stamp,
                                          *enu_matched_point_,
                                          future_curvature,
                                          vehicleTwist2D));
+
+
+    }
+    else
+    {
+      std::cout << " matching not ok"<<std::endl;
 
     }
 
@@ -160,10 +224,11 @@ void WGS84PathMatchingSystem::processOdom(const nav_msgs::Odometry::ConstPtr &ms
 
     if(display_)
     {
+
       rviz_util_.deleteAllMarkers();
 
-      //rviz_util_.publishSpheres(path3d_,rviz_visual_tools::WHITE,rviz_visual_tools::XXLARGE);
-      rviz_util_.publishPath(path3d_,rviz_visual_tools::WHITE,rviz_visual_tools::XXLARGE);
+      rviz_util_.publishSpheres(path3d_,rviz_visual_tools::WHITE,rviz_visual_tools::XXLARGE);
+      //rviz_util_.publishPath(path3d_,rviz_visual_tools::WHITE,rviz_visual_tools::XXLARGE);
 
       const romea::PathCurve2D pathCurve = enu_path_matching_.getInterpolatedPath();
       double ss=pathCurve.getMinimalCurvilinearAbscissa();
@@ -174,16 +239,20 @@ void WGS84PathMatchingSystem::processOdom(const nav_msgs::Odometry::ConstPtr &ms
         double s = ss+ n*ds;
         interpolatedPath3d_[n].x()=pathCurve.computeX(s);
         interpolatedPath3d_[n].y()=pathCurve.computeY(s);
+        interpolatedPath3d_[n].z()=0.1;
+
       }
 
-      rviz_util_.publishPath(interpolatedPath3d_,rviz_visual_tools::RED,rviz_visual_tools::XXLARGE);
+      rviz_util_.publishSpheres(interpolatedPath3d_,rviz_visual_tools::RED,rviz_visual_tools::XXLARGE);
+      //rviz_util_.publishPath(interpolatedPath3d_,rviz_visual_tools::RED,rviz_visual_tools::XXLARGE);
       romea::publish(rviz_util_,vehiclePose2D,rviz_visual_tools::GREEN);
 
+      rviz_util_.triggerBatchPublish();
     }
-
   }
   catch (tf::TransformException ex)
   {
+    std::cout << " catch " << std::endl;
     diagnostics_.updateLookupTransformStatus(false);
   }
 

@@ -4,6 +4,7 @@
 #include <ros/TransformConversions.hpp>
 #include <ros/Pose2DRvizDisplay.hpp>
 #include <ros/OdomConversions.hpp>
+#include <ros/services/FSMServiceClient.hpp>
 
 //std
 #include <fstream>
@@ -55,9 +56,22 @@ WGS84PathMatchingSystem::WGS84PathMatchingSystem(ros::NodeHandle nh, ros::NodeHa
   tf_world_to_path_msg_.header.frame_id = "world";
   tf_world_to_path_msg_.child_frame_id = "path";
 
-  loadPath_("/home/effibox/dev/catkin_ws/path.txt");
 
-  srv_server = nh.advertiseService(nh.resolveName("fsm_service"),&WGS84PathMatchingSystem::serviceCallback_,this);
+  if(autostart)
+  {
+    std::string path;
+    if(private_nh.getParam("path",path))
+    {
+      loadPath_(path);
+    }
+    else
+    {
+      ROS_ERROR("Failed to read path status from launch file ");
+    }
+
+  }
+
+  srv_server = nh.advertiseService(private_nh.resolveName("fsm_service"),&WGS84PathMatchingSystem::serviceCallback_,this);
   odom_sub_ = nh.subscribe<nav_msgs::Odometry>(nh.resolveName("filtered_odom"), 10, &WGS84PathMatchingSystem::processOdom,this);
   match_pub_ = nh.advertise<romea_path_msgs::PathMatchingInfo2D>(nh.resolveName("path_matching_info"),1);
   timer_ = nh.createTimer(ros::Rate(1), &WGS84PathMatchingSystem::publishTf_, this,autostart);
@@ -68,17 +82,19 @@ WGS84PathMatchingSystem::WGS84PathMatchingSystem(ros::NodeHandle nh, ros::NodeHa
 bool WGS84PathMatchingSystem::serviceCallback_(romea_fsm_srvs::FSMService::Request  &request,
                                                romea_fsm_srvs::FSMService::Response &response)
 {
-  if(request.id=="start")
+  std::string command =romea::FSMServiceClient::extractCommand(request.id);
+
+  if(command.compare("start")==0)
   {
     timer_.start();
     response.success=true;
   }
-  else if(request.id=="stop")
+  else if(command.compare("stop")==0)
   {
     timer_.stop();
     response.success=true;
   }
-  else if(request.id=="loadPath")
+  else if(command.compare("loadPath")==0)
   {
     enu_matched_point_.reset();
     response.success=loadPath_(request.arguments);
@@ -104,6 +120,7 @@ bool WGS84PathMatchingSystem::loadPath_(const std::string & filename)
   std::ifstream file(filename);
   if(file.is_open())
   {
+
     double reference_latitude;
     double reference_longitude;
     double reference_altitude;
@@ -127,23 +144,13 @@ bool WGS84PathMatchingSystem::loadPath_(const std::string & filename)
     points.reserve(numberOfPoints);
     path3d_.reserve(numberOfPoints);
 
-    double n=0;
-    double R=100;
-    double theta=-M_PI_2;
     double x,y;
     while(!file.eof())
     {
       file >> x >> y;
-      //      points.emplace_back(Eigen::Vector2d(x,y));
-      //      path3d_.emplace_back(Eigen::Vector3d(x,y,0));
-      //      points.emplace_back(Eigen::Vector2d(n,2));
-      //      path3d_.emplace_back(Eigen::Vector3d(n,2,0));
-      points.emplace_back(Eigen::Vector2d(R*std::cos(theta),R*std::sin(theta)+R));
-      path3d_.emplace_back(Eigen::Vector3d(R*std::cos(theta),R*std::sin(theta)+R,0));
-      n+=0.2;
-      theta+=0.1/R;
+      points.emplace_back(Eigen::Vector2d(x,y));
+      path3d_.emplace_back(Eigen::Vector3d(x,y,0));
     }
-
     wgs84_path_.enuPath.load(points);
   }
 

@@ -58,5 +58,11 @@ const Path2D::Vector & Path2D::getCurvilinearAbscissa()const
   return curvilinearAbscissa_;
 }
 
+//-----------------------------------------------------------------------------
+double Path2D::getLength()const
+{
+  return curvilinearAbscissa_.back();
+}
+
 
 }

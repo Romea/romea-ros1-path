@@ -27,6 +27,7 @@ public:
   const Vector & getX()const;
   const Vector & getY()const;
   const Vector & getCurvilinearAbscissa()const;
+  double getLength()const;
 
 private :
 

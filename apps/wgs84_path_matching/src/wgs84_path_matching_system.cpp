@@ -4,7 +4,6 @@
 #include <ros/TransformConversions.hpp>
 #include <ros/Pose2DRvizDisplay.hpp>
 #include <ros/OdomConversions.hpp>
-#include <ros/services/FSMServiceClient.hpp>
 
 //std
 #include <fstream>
@@ -74,7 +73,7 @@ WGS84PathMatchingSystem::WGS84PathMatchingSystem(ros::NodeHandle nh, ros::NodeHa
   srv_server = nh.advertiseService(private_nh.resolveName("fsm_service"),&WGS84PathMatchingSystem::serviceCallback_,this);
   odom_sub_ = nh.subscribe<nav_msgs::Odometry>(nh.resolveName("filtered_odom"), 10, &WGS84PathMatchingSystem::processOdom,this);
   match_pub_ = nh.advertise<romea_path_msgs::PathMatchingInfo2D>(nh.resolveName("path_matching_info"),1);
-  timer_ = nh.createTimer(ros::Rate(1), &WGS84PathMatchingSystem::publishTf_, this,autostart);
+  timer_ = nh.createTimer(ros::Rate(1), &WGS84PathMatchingSystem::publishTf_, this,false,autostart);
 
 }
 
@@ -82,7 +81,7 @@ WGS84PathMatchingSystem::WGS84PathMatchingSystem(ros::NodeHandle nh, ros::NodeHa
 bool WGS84PathMatchingSystem::serviceCallback_(romea_fsm_srvs::FSMService::Request  &request,
                                                romea_fsm_srvs::FSMService::Response &response)
 {
-  std::string command =romea::FSMServiceClient::extractCommand(request.id);
+  std::string command = request.id.substr(request.id.find_last_of(".")+1);
 
   if(command.compare("start")==0)
   {
@@ -152,6 +151,9 @@ bool WGS84PathMatchingSystem::loadPath_(const std::string & filename)
       path3d_.emplace_back(Eigen::Vector3d(x,y,0));
     }
     wgs84_path_.enuPath.load(points);
+    std::cout << " wgs84_path_.enuPath length "<< wgs84_path_.enuPath.getLength()<<std::endl;
+    std::cout << wgs84_path_.enuCoordinateSystems.getAnchor() << std::endl;
+
   }
 
   diagnostics_.updatePathStatus(filename,file.is_open());
@@ -159,7 +161,7 @@ bool WGS84PathMatchingSystem::loadPath_(const std::string & filename)
 }
 
 //-----------------------------------------------------------------------------
-void WGS84PathMatchingSystem::publishTf_(const ros::TimerEvent & event)
+void WGS84PathMatchingSystem::publishTf_(const ros::TimerEvent & /*event*/)
 {
   tf_broadcaster_.sendTransform(tf_world_to_path_msg_);
 }
@@ -172,6 +174,7 @@ void WGS84PathMatchingSystem::processOdom(const nav_msgs::Odometry::ConstPtr &ms
   romea::PoseAndTwist3D::Stamped  enuPoseAndBodyTwist3D=romea::toRomea(*msg,frame_id,frame_child_id);
   diagnostics_.updateOdomRate(romea::toRomeaDuration(msg->header.stamp));
 
+  std::cout << "process odom"<<std::endl;
   try{
 
     tf_listener_.lookupTransform("world",frame_id,msg->header.stamp,tf_world_to_map_);
@@ -180,8 +183,8 @@ void WGS84PathMatchingSystem::processOdom(const nav_msgs::Odometry::ConstPtr &ms
     std::cout << "tf_map_to_path_ "<< std::endl;
     std::cout << tf_map_to_path_.matrix() << std::endl;
 
-    //romea::Pose2D vehiclePose2D = (tf_map_to_path_*enuPoseAndBodyTwist3D.data.getPose()).toPose2D();
-    romea::Pose2D vehiclePose2D = (enuPoseAndBodyTwist3D.data.getPose()).toPose2D();
+    romea::Pose2D vehiclePose2D = (tf_map_to_path_*enuPoseAndBodyTwist3D.data.getPose()).toPose2D();
+//    romea::Pose2D vehiclePose2D = (enuPoseAndBodyTwist3D.data.getPose()).toPose2D();
     romea::Twist2D vehicleTwist2D = enuPoseAndBodyTwist3D.data.getTwist().toTwist2D();
 
     diagnostics_.updateLookupTransformStatus(true);
@@ -216,6 +219,7 @@ void WGS84PathMatchingSystem::processOdom(const nav_msgs::Odometry::ConstPtr &ms
 
       match_pub_.publish(romea::toROSMsg(msg->header.stamp,
                                          *enu_matched_point_,
+                                         wgs84_path_.enuPath.getLength(),
                                          future_curvature,
                                          vehicleTwist2D));
 

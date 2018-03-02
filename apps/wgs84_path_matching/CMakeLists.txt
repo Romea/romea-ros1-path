@@ -10,7 +10,6 @@ set(${PROJECT_NAME}_CATKIN_DEPS
     romea_path_util
     romea_localisation_util
     romea_fsm_srvs
-    romea_fsm_util
     )
 
 ## Find catkin macros and libraries

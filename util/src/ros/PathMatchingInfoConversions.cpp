@@ -23,9 +23,9 @@ romea_path_msgs::PathFrenetPose2D toROSMsg(const PathFrenetPose2D & frenet_pose)
   msg.lateral_deviation = frenet_pose.getLateralDeviation();
   msg.course_deviation = frenet_pose.getCourseDeviation();
 
-  std::copy(frenet_pose.getCovariance().data(),
-            frenet_pose.getCovariance().data()+9,
-            msg.covariance.data());
+//  std::copy(frenet_pose.getCovariance().data(),
+//            frenet_pose.getCovariance().data()+9,
+//            msg.covariance.data());
 
   return msg;
 }
@@ -33,9 +33,12 @@ romea_path_msgs::PathFrenetPose2D toROSMsg(const PathFrenetPose2D & frenet_pose)
 //-----------------------------------------------------------------------------
 romea_path_msgs::PathMatchedPoint2D toROSMsg(const PathMatchedPoint2D &matched_point)
 {
+
   romea_path_msgs::PathMatchedPoint2D msg;
   msg.posture = toROSMsg(matched_point.getPosture());
   msg.frenet_pose = toROSMsg(matched_point.getFrenetPose());
+//  std::cout << matched_point << std::endl;
+//  std::cout <<matched_point.getNearestPointIndex()<<std::endl;
   msg.nearest_point_index = matched_point.getNearestPointIndex();
   return msg;
 }
@@ -43,15 +46,17 @@ romea_path_msgs::PathMatchedPoint2D toROSMsg(const PathMatchedPoint2D &matched_p
 //-----------------------------------------------------------------------------
 romea_path_msgs::PathMatchingInfo2D toROSMsg(const Duration & duration,
                                             const PathMatchedPoint2D matched_point,
+                                            const double & path_length,
                                             const double & future_curvature,
                                             const Twist2D & twist)
 {
-  return toROSMsg(toROSTime(duration),matched_point,future_curvature,twist);
+  return toROSMsg(toROSTime(duration),matched_point,path_length,future_curvature,twist);
 }
 
 //-----------------------------------------------------------------------------
 romea_path_msgs::PathMatchingInfo2D toROSMsg(const ros::Time & stamp,
                                              const PathMatchedPoint2D matched_point,
+                                             const double & path_length,
                                              const double & future_curvature,
                                              const Twist2D & twist)
 {
@@ -59,6 +64,7 @@ romea_path_msgs::PathMatchingInfo2D toROSMsg(const ros::Time & stamp,
   msg.header.frame_id="matched_point";
   msg.header.stamp = stamp;
   msg.matched_point = toROSMsg(matched_point);
+  msg.path_length =path_length;
   msg.future_curvature = future_curvature;
   msg.twist = toROSMsg(twist);
   return msg;

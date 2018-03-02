@@ -21,12 +21,13 @@ romea_path_msgs::PathFrenetPose2D toROSMsg(const PathFrenetPose2D & frenet_pose)
 romea_path_msgs::PathMatchedPoint2D toROSMsg(const PathMatchedPoint2D & matched_point);
 
 romea_path_msgs::PathMatchingInfo2D toROSMsg(const Duration & duration,
-                                             const PathMatchedPoint2D matched_point,
+                                             const PathMatchedPoint2D matched_point, const double &path_length,
                                              const double & future_curvature,
                                              const Twist2D & twist);
 
 romea_path_msgs::PathMatchingInfo2D toROSMsg(const ros::Time & stamp,
                                              const PathMatchedPoint2D matched_point,
+                                             const double & path_length,
                                              const double & future_curvature,
                                              const Twist2D & twist);
 

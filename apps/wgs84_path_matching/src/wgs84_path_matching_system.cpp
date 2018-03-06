@@ -81,29 +81,39 @@ WGS84PathMatchingSystem::WGS84PathMatchingSystem(ros::NodeHandle nh, ros::NodeHa
 bool WGS84PathMatchingSystem::serviceCallback_(romea_fsm_srvs::FSMService::Request  &request,
                                                romea_fsm_srvs::FSMService::Response &response)
 {
-  std::string command = request.id.substr(request.id.find_last_of(".")+1);
-
-  if(command.compare("start")==0)
+  if(request.command.compare("start")==0)
   {
     timer_.start();
     response.success=true;
   }
-  else if(command.compare("stop")==0)
+  else if(request.command.compare("stop")==0)
   {
     timer_.stop();
     response.success=true;
   }
-  else if(command.compare("loadPath")==0)
+  else if(request.command.compare("loadPath")==0)
   {
+    bool running = timer_.hasPending();
+    if(running)
+    {
+      timer_.stop();
+    }
+
     enu_matched_point_.reset();
-    response.success=loadPath_(request.arguments);
+    response.success=loadPath_(request.command_arguments);
     if(!response.success)
     {
-      response.message= "file "+ request.arguments+ " cannot be loaded";
+      response.message= "file "+ request.command_arguments+ " cannot be loaded";
+    }
+
+    if(running)
+    {
+      timer_.start();
     }
   }
   else
   {
+    response.success=false;
     return false;
   }
 

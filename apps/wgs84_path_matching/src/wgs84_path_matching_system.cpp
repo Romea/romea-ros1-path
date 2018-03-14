@@ -36,10 +36,8 @@ WGS84PathMatchingSystem::WGS84PathMatchingSystem(ros::NodeHandle nh, ros::NodeHa
     rviz_util_.enableBatchPublishing();
   }
 
-
   //autostart
-  bool autostart;
-  private_nh.param("auto_start",autostart,true);
+  bool autostart=false;
 
   //maximal_researh_radius
   double maximal_researh_radius;
@@ -56,18 +54,17 @@ WGS84PathMatchingSystem::WGS84PathMatchingSystem(ros::NodeHandle nh, ros::NodeHa
   tf_world_to_path_msg_.child_frame_id = "path";
 
 
-  if(autostart)
+  std::string path;
+  if(private_nh.getParam("path",path))
   {
-    std::string path;
-    if(private_nh.getParam("path",path))
+    if(!loadPath_(path))
     {
-      loadPath_(path);
+      ROS_ERROR("unable to load %s",path.c_str());
     }
     else
     {
-      ROS_ERROR("Failed to read path status from launch file ");
+      private_nh.param("autostart",autostart,true);
     }
-
   }
 
   srv_server = nh.advertiseService(private_nh.resolveName("fsm_service"),&WGS84PathMatchingSystem::serviceCallback_,this);
@@ -187,14 +184,15 @@ void WGS84PathMatchingSystem::processOdom(const nav_msgs::Odometry::ConstPtr &ms
   std::cout << "process odom"<<std::endl;
   try{
 
+    std::cout << "frame_id "<< frame_id <<std::endl;
     tf_listener_.lookupTransform("world",frame_id,msg->header.stamp,tf_world_to_map_);
-    tf::transformTFToEigen(tf_world_to_map_.inverseTimes(tf_world_to_path_),tf_map_to_path_);
+    tf::transformTFToEigen((tf_world_to_map_*tf_world_to_path_.inverse()).inverse(),tf_map_to_path_);
 
     std::cout << "tf_map_to_path_ "<< std::endl;
     std::cout << tf_map_to_path_.matrix() << std::endl;
 
     romea::Pose2D vehiclePose2D = (tf_map_to_path_*enuPoseAndBodyTwist3D.data.getPose()).toPose2D();
-//    romea::Pose2D vehiclePose2D = (enuPoseAndBodyTwist3D.data.getPose()).toPose2D();
+    //    romea::Pose2D vehiclePose2D = (enuPoseAndBodyTwist3D.data.getPose()).toPose2D();
     romea::Twist2D vehicleTwist2D = enuPoseAndBodyTwist3D.data.getTwist().toTwist2D();
 
     diagnostics_.updateLookupTransformStatus(true);

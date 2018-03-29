@@ -58,7 +58,6 @@ inline bool computeSecondDegreePolynomialRegressionLight(const Eigen::ArrayXd &X
   polynomCoefficient = inverseTransform * F;
   polynomCoefficient(1) = polynomCoefficient(1) -2*polynomCoefficient(2)*Xoff;
   polynomCoefficient(0) = polynomCoefficient(0) -polynomCoefficient(1)*Xoff -polynomCoefficient(2)*Xoff*Xoff;
-
   return success;
 }
 
@@ -96,8 +95,10 @@ bool PathCurve2D::findNearestCurvilinearAbscissa(const Eigen::Vector2d & vehicle
                                                  double & curvilinearAbscissa)const
 {
 
+  std::cout << " vehicle position "<< vehiclePosition.transpose() << std::endl;
+  std::cout << " input curvilinearAbscissa  "<< curvilinearAbscissa<<std::endl;
   assert(curvilinearAbscissa >= minimalCurvilinearAbscissa_ &&
-         curvilinearAbscissa<maximalCurvilinearAbscissa_);
+         curvilinearAbscissa<=maximalCurvilinearAbscissa_);
 
   //  assert(maximalCurvilinearAbscissa >= 0);
   //  assert()
@@ -120,11 +121,13 @@ bool PathCurve2D::findNearestCurvilinearAbscissa(const Eigen::Vector2d & vehicle
   coeff[2] = bx*bx+by*by+2*(ax*cx+ay*cy-cx*vehiclePosition.x()-cy*vehiclePosition.y());
   coeff[3] = ax*bx+ay*by-bx*vehiclePosition.x()-by*vehiclePosition.y();
 
-  /// Using the Eigen library is very slow
-  //  Eigen::PolynomialSolver<double, Eigen::Dynamic> solver;
-  //  solver.compute(coeff);
-  //  bool have_root = false;
-  //  neareastCurvilinearAbscissa = solver.greatestRealRoot(have_root);
+  std::cout << " coeff " << coeff.transpose() << std::endl;
+
+//  /// Using the Eigen library is very slow
+//    Eigen::PolynomialSolver<double, Eigen::Dynamic> solver;
+//    solver.compute(coeff);
+//    bool have_root = false;
+//    curvilinearAbscissa = solver.greatestRealRoot(have_root);
 
   //Using gsl
   double root_0, root_1=-100, root_2=-100;
@@ -139,19 +142,23 @@ bool PathCurve2D::findNearestCurvilinearAbscissa(const Eigen::Vector2d & vehicle
   //no solution
   if(nb_roots < 1)
   {
+    std::cout <<"  no solution!!! "<< std::endl;
     return false;
   }
 
   //choice the nearest solution according previous curvilinear abscissa
   if(nb_roots==1)
   {
+    std::cout << " one root "<< root_0 << std::endl;
     curvilinearAbscissa=root_0;
   }
   else
   {
-    double diff0 = fabs(root_0-curvilinearAbscissa);
-    double diff1 = fabs(root_1-curvilinearAbscissa);
-    double diff2 = fabs(root_2-curvilinearAbscissa);
+    double diff0 = std::abs(root_0-curvilinearAbscissa);
+    double diff1 = std::abs(root_1-curvilinearAbscissa);
+    double diff2 = std::abs(root_2-curvilinearAbscissa);
+
+    std::cout << diff0 << " "<< diff1 << " "<< diff2 << std::endl;
     if(diff1 < diff2)
     {
       if(diff1 < diff0)
@@ -164,10 +171,8 @@ bool PathCurve2D::findNearestCurvilinearAbscissa(const Eigen::Vector2d & vehicle
     }
   }
 
-  //clamp neareastCurvilinearAbscissa (use std::clamp c++17)
-  curvilinearAbscissa =std::min(std::max(curvilinearAbscissa, minimalCurvilinearAbscissa_),maximalCurvilinearAbscissa_);
-
-  return true;
+  std::cout <<" curvilinearAbscissa "<< minimalCurvilinearAbscissa_<< " "<< curvilinearAbscissa << " "<<maximalCurvilinearAbscissa_<<std::endl;
+  return curvilinearAbscissa>= minimalCurvilinearAbscissa_ && curvilinearAbscissa<=maximalCurvilinearAbscissa_;
 }
 
 

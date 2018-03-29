@@ -4,6 +4,7 @@
 
 //std
 #include <iterator>
+#include <iostream>
 
 namespace romea {
 
@@ -75,6 +76,10 @@ boost::optional<PathMatchedPoint2D> PathMatching2D::findMatchedPoint_(const Path
 
   Range<size_t> indexRange = findIndexRange_(path,nearestPointIndex,interpolationWindowLength_);
   double nearestCurvilinearAbscissa = path.getCurvilinearAbscissa()[nearestPointIndex];
+
+  std::cout <<"nearestPointIndex "<<nearestPointIndex<<std::endl;
+  std::cout <<"nearestCurvilinearAbscissa "<<nearestCurvilinearAbscissa<<std::endl;
+  std::cout <<" path length "<< path.getCurvilinearAbscissa().back()<<std::endl;
 
   boost::optional<PathMatchedPoint2D> matchedPoint;
   Eigen::Map<const Eigen::ArrayXd> X(path.getX().data()+indexRange.getMin(),indexRange.interval()+1);

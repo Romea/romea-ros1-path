@@ -20,7 +20,7 @@ WGS84Path2D::WGS84Path2D(const GeodeticCoordinates & anchor):
 
 //-----------------------------------------------------------------------------
 WGS84Path2D::WGS84Path2D(const GeodeticCoordinates & anchor,
-                         const VectorOfEigenVector<Eigen::Vector2d> & enuPoints):
+                         const VectorOfEigenVector2d & enuPoints):
   enuPath(enuPoints),
   enuCoordinateSystems(anchor)
 {

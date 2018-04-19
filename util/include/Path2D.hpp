@@ -20,9 +20,9 @@ public:
 
   Path2D();
 
-  Path2D(const VectorOfEigenVector<Eigen::Vector2d> & points);
+  Path2D(const VectorOfEigenVector2d & points);
 
-  void load(const VectorOfEigenVector<Eigen::Vector2d> & points);
+  void load(const VectorOfEigenVector2d & points);
 
   const Vector & getX()const;
   const Vector & getY()const;

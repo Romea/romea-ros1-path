@@ -9,9 +9,9 @@
 //std
 #include <fstream>
 
-romea::VectorOfEigenVector<Eigen::Vector2d> loadPath(const std::string &filename)
+romea::VectorOfEigenVector2d loadPath(const std::string &filename)
 {
-  romea::VectorOfEigenVector<Eigen::Vector2d> points;
+  romea::VectorOfEigenVector2d points;
   points.reserve(1000);
 
   std::string path = std::string(TEST_DIR);
@@ -41,7 +41,7 @@ TEST(TestPath, testMatching)
   romea::PathMatching2D pathmatching(maximalResearchRadius,interpolationWindowLength);
 
   //load path
-  romea::VectorOfEigenVector<Eigen::Vector2d> points= loadPath("/path.txt");
+  romea::VectorOfEigenVector2d points= loadPath("/path.txt");
   romea::Path2D rPath(points);
 
 

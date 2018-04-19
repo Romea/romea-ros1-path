@@ -208,8 +208,8 @@ boost::optional<PathMatchedPoint2D> PathMatching2D::match(const Path2D & path,
   boost::optional<PathMatchedPoint2D> matchedPoint;
 
   //find neareast point on path
-  size_t numberOfPoints = path.getX().size();
-  size_t nearestPointIndex = findNearestPointIndex_(path,vehiclePose.getPosition(),Range<size_t>(0,numberOfPoints));
+  const auto numberOfPoints = path.getX().size();
+  const size_t nearestPointIndex = findNearestPointIndex_(path,vehiclePose.getPosition(),Range<size_t>(0,numberOfPoints));
 
   //compute matched point
   if(nearestPointIndex!=numberOfPoints)

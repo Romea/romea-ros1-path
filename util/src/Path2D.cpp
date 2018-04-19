@@ -13,16 +13,16 @@ Path2D::Path2D():
 }
 
 //-----------------------------------------------------------------------------
-Path2D::Path2D(const VectorOfEigenVector<Eigen::Vector2d> & points):
+Path2D::Path2D(const VectorOfEigenVector2d & points):
   Path2D::Path2D()
 {
   load(points);
 }
 
 //-----------------------------------------------------------------------------
-void Path2D::load(const VectorOfEigenVector<Eigen::Vector2d> &points)
+void Path2D::load(const VectorOfEigenVector2d &points)
 {
-  size_t numberOfPoints = points.size();
+  const auto numberOfPoints = points.size();
   assert(numberOfPoints>=2);
 
   X_.resize(numberOfPoints,0);

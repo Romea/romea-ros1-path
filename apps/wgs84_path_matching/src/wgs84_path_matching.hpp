@@ -20,24 +20,27 @@
 #include <ros/Pose2DRvizDisplay.hpp>
 #include <romea_fsm_srvs/FSMService.h>
 
+namespace romea {
 
-class WGS84PathMatchingSystem
+class WGS84PathMatching
 {
 
 public :
 
-  WGS84PathMatchingSystem(ros::NodeHandle nh, ros::NodeHandle private_nh);
+  WGS84PathMatching();
 
-  void processOdom(const nav_msgs::Odometry::ConstPtr &msg);
+  bool init(ros::NodeHandle nh, ros::NodeHandle private_nh);
+
+  bool loadPath(const std::string & filename);
+
+  void publishTf(const ros::TimerEvent & event);
+
+  bool reset();
 
 protected:
 
-  bool serviceCallback_(romea_fsm_srvs::FSMService::Request  &request,
-                        romea_fsm_srvs::FSMService::Response &response);
+  void processOdom_(const nav_msgs::Odometry::ConstPtr &msg);
 
-  bool loadPath_(const std::string & filename);
-
-  void publishTf_(const ros::TimerEvent & event);
 
   //  void displayResults(const romea::Duration &duration,
   //                      const std::vector<romea::Range::Ptr> & ranges);
@@ -48,10 +51,8 @@ protected:
   romea::PathMatching2D enu_path_matching_;
   romea::PathMatchedPoint2D::Opt enu_matched_point_;
 
-  ros::ServiceServer srv_server;
   ros::Subscriber odom_sub_;
   ros::Publisher match_pub_;
-  ros::Timer timer_;
 
   Eigen::Affine3d tf_map_to_path_;
   tf::Transform tf_world_to_path_;
@@ -64,8 +65,8 @@ protected:
   bool display_;
   rviz_visual_tools::RvizVisualTools rviz_util_;
 #if ROS_VERSION_MINIMUM(1,12,0)
-  romea::VectorOfEigenVector<Eigen::Vector3d> path3d_;
-  romea::VectorOfEigenVector<Eigen::Vector3d> interpolatedPath3d_;
+  romea::VectorOfEigenVector3d path3d_;
+  romea::VectorOfEigenVector3d interpolatedPath3d_;
 #else
   std::vector<Eigen::Vector3d> path3d_;
   std::vector<Eigen::Vector3d> interpolatedPath3d_;
@@ -75,5 +76,5 @@ protected:
 
 };
 
-
+}
 #endif

@@ -16,9 +16,16 @@
 
   <buildtool_depend>catkin</buildtool_depend>
   <depend>roscpp</depend>
+  <depend>roslib</depend>
+  <depend>nodelet</depend>
   <depend>tf</depend>
   <depend>romea_util</depend>
   <depend>romea_localisation_util</depend>
   <depend>romea_path_util</depend>
   <depend>romea_fsm_srvs</depend>
+
+  <export>
+     <nodelet plugin="${prefix}/nodelet.xml"/>
+  </export>
+
 </package>

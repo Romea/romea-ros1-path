@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 <package format="2">
-  <name>romea_path_util</name>
+  <name>romea_path</name>
   <version>0.0.0</version>
-  <description>The romea_path_util package</description>
+  <description>The romea_path package</description>
 
   <author email="jean.laneurit@irstea.fr">Jean Laneurit</author>
   <maintainer email="jean.laneurit@irstea.fr">Jean Laneurit</maintainer>
@@ -15,7 +15,7 @@
   <buildtool_depend>catkin</buildtool_depend>
   <depend>roscpp</depend>
   <depend>romea_util</depend>
-  <depend>romea_localisation_util</depend>
+  <depend>romea_localisation</depend>
   <depend>romea_path_msgs</depend>
 
 </package>

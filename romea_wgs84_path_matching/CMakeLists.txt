@@ -8,10 +8,10 @@ set(${PROJECT_NAME}_CATKIN_DEPS
     roslib
     nodelet
     tf
-    romea_util
+    romea
     romea_path
     romea_localisation
-    romea_fsm_srvs
+    romea_fsm_msgs
     )
 
 find_package(catkin REQUIRED COMPONENTS ${${PROJECT_NAME}_CATKIN_DEPS})

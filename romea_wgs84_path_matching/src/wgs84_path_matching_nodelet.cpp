@@ -34,8 +34,8 @@ void WGS84PathMatchingNodelet::onInit()
 
 
 //-----------------------------------------------------------------------------
-bool WGS84PathMatchingNodelet::serviceCallback_(romea_fsm_srvs::FSMService::Request  &request,
-                                                romea_fsm_srvs::FSMService::Response &response)
+bool WGS84PathMatchingNodelet::serviceCallback_(romea_fsm_msgs::FSMService::Request  &request,
+                                                romea_fsm_msgs::FSMService::Response &response)
 {
   if(request.command.compare("start")==0)
   {

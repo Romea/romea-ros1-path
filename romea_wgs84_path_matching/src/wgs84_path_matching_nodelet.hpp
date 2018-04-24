@@ -4,7 +4,7 @@
 
 //romea
 #include "wgs84_path_matching.hpp"
-#include <romea_fsm_srvs/FSMService.h>
+#include <romea_fsm_msgs/FSMService.h>
 
 namespace romea {
 
@@ -21,8 +21,8 @@ public:
 
 protected :
 
-  bool serviceCallback_(romea_fsm_srvs::FSMService::Request  &request,
-                        romea_fsm_srvs::FSMService::Response &response);
+  bool serviceCallback_(romea_fsm_msgs::FSMService::Request  &request,
+                        romea_fsm_msgs::FSMService::Response &response);
 
 private:
 

@@ -18,7 +18,7 @@
 #include <PathMatching2D.hpp>
 #include <WGS84Path2D.hpp>
 #include <ros/Pose2DRvizDisplay.hpp>
-#include <romea_fsm_srvs/FSMService.h>
+#include <romea_fsm_msgs/FSMService.h>
 
 namespace romea {
 

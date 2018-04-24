@@ -19,10 +19,10 @@
   <depend>roslib</depend>
   <depend>nodelet</depend>
   <depend>tf</depend>
-  <depend>romea_util</depend>
+  <depend>romea</depend>
   <depend>romea_localisation</depend>
   <depend>romea_path</depend>
-  <depend>romea_fsm_srvs</depend>
+  <depend>romea_fsm_msgs</depend>
 
   <export>
      <nodelet plugin="${prefix}/nodelet.xml"/>

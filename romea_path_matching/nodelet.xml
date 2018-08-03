@@ -1,0 +1,9 @@
+<library path="libpath_matching_nodelet">
+  <class name="romea_path_matching/PathMatchingNodelet"
+         type="romea::PathMatchingNodelet"
+         base_class_type="nodelet::Nodelet">
+  <description>
+  PathMatching nodelet
+  </description>
+  </class>
+</library>

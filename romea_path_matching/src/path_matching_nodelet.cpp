@@ -1,23 +1,23 @@
-#include "wgs84_path_matching_nodelet.hpp"
+#include "path_matching_nodelet.hpp"
 
 
 namespace romea{
 
 //-----------------------------------------------------------------------------
-WGS84PathMatchingNodelet::WGS84PathMatchingNodelet()
+PathMatchingNodelet::PathMatchingNodelet()
 {
 
 }
 
 //-----------------------------------------------------------------------------
-WGS84PathMatchingNodelet::~WGS84PathMatchingNodelet()
+PathMatchingNodelet::~PathMatchingNodelet()
 {
 
 }
 
 
 //-----------------------------------------------------------------------------
-void WGS84PathMatchingNodelet::onInit()
+void PathMatchingNodelet::onInit()
 {
 
   auto & nh = getNodeHandle();
@@ -27,14 +27,14 @@ void WGS84PathMatchingNodelet::onInit()
   {
     bool autostart;
     private_nh.param("autostart",autostart,true);
-    timer_= nh.createTimer(ros::Rate(1),&WGS84PathMatching::publishTf,(WGS84PathMatching*)&path_matching_,false,autostart);
-    fsm_service_ = private_nh.advertiseService("fsm_service",&WGS84PathMatchingNodelet::serviceCallback_,this);
+    timer_= nh.createTimer(ros::Rate(1),&PathMatching::publishTf,(PathMatching*)&path_matching_,false,autostart);
+    fsm_service_ = private_nh.advertiseService("fsm_service",&PathMatchingNodelet::serviceCallback_,this);
   }
 }
 
 
 //-----------------------------------------------------------------------------
-bool WGS84PathMatchingNodelet::serviceCallback_(romea_fsm_msgs::FSMService::Request  &request,
+bool PathMatchingNodelet::serviceCallback_(romea_fsm_msgs::FSMService::Request  &request,
                                                 romea_fsm_msgs::FSMService::Response &response)
 {
   if(request.command.compare("start")==0)
@@ -79,4 +79,4 @@ bool WGS84PathMatchingNodelet::serviceCallback_(romea_fsm_msgs::FSMService::Requ
 
 }
 
-PLUGINLIB_EXPORT_CLASS(romea::WGS84PathMatchingNodelet, nodelet::Nodelet);
+PLUGINLIB_EXPORT_CLASS(romea::PathMatchingNodelet, nodelet::Nodelet);

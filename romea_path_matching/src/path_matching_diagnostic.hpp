@@ -1,5 +1,5 @@
-#ifndef __DiagnosticWGS84PathMatching_HPP__
-#define __DiagnosticWGS84PathMatching_HPP__
+#ifndef __DiagnosticPathMatching_HPP__
+#define __DiagnosticPathMatching_HPP__
 
 //ros
 #include <diagnostic_updater/diagnostic_updater.h>
@@ -66,12 +66,12 @@ private :
 };
 
 
-class WGS84PathMatchingDiagnostic
+class PathMatchingDiagnostic
 {
 
 public:
 
-  WGS84PathMatchingDiagnostic();
+  PathMatchingDiagnostic();
 
   void updateOdomRate(const romea::Duration & duration);
   void updateLookupTransformStatus(const bool & status);

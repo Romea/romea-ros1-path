@@ -3,19 +3,19 @@
 #include <pluginlib/class_list_macros.h>
 
 //romea
-#include "wgs84_path_matching.hpp"
+#include "path_matching.hpp"
 #include <romea_fsm_msgs/FSMService.h>
 
 namespace romea {
 
 
-class WGS84PathMatchingNodelet : public nodelet::Nodelet
+class PathMatchingNodelet : public nodelet::Nodelet
 {
 public:
 
-  WGS84PathMatchingNodelet();
+  PathMatchingNodelet();
 
-  virtual ~WGS84PathMatchingNodelet();
+  virtual ~PathMatchingNodelet();
 
   virtual void onInit()override;
 
@@ -30,7 +30,7 @@ private:
   ros::Timer timer_;
 
 
-   WGS84PathMatching path_matching_;
+   PathMatching path_matching_;
 };
 
 }

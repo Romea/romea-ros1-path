@@ -1,9 +1,9 @@
-#ifndef __WGS84PathMatchingSystem_HPP__
-#define __WGS84PathMatchingSystem_HPP__
+#ifndef __PathMatchingSystem_HPP__
+#define __PathMatchingSystem_HPP__
 
 
 //local
-#include "wgs84_path_matching_diagnostic.hpp"
+#include "path_matching_diagnostic.hpp"
 
 //ros
 #include <ros/ros.h>
@@ -16,18 +16,18 @@
 //romea
 #include <PoseAndTwist3D.hpp>
 #include <PathMatching2D.hpp>
-#include <WGS84Path2D.hpp>
+#include <Path2D.hpp>
 #include <ros/Pose2DRvizDisplay.hpp>
 #include <romea_fsm_msgs/FSMService.h>
 
 namespace romea {
 
-class WGS84PathMatching
+class PathMatching
 {
 
 public :
 
-  WGS84PathMatching();
+  PathMatching();
 
   bool init(ros::NodeHandle nh, ros::NodeHandle private_nh);
 
@@ -35,21 +35,17 @@ public :
 
   void publishTf(const ros::TimerEvent & event);
 
-  bool reset();
+  void reset();
 
 protected:
 
   void processOdom_(const nav_msgs::Odometry::ConstPtr &msg);
 
-
-  //  void displayResults(const romea::Duration &duration,
-  //                      const std::vector<romea::Range::Ptr> & ranges);
-
 protected:
 
-  romea::WGS84Path2D wgs84_path_;
-  romea::PathMatching2D enu_path_matching_;
-  romea::PathMatchedPoint2D::Opt enu_matched_point_;
+  romea::Path2D path_;
+  romea::PathMatching2D path_matching_;
+  romea::PathMatchedPoint2D::Opt matched_point_;
 
   ros::Subscriber odom_sub_;
   ros::Publisher match_pub_;
@@ -72,7 +68,7 @@ protected:
   std::vector<Eigen::Vector3d> interpolatedPath3d_;
 #endif
 
-  WGS84PathMatchingDiagnostic diagnostics_;
+  PathMatchingDiagnostic diagnostics_;
 
 };
 

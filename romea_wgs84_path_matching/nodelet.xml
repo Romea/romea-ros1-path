@@ -1,9 +1,0 @@
-<library path="libwgs84_path_matching_nodelet">
-  <class name="romea_wgs84_path_matching/WGS84PathMatchingNodelet"
-         type="romea::WGS84PathMatchingNodelet"
-         base_class_type="nodelet::Nodelet">
-  <description>
-  WGS84PathMatching nodelet
-  </description>
-  </class>
-</library>

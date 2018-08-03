@@ -1,4 +1,4 @@
-#include "wgs84_path_matching_diagnostic.hpp"
+#include "path_matching_diagnostic.hpp"
 
 
 //-----------------------------------------------------------------------------
@@ -121,13 +121,13 @@ void DiagnosticLookupTransformStatus::run(diagnostic_updater::DiagnosticStatusWr
 
 
 //-----------------------------------------------------------------------------
-WGS84PathMatchingDiagnostic::WGS84PathMatchingDiagnostic():
+PathMatchingDiagnostic::PathMatchingDiagnostic():
   odom_rate_monitoring_(),
   odom_rate_diagnostic_("odom_rate",0),
   matching_status_diagnostic_("matching_status"),
   lookup_transform_status_diagnostic_("lookup_tf_status"),
   path_status_diagnostic_("path_status"),
-  composite_diagnostic_("wgs84_path_matching"),
+  composite_diagnostic_("_path_matching"),
   diagnostics_updater_()
 {
   composite_diagnostic_.addTask(&odom_rate_diagnostic_);
@@ -139,25 +139,25 @@ WGS84PathMatchingDiagnostic::WGS84PathMatchingDiagnostic():
 }
 
 //-----------------------------------------------------------------------------
-void WGS84PathMatchingDiagnostic::updateOdomRate(const romea::Duration & duration)
+void PathMatchingDiagnostic::updateOdomRate(const romea::Duration & duration)
 {
   odom_rate_monitoring_.update(duration);
 }
 
 //-----------------------------------------------------------------------------
-void WGS84PathMatchingDiagnostic::updateLookupTransformStatus(const bool & status)
+void PathMatchingDiagnostic::updateLookupTransformStatus(const bool & status)
 {
   lookup_transform_status_diagnostic_.setStatus(status);
 }
 
 //-----------------------------------------------------------------------------
-void WGS84PathMatchingDiagnostic::updateMatchingStatus(const bool & status)
+void PathMatchingDiagnostic::updateMatchingStatus(const bool & status)
 {
   matching_status_diagnostic_.setStatus(status);
 }
 
 //-----------------------------------------------------------------------------
-void WGS84PathMatchingDiagnostic::updatePathStatus(const std::string & filename, const bool & isOpened)
+void PathMatchingDiagnostic::updatePathStatus(const std::string & filename, const bool & isOpened)
 {
  path_status_diagnostic_.setPathFilename(filename);
  path_status_diagnostic_.setStatus(isOpened);
@@ -165,7 +165,7 @@ void WGS84PathMatchingDiagnostic::updatePathStatus(const std::string & filename,
 
 
 //-----------------------------------------------------------------------------
-void WGS84PathMatchingDiagnostic::publish()
+void PathMatchingDiagnostic::publish()
 {
   odom_rate_diagnostic_.update(odom_rate_monitoring_.getRate());
   diagnostics_updater_.update();

@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 <package format="2">
-  <name>romea_wgs84_path_matching</name>
+  <name>romea_path_matching</name>
   <version>0.0.0</version>
-  <description>The romea_wgs84_path_matching package</description>
+  <description>The romea_path_matching package</description>
 
   <author email="jean.laneurit@irstea.fr">Jean Laneurit</author>
   <maintainer email="jean.laneurit@irstea.fr">Jean Laneurit</maintainer>

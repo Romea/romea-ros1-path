@@ -15,9 +15,9 @@ class PathMatchedPoint2D {
 
 public :
 
-  typedef std::shared_ptr<PathMatchedPoint2D> Ptr;
-  typedef boost::optional<PathMatchedPoint2D> Opt;
-  typedef StampedWrapper<Duration,PathMatchedPoint2D> Stamped;
+  using Ptr = std::shared_ptr<PathMatchedPoint2D> ;
+  using Opt = boost::optional<PathMatchedPoint2D> ;
+  using Stamped = StampedWrapper<Duration,PathMatchedPoint2D> ;
 
 public :
 

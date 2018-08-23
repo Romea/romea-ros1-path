@@ -177,8 +177,8 @@ double PathMatching2D::computeFutureCurvature(const Path2D & path,
   else
   {
     auto c = path.getCurvilinearAbscissa();
-    auto it = std::lower_bound(c.begin(), c.end(), futureCurvilinearAbscissa);
-    futurePointIndex = std::distance(c.begin(),it);
+    auto it = std::lower_bound(c.cbegin(), c.cend(), futureCurvilinearAbscissa);
+    futurePointIndex = std::distance(c.cbegin(),it);
   }
 
 

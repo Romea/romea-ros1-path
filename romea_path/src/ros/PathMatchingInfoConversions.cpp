@@ -61,7 +61,7 @@ romea_path_msgs::PathMatchingInfo2D toROSMsg(const ros::Time & stamp,
                                              const Twist2D & twist)
 {
   romea_path_msgs::PathMatchingInfo2D msg;
-  msg.header.frame_id="matched_point";
+  msg.header.frame_id="path";
   msg.header.stamp = stamp;
   msg.matched_point = toROSMsg(matched_point);
   msg.path_length =path_length;

@@ -14,7 +14,7 @@ class Path2D
 {
 public:
 
-  typedef std::vector<double,Eigen::aligned_allocator<double> > Vector;
+  using Vector = std::vector<double,Eigen::aligned_allocator<double> > ;
 
 public:
 

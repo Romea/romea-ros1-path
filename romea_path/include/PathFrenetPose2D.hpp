@@ -16,8 +16,8 @@ class PathFrenetPose2D {
 
 public :
 
-  typedef boost::optional<PathFrenetPose2D> Opt;
-  typedef std::shared_ptr<PathFrenetPose2D> Ptr;
+  using Opt=boost::optional<PathFrenetPose2D> ;
+  using Ptr=std::shared_ptr<PathFrenetPose2D> ;
 
 public :
 

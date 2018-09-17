@@ -10,13 +10,6 @@ PathMatchingNodelet::PathMatchingNodelet()
 }
 
 //-----------------------------------------------------------------------------
-PathMatchingNodelet::~PathMatchingNodelet()
-{
-
-}
-
-
-//-----------------------------------------------------------------------------
 void PathMatchingNodelet::onInit()
 {
 

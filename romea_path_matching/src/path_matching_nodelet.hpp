@@ -15,7 +15,7 @@ public:
 
   PathMatchingNodelet();
 
-  virtual ~PathMatchingNodelet();
+  virtual ~PathMatchingNodelet()=default;
 
   virtual void onInit()override;
 

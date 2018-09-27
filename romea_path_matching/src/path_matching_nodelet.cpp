@@ -20,16 +20,32 @@ void PathMatchingNodelet::onInit()
   {
     bool autostart;
     private_nh.param("autostart",autostart,true);
+
+    if(autostart)
+    {
+      std::string path_filename;
+      if(private_nh.getParam("path",path_filename))
+      {
+        if(!path_matching_.loadPath(path_filename))
+        {
+          ROS_ERROR("Unable to load path %s",path_filename.c_str());
+          autostart=false;
+        }
+      }
+    }
     timer_= nh.createTimer(ros::Rate(1),&PathMatching::publishTf,(PathMatching*)&path_matching_,false,autostart);
     fsm_service_ = private_nh.advertiseService("fsm_service",&PathMatchingNodelet::serviceCallback_,this);
+
   }
 }
 
 
 //-----------------------------------------------------------------------------
 bool PathMatchingNodelet::serviceCallback_(romea_fsm_msgs::FSMService::Request  &request,
-                                                romea_fsm_msgs::FSMService::Response &response)
+                                           romea_fsm_msgs::FSMService::Response &response)
 {
+
+  std::cout << " service " << request.command << std::endl;
   if(request.command.compare("start")==0)
   {
     timer_.start();

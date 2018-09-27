@@ -15,12 +15,9 @@ public :
 
   PathMatching2D();
 
-  PathMatching2D(const double & maximalResearchRadius,
-                 const double & interpolationWindowLength);
+  PathMatching2D(const double & maximalResearchRadius);
 
   void setMaximalResearchRadius(const double & maximalResearchRadius);
-
-  void setInterpolationWindowLength(const double & interpolationWindowLength);
 
   boost::optional<PathMatchedPoint2D> match(const Path2D & path,
                                             const Pose2D & vehiclePose);
@@ -43,9 +40,6 @@ private :
                                 const Eigen::Vector2d & vehiclePosition,
                                 const Range<size_t> indexRange)const;
 
-  Range<size_t> findIndexRange_(const Path2D & path,
-                                const size_t & pointIndex,
-                                const double & researchIntervalLength);
 
   boost::optional<PathMatchedPoint2D> findMatchedPoint_(const Path2D & path,
                                                         const Pose2D &vehiclePose,
@@ -54,8 +48,6 @@ private :
 private:
 
   double maximalResearchRadius_;
-  double interpolationWindowLength_;
-  PathCurve2D interpolatedPath_;
 
 };
 

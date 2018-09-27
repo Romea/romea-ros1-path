@@ -10,17 +10,15 @@ namespace romea {
 
 //-----------------------------------------------------------------------------
 PathMatching2D::PathMatching2D():
-  PathMatching2D(0,0)
+  PathMatching2D(0)
 {
 
 }
 
 
 //-----------------------------------------------------------------------------
-PathMatching2D::PathMatching2D(const double & maximalResearchRadius,
-                               const double & interpolationWindowLength):
-  maximalResearchRadius_(maximalResearchRadius),
-  interpolationWindowLength_(interpolationWindowLength)
+PathMatching2D::PathMatching2D(const double & maximalResearchRadius):
+  maximalResearchRadius_(maximalResearchRadius)
 {
 
 }
@@ -31,69 +29,25 @@ void PathMatching2D::setMaximalResearchRadius(const double & maximalResearchRadi
   maximalResearchRadius_=maximalResearchRadius;
 }
 
-
-//-----------------------------------------------------------------------------
-void PathMatching2D::setInterpolationWindowLength(const double & interpolationWindowLength)
-{
-  interpolationWindowLength_=interpolationWindowLength;
-}
-
-
-//-----------------------------------------------------------------------------
-Range<size_t> PathMatching2D::findIndexRange_(const Path2D & path,
-                                              const size_t & pointIndex,
-                                              const double & researchIntervalLength)
-
-{
-  const auto & curvilinearAbscissas = path.getCurvilinearAbscissa();
-  assert(pointIndex<curvilinearAbscissas.size());
-
-  size_t minimalIndex = pointIndex;
-  size_t maximalIndex = pointIndex;
-  double pointCurvilinearAbscissa = curvilinearAbscissas[pointIndex];
-
-  while(minimalIndex !=0 &&
-        pointCurvilinearAbscissa - curvilinearAbscissas[minimalIndex] < researchIntervalLength/2.)
-  {
-    minimalIndex--;
-  }
-
-  while(maximalIndex != curvilinearAbscissas.size()-1 &&
-        curvilinearAbscissas[maximalIndex] - pointCurvilinearAbscissa < researchIntervalLength/2.)
-  {
-    maximalIndex++;
-  }
-
-  return Range<size_t>(minimalIndex,maximalIndex);
-}
-
-
 //-----------------------------------------------------------------------------
 boost::optional<PathMatchedPoint2D> PathMatching2D::findMatchedPoint_(const Path2D & path,
                                                                       const Pose2D & vehiclePose,
                                                                       const size_t & nearestPointIndex)
 {
-
-  Range<size_t> indexRange = findIndexRange_(path,nearestPointIndex,interpolationWindowLength_);
+  boost::optional<PathMatchedPoint2D> matchedPoint;
   double nearestCurvilinearAbscissa = path.getCurvilinearAbscissa()[nearestPointIndex];
 
   std::cout <<"nearestPointIndex "<<nearestPointIndex<<std::endl;
   std::cout <<"nearestCurvilinearAbscissa "<<nearestCurvilinearAbscissa<<std::endl;
   std::cout <<" path length "<< path.getCurvilinearAbscissa().back()<<std::endl;
 
-  boost::optional<PathMatchedPoint2D> matchedPoint;
-  Eigen::Map<const Eigen::ArrayXd> X(path.getX().data()+indexRange.getMin(),indexRange.interval()+1);
-  Eigen::Map<const Eigen::ArrayXd> Y(path.getY().data()+indexRange.getMin(),indexRange.interval()+1);
-  Eigen::Map<const Eigen::ArrayXd> S(path.getCurvilinearAbscissa().data()+indexRange.getMin(),indexRange.interval()+1);
-
-  if(interpolatedPath_.estimate(X,Y,S) &&
-     interpolatedPath_.findNearestCurvilinearAbscissa(vehiclePose.getPosition(),nearestCurvilinearAbscissa))
+  const PathCurve2D & pathCurve = path.getCurves()[nearestPointIndex];
+  if(pathCurve.findNearestCurvilinearAbscissa(vehiclePose.getPosition(),nearestCurvilinearAbscissa))
   {
-    double xp = interpolatedPath_.computeX(nearestCurvilinearAbscissa);
-    double yp = interpolatedPath_.computeY(nearestCurvilinearAbscissa);
-    double tangent = interpolatedPath_.computeTangent(nearestCurvilinearAbscissa);
-    double curvature = interpolatedPath_.computeCurvature(nearestCurvilinearAbscissa);
-    //double futureCurvature = in
+    double xp = pathCurve.computeX(nearestCurvilinearAbscissa);
+    double yp = pathCurve.computeY(nearestCurvilinearAbscissa);
+    double tangent = pathCurve.computeTangent(nearestCurvilinearAbscissa);
+    double curvature = pathCurve.computeCurvature(nearestCurvilinearAbscissa);
 
     const double & xv = vehiclePose.getPosition().x();
     const double & yv = vehiclePose.getPosition().y();
@@ -108,7 +62,7 @@ boost::optional<PathMatchedPoint2D> PathMatching2D::findMatchedPoint_(const Path
     J.block<2,2>(0,0) = eulerAngleToRotation2D(courseDeviation);
     Eigen::Matrix3d frenetPoseCovariance = J*vehiclePose.getCovariance()*J.transpose();
 
-    size_t nearestPointIndex = findNearestPointIndex_(path,Eigen::Vector2d(xp,yp),indexRange);
+    size_t nearestPointIndex = findNearestPointIndex_(path,Eigen::Vector2d(xp,yp),pathCurve.getIndexRange());
 
     //Singularity
     if((std::abs(curvature) > 10e-6)&&(std::abs(lateralDeviation-(1/curvature))<=10e-6))
@@ -161,43 +115,9 @@ double PathMatching2D::computeFutureCurvature(const Path2D & path,
                                               const PathMatchedPoint2D & matchedPoint,
                                               const double & linear_speed)
 {
-
-
   double futureCurvilinearAbscissa = matchedPoint.getFrenetPose().getCurvilinearAbscissa()+ linear_speed* 0.5;
-
-  size_t futurePointIndex;
-  if(futureCurvilinearAbscissa<=0)
-  {
-    futurePointIndex=0;
-  }
-  else if(futureCurvilinearAbscissa>=path.getCurvilinearAbscissa().back())
-  {
-    futurePointIndex = path.getCurvilinearAbscissa().size()-1;
-  }
-  else
-  {
-    auto c = path.getCurvilinearAbscissa();
-    auto it = std::lower_bound(c.cbegin(), c.cend(), futureCurvilinearAbscissa);
-    futurePointIndex = std::distance(c.cbegin(),it);
-  }
-
-
-  Range<size_t> futureIndexRange = findIndexRange_(path,futurePointIndex,interpolationWindowLength_);
-  Eigen::Map<const Eigen::ArrayXd> X(path.getX().data()+futureIndexRange.getMin(),futureIndexRange.interval()+1);
-  Eigen::Map<const Eigen::ArrayXd> Y(path.getY().data()+futureIndexRange.getMin(),futureIndexRange.interval()+1);
-  Eigen::Map<const Eigen::ArrayXd> S(path.getCurvilinearAbscissa().data()+futureIndexRange.getMin(),futureIndexRange.interval()+1);
-
-  PathCurve2D futureInterpolatedPath;
-  if(futureInterpolatedPath.estimate(X,Y,S))
-  {
-    return futureInterpolatedPath.computeCurvature(futureCurvilinearAbscissa);
-  }
-  else
-  {
-    return 0;
-  }
-
-
+  size_t futurePointIndex = path.findNearestIndex(futureCurvilinearAbscissa);
+  return path.getCurves()[futurePointIndex].computeCurvature(futureCurvilinearAbscissa);
 }
 
 //-----------------------------------------------------------------------------
@@ -230,10 +150,8 @@ boost::optional<PathMatchedPoint2D> PathMatching2D::match(const Path2D & path,
                                                           const double & expectedTravelledDistance)
 {
 
-
-  Range<size_t> rangeIndex = findIndexRange_(path,
-                                             previousMatchedPoint.getNearestPointIndex(),
-                                             expectedTravelledDistance);
+  Range<size_t> rangeIndex = path.findMinMaxIndexes(previousMatchedPoint.getNearestPointIndex(),
+                                                    expectedTravelledDistance);
 
   size_t nearestPointIndex = findNearestPointIndex_(path,
                                                     vehiclePose.getPosition(),
@@ -244,12 +162,6 @@ boost::optional<PathMatchedPoint2D> PathMatching2D::match(const Path2D & path,
                            vehiclePose,
                            nearestPointIndex);
 
-}
-
-//-----------------------------------------------------------------------------
-const PathCurve2D & PathMatching2D::getInterpolatedPath() const
-{
-  return interpolatedPath_;
 }
 
 }

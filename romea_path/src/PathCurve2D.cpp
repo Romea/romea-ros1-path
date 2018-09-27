@@ -74,19 +74,23 @@ PathCurve2D::PathCurve2D():
 }
 
 //-----------------------------------------------------------------------------
-bool PathCurve2D::estimate(const Eigen::ArrayXd &X,
-                           const Eigen::ArrayXd &Y,
-                           const Eigen::ArrayXd &S)
+bool PathCurve2D::estimate(const Vector & X,
+                           const Vector & Y,
+                           const Vector & S,
+                           const Range<size_t> & indexRange)
 {
 
-  assert(S.rows()>2);
+  assert(indexRange.interval()>2);
+  Eigen::Map<const Eigen::ArrayXd> Xmap(X.data()+indexRange.getMin(),indexRange.interval()+1);
+  Eigen::Map<const Eigen::ArrayXd> Ymap(Y.data()+indexRange.getMin(),indexRange.interval()+1);
+  Eigen::Map<const Eigen::ArrayXd> Smap(S.data()+indexRange.getMin(),indexRange.interval()+1);
 
-  minimalCurvilinearAbscissa_ = S[0];
-  maximalCurvilinearAbscissa_ = S[S.rows()-1];
+  indexRange_ = indexRange;
+  minimalCurvilinearAbscissa_ = S[indexRange.getMin()];
+  maximalCurvilinearAbscissa_ = S[indexRange.getMax()];
 
-  return (computeSecondDegreePolynomialRegressionLight(S, X, fxPolynomCoefficient_) &&
-          computeSecondDegreePolynomialRegressionLight(S, Y, fyPolynomCoefficient_) );
-
+  return (computeSecondDegreePolynomialRegressionLight(Smap, Xmap, fxPolynomCoefficient_) &&
+          computeSecondDegreePolynomialRegressionLight(Smap, Ymap, fyPolynomCoefficient_) );
 
 }
 
@@ -95,8 +99,6 @@ bool PathCurve2D::findNearestCurvilinearAbscissa(const Eigen::Vector2d & vehicle
                                                  double & curvilinearAbscissa)const
 {
 
-  std::cout << " vehicle position "<< vehiclePosition.transpose() << std::endl;
-  std::cout << " input curvilinearAbscissa  "<< curvilinearAbscissa<<std::endl;
   assert(curvilinearAbscissa >= minimalCurvilinearAbscissa_ &&
          curvilinearAbscissa<=maximalCurvilinearAbscissa_);
 
@@ -121,13 +123,11 @@ bool PathCurve2D::findNearestCurvilinearAbscissa(const Eigen::Vector2d & vehicle
   coeff[2] = bx*bx+by*by+2*(ax*cx+ay*cy-cx*vehiclePosition.x()-cy*vehiclePosition.y());
   coeff[3] = ax*bx+ay*by-bx*vehiclePosition.x()-by*vehiclePosition.y();
 
-  std::cout << " coeff " << coeff.transpose() << std::endl;
-
-//  /// Using the Eigen library is very slow
-//    Eigen::PolynomialSolver<double, Eigen::Dynamic> solver;
-//    solver.compute(coeff);
-//    bool have_root = false;
-//    curvilinearAbscissa = solver.greatestRealRoot(have_root);
+  //  /// Using the Eigen library is very slow
+  //    Eigen::PolynomialSolver<double, Eigen::Dynamic> solver;
+  //    solver.compute(coeff);
+  //    bool have_root = false;
+  //    curvilinearAbscissa = solver.greatestRealRoot(have_root);
 
   //Using gsl
   double root_0, root_1=-100, root_2=-100;
@@ -171,7 +171,6 @@ bool PathCurve2D::findNearestCurvilinearAbscissa(const Eigen::Vector2d & vehicle
     }
   }
 
-  std::cout <<" curvilinearAbscissa "<< minimalCurvilinearAbscissa_<< " "<< curvilinearAbscissa << " "<<maximalCurvilinearAbscissa_<<std::endl;
   return curvilinearAbscissa>= minimalCurvilinearAbscissa_ && curvilinearAbscissa<=maximalCurvilinearAbscissa_;
 }
 
@@ -230,7 +229,7 @@ double PathCurve2D::computeCurvature(const double & curvilinearAbscissa)const
 //-----------------------------------------------------------------------------
 const double & PathCurve2D::getMinimalCurvilinearAbscissa()const
 {
-   return minimalCurvilinearAbscissa_;
+  return minimalCurvilinearAbscissa_;
 }
 
 //-----------------------------------------------------------------------------
@@ -239,5 +238,10 @@ const double & PathCurve2D::getMaximalCurvilinearAbscissa()const
   return maximalCurvilinearAbscissa_;
 }
 
+//-----------------------------------------------------------------------------
+const Range<size_t> & PathCurve2D::getIndexRange()const
+{
+  return indexRange_;
+}
 
 }

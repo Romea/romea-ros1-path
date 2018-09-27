@@ -4,6 +4,7 @@
 //romea
 #include <PathPosture2D.hpp>
 #include <PathFrenetPose2D.hpp>
+#include <containers/Range.hpp>
 
 namespace romea {
 
@@ -13,11 +14,19 @@ class PathCurve2D
 
 public :
 
+    using Vector = std::vector<double,Eigen::aligned_allocator<double> > ;
+
+public :
+
   PathCurve2D();
 
-  bool estimate(const Eigen::ArrayXd & x,const Eigen::ArrayXd & y, const Eigen::ArrayXd & cuvilinerAbscissas);
+  bool estimate(const Vector & X,
+                const Vector & Y,
+                const Vector & S ,
+                const Range<size_t> & indexRange);
 
-  bool findNearestCurvilinearAbscissa(const Eigen::Vector2d & vehiclePosition,double & curvilinearAbscissa) const;
+  bool findNearestCurvilinearAbscissa(const Eigen::Vector2d & vehiclePosition,
+                                      double & curvilinearAbscissa) const;
 
   double computeX(const double & curvilinearAbscissa)const;
 
@@ -31,12 +40,16 @@ public :
 
   const double & getMaximalCurvilinearAbscissa()const;
 
+  const Range<size_t> & getIndexRange()const;
+
 private :
 
   Eigen::Array3d fxPolynomCoefficient_;
   Eigen::Array3d fyPolynomCoefficient_;
   double minimalCurvilinearAbscissa_;
   double maximalCurvilinearAbscissa_;
+  Range<size_t> indexRange_;
+
 
 };
 

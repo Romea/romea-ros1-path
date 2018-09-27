@@ -146,6 +146,8 @@ void PathMatching::publishTf(const ros::TimerEvent & /*event*/)
 void PathMatching::processOdom_(const nav_msgs::Odometry::ConstPtr &msg)
 {
 
+  std::cout << msg->header.stamp <<"process odom"<<std::endl;
+
   if(path_.isLoaded())
   {
     std::string frame_id, frame_child_id;
@@ -153,6 +155,7 @@ void PathMatching::processOdom_(const nav_msgs::Odometry::ConstPtr &msg)
     diagnostics_.updateOdomRate(romea::toRomeaDuration(msg->header.stamp));
 
     std::cout << msg->header.stamp <<"process odom"<<std::endl;
+    std::cout <<"frame_id "<< frame_id <<" "<< frame_child_id<<std::endl;
 
     try{
 
@@ -162,21 +165,24 @@ void PathMatching::processOdom_(const nav_msgs::Odometry::ConstPtr &msg)
 
       romea::Pose2D vehiclePose2D = (tf_map_to_path_*enuPoseAndBodyTwist3D.data.getPose()).toPose2D();
       romea::Twist2D vehicleTwist2D = enuPoseAndBodyTwist3D.data.getTwist().toTwist2D();
-
       diagnostics_.updateLookupTransformStatus(true);
 
-      if(matched_point_)
+      if(matched_point_.is_initialized())
       {
         matched_point_ = path_matching_.match(path_,vehiclePose2D,*matched_point_,10);
+        std::cout <<"local "<<std::endl;
       }
       else
       {
         matched_point_ = path_matching_.match(path_,vehiclePose2D);
+        std::cout <<"global "<<std::endl;
       }
 
 
-      if(matched_point_)
+      if(matched_point_.is_initialized())
       {
+
+        std::cout << *matched_point_ << std::endl;
 
         double future_curvature = path_matching_.computeFutureCurvature(path_,
                                                                         *matched_point_,
@@ -200,21 +206,24 @@ void PathMatching::processOdom_(const nav_msgs::Odometry::ConstPtr &msg)
         rviz_util_.deleteAllMarkers();
         rviz_util_.publishSpheres(path3d_,rviz_visual_tools::WHITE,rviz_visual_tools::XXLARGE);
 
-        const romea::PathCurve2D pathCurve = path_matching_.getInterpolatedPath();
-        double ss=pathCurve.getMinimalCurvilinearAbscissa();
-        double ds=(pathCurve.getMaximalCurvilinearAbscissa()-ss)/30.;
-
-        for(size_t n=0; n<30; n++)
+        if(matched_point_.is_initialized())
         {
-          double s = ss+ n*ds;
-          interpolatedPath3d_[n].x()=pathCurve.computeX(s);
-          interpolatedPath3d_[n].y()=pathCurve.computeY(s);
-          interpolatedPath3d_[n].z()=0.1;
+          const romea::PathCurve2D & pathCurve = path_.getCurves()[matched_point_->getNearestPointIndex()];
+          double ss=pathCurve.getMinimalCurvilinearAbscissa();
+          double ds=(pathCurve.getMaximalCurvilinearAbscissa()-ss)/30.;
 
+          for(size_t n=0; n<30; n++)
+          {
+            double s = ss+ n*ds;
+            interpolatedPath3d_[n].x()=pathCurve.computeX(s);
+            interpolatedPath3d_[n].y()=pathCurve.computeY(s);
+            interpolatedPath3d_[n].z()=0.1;
+
+          }
+
+          rviz_util_.publishSpheres(interpolatedPath3d_,rviz_visual_tools::RED,rviz_visual_tools::XXLARGE);
+          romea::publish(rviz_util_,vehiclePose2D,rviz_visual_tools::GREEN);
         }
-
-        rviz_util_.publishSpheres(interpolatedPath3d_,rviz_visual_tools::RED,rviz_visual_tools::XXLARGE);
-        romea::publish(rviz_util_,vehiclePose2D,rviz_visual_tools::GREEN);
 
         rviz_util_.triggerBatchPublish();
       }

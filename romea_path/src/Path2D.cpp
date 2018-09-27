@@ -27,6 +27,18 @@ Path2D::Path2D(const double &interpolationWindowLength):
 }
 
 //-----------------------------------------------------------------------------
+void Path2D::setInterpolationWindowLength(const double & interpolationWindowLength)
+{
+  interpolationWindowLength_=interpolationWindowLength;
+}
+
+//-----------------------------------------------------------------------------
+const double & Path2D::getInterpolationWindowLength()const
+{
+  return interpolationWindowLength_;
+}
+
+//-----------------------------------------------------------------------------
 void Path2D::load(const VectorOfEigenVector2d &points)
 {
   const auto numberOfPoints = points.size();

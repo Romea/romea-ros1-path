@@ -31,8 +31,6 @@ public :
                                 const PathMatchedPoint2D & matchedPoint,
                                 const double & linear_speed);
 
-  const PathCurve2D & getInterpolatedPath() const;
-
 private :
 
 

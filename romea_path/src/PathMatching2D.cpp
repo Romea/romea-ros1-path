@@ -134,6 +134,7 @@ boost::optional<PathMatchedPoint2D> PathMatching2D::match(const Path2D & path,
   //compute matched point
   if(nearestPointIndex!=numberOfPoints)
   {
+
     matchedPoint = findMatchedPoint_(path,
                                      vehiclePose,
                                      nearestPointIndex);

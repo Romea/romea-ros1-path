@@ -16,23 +16,30 @@ void PathMatchingNodelet::onInit()
   auto & nh = getNodeHandle();
   auto & private_nh = getPrivateNodeHandle();
 
+  std::cout << " PathMatchingNodelet::onInit() "<< std::endl;
   if(path_matching_.init(nh,private_nh))
   {
     bool autostart;
     private_nh.param("autostart",autostart,true);
 
-    if(autostart)
+    std::string path_filename;
+    if(private_nh.getParam("path",path_filename))
     {
-      std::string path_filename;
-      if(private_nh.getParam("path",path_filename))
+      std::cout << " path_filename "<< path_filename << std::endl;
+      if(!path_matching_.loadPath(path_filename))
       {
-        if(!path_matching_.loadPath(path_filename))
-        {
-          ROS_ERROR("Unable to load path %s",path_filename.c_str());
-          autostart=false;
-        }
+        ROS_ERROR("Unable to load path %s",path_filename.c_str());
+        autostart=false;
       }
     }
+    else
+    {
+      if(autostart)
+      {
+        ROS_ERROR("Cannot load path filename from param server");
+      }
+    }
+
     timer_= nh.createTimer(ros::Rate(1),&PathMatching::publishTf,(PathMatching*)&path_matching_,false,autostart);
     fsm_service_ = private_nh.advertiseService("fsm_service",&PathMatchingNodelet::serviceCallback_,this);
 

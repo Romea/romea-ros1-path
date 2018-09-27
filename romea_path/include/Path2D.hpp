@@ -28,7 +28,7 @@ public :
 
   void setInterpolationWindowLength(const double & interpolationWindowLength);
 
-  const double & getInterpolationWindowLength(const double & interpolationWindowLength);
+  const double & getInterpolationWindowLength()const;
 
   void load(const VectorOfEigenVector2d & points);
 

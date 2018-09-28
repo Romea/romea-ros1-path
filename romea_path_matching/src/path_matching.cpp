@@ -8,6 +8,9 @@
 //std
 #include <fstream>
 
+//ros
+#include <eigen_conversions/eigen_msg.h>
+
 namespace {
 const double DEFAULT_MAXIMAL_REASEARCH_RADIUS =10;
 const double DEFAULT_INTERPOLATION_WINDOW_LENGTH =3;
@@ -30,7 +33,7 @@ PathMatching::PathMatching():
   tf_broadcaster_(),
   tf_world_to_path_msg_(),
   display_(true),
-  rviz_util_("map","matching"),
+  rviz_util_("path","matching"),
   path3d_(),
   interpolatedPath3d_(30),
   diagnostics_()
@@ -67,6 +70,8 @@ bool PathMatching::init(ros::NodeHandle nh, ros::NodeHandle private_nh)
 
   tf_world_to_path_msg_.header.frame_id = "world";
   tf_world_to_path_msg_.child_frame_id = "path";
+  tf_map_to_path_msg_.header.frame_id = "path";
+  tf_map_to_path_msg_.child_frame_id = "map";
 
   odom_sub_ = nh.subscribe<nav_msgs::Odometry>(nh.resolveName("filtered_odom"), 10, &PathMatching::processOdom_,this);
   match_pub_ = nh.advertise<romea_path_msgs::PathMatchingInfo2D>(nh.resolveName("path_matching_info"),1);
@@ -162,6 +167,11 @@ void PathMatching::processOdom_(const nav_msgs::Odometry::ConstPtr &msg)
 #warning anti date can cause trouble if map reference frame change
       tf_listener_.lookupTransform("world",frame_id,msg->header.stamp-ros::Duration(0.2),tf_world_to_map_);
       tf::transformTFToEigen((tf_world_to_map_*tf_world_to_path_.inverse()).inverse(),tf_map_to_path_);
+
+//      tf_map_to_path_msg_.header.stamp = msg->header.stamp;
+//      tf::transformEigenToMsg(tf_map_to_path_,tf_map_to_path_msg_.transform);
+//      tf_broadcaster_.sendTransform(tf_world_to_path_msg_);
+//      tf_broadcaster_.sendTransform(tf_map_to_path_msg_);
 
       romea::Pose2D vehiclePose2D = (tf_map_to_path_*enuPoseAndBodyTwist3D.data.getPose()).toPose2D();
       romea::Twist2D vehicleTwist2D = enuPoseAndBodyTwist3D.data.getTwist().toTwist2D();

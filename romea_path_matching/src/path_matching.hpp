@@ -56,6 +56,7 @@ protected:
   tf::TransformListener tf_listener_;
   tf::TransformBroadcaster tf_broadcaster_;
   geometry_msgs::TransformStamped tf_world_to_path_msg_;
+  geometry_msgs::TransformStamped tf_map_to_path_msg_;
 
 
   bool display_;

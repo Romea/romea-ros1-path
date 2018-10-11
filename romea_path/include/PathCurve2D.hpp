@@ -6,6 +6,9 @@
 #include <PathFrenetPose2D.hpp>
 #include <containers/Range.hpp>
 
+//std
+#include <vector>
+
 namespace romea {
 
 

@@ -51,7 +51,7 @@ boost::optional<PathMatchedPoint2D> PathMatching2D::findMatchedPoint_(const Path
 
     const double & xv = vehiclePose.getPosition().x();
     const double & yv = vehiclePose.getPosition().y();
-    const double & o = vehiclePose.getCourse();
+    const double & o = vehiclePose.getYaw();
     const double & cost= std::cos(tangent);
     const double & sint = std::sin(tangent);
 

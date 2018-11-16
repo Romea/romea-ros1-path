@@ -77,7 +77,7 @@ PathCurve2D::PathCurve2D():
 bool PathCurve2D::estimate(const Vector & X,
                            const Vector & Y,
                            const Vector & S,
-                           const Range<size_t> & indexRange)
+                           const Range<size_t> &indexRange)
 {
 
   assert(indexRange.interval()>2);

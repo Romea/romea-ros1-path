@@ -92,7 +92,7 @@ size_t Path2D::findNearestIndex(const double & curvilinearAbscissa) const
 
 //-----------------------------------------------------------------------------
 Range<size_t> Path2D::findMinMaxIndexes(const double & curvilinearAbscissa,
-                                        const double & researchIntervalLength) const
+                                      const double & researchIntervalLength) const
 {
   return findMinMaxIndexes(findNearestIndex(curvilinearAbscissa),
                            researchIntervalLength);
@@ -100,7 +100,7 @@ Range<size_t> Path2D::findMinMaxIndexes(const double & curvilinearAbscissa,
 
 //-----------------------------------------------------------------------------
 Range<size_t> Path2D::findMinMaxIndexes(const size_t & pointIndex,
-                                        const double & researchIntervalLength)const
+                                      const double & researchIntervalLength)const
 {
   size_t minimalIndex = pointIndex;
   size_t maximalIndex = pointIndex;

@@ -2,8 +2,8 @@
 #define romea_ENUPath2D_hpp
 
 //romea
+#include <math/Range.hpp>
 #include <containers/Eigen/VectorOfEigenVector.hpp>
-#include <containers/Range.hpp>
 #include "PathCurve2D.hpp"
 
 //boost
@@ -49,10 +49,10 @@ public :
   size_t findNearestIndex(const double & curvilinearAbscissa) const;
 
   Range<size_t> findMinMaxIndexes(const double & curvilinearAbscissa,
-                                  const double & researchIntervalLength) const;
+                                const double & researchIntervalLength) const;
 
   Range<size_t> findMinMaxIndexes(const size_t & pointIndex,
-                                  const double & researchIntervalLength) const;
+                                const double & researchIntervalLength) const;
 
 private :
 

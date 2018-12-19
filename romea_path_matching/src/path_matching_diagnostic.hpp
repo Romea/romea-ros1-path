@@ -9,7 +9,7 @@
 
 //romea
 #include <monitoring/RateMonitoring.hpp>
-#include <ros/DiagnosticGreaterThan.hpp>
+#include <ros/diagnostics/DiagnosticGreaterThan.hpp>
 
 class DiagnosticMatchingStatus : public diagnostic_updater::DiagnosticTask
 {

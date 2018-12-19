@@ -17,7 +17,7 @@
 #include <PoseAndTwist3D.hpp>
 #include <PathMatching2D.hpp>
 #include <Path2D.hpp>
-#include <ros/Pose2DRvizDisplay.hpp>
+#include <ros/RvizDisplay.hpp>
 #include <romea_fsm_msgs/FSMService.h>
 
 namespace romea {
@@ -39,7 +39,19 @@ public :
 
 protected:
 
+
   void processOdom_(const nav_msgs::Odometry::ConstPtr &msg);
+
+  bool tryToEvaluteMapToPathTransformation_(const ros::Time & stamp,
+                                            const std::string & map_frame_id);
+
+  bool tryToMatchOnPath_(const Pose2D & vehicle_pose);
+
+  void initDisplay_();
+
+  void displayInterpolatedPath_();
+
+  void displayResults_(const Pose2D & vehicle_pose);
 
 protected:
 

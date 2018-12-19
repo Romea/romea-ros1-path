@@ -6,26 +6,30 @@
 #include "../PathMatchedPoint2D.hpp"
 #include <romea_path_msgs/PathMatchingInfo2D.h>
 
-#include <ros/TimeConversions.hpp>
-#include <ros/Twist2DConversions.hpp>
+#include <ros/conversions/TimeConversions.hpp>
+#include <ros/conversions/Twist2DConversions.hpp>
 
 
 
 namespace romea {
 
 
-romea_path_msgs::PathPosture2D toROSMsg(const PathPosture2D & posture);
+void toRosMsg(const PathPosture2D & romea_path_posture2d,
+              romea_path_msgs::PathPosture2D & ros_path_posture2d_msg);
 
-romea_path_msgs::PathFrenetPose2D toROSMsg(const PathFrenetPose2D & frenet_pose);
+void toRosMsg(const PathFrenetPose2D & romea_frenet_pose2d,
+              romea_path_msgs::PathFrenetPose2D & ros_frenet_pose2d_msg);
 
-romea_path_msgs::PathMatchedPoint2D toROSMsg(const PathMatchedPoint2D & matched_point);
+void toRosMsg(const PathMatchedPoint2D & romea_matched_point2d,
+              romea_path_msgs::PathMatchedPoint2D & ros_path_matched_point2d_msg);
 
-romea_path_msgs::PathMatchingInfo2D toROSMsg(const Duration & duration,
-                                             const PathMatchedPoint2D matched_point, const double &path_length,
+romea_path_msgs::PathMatchingInfo2D toRosMsg(const Duration & duration,
+                                             const PathMatchedPoint2D matched_point,
+                                             const double &path_length,
                                              const double & future_curvature,
                                              const Twist2D & twist);
 
-romea_path_msgs::PathMatchingInfo2D toROSMsg(const ros::Time & stamp,
+romea_path_msgs::PathMatchingInfo2D toRosMsg(const ros::Time & stamp,
                                              const PathMatchedPoint2D matched_point,
                                              const double & path_length,
                                              const double & future_curvature,

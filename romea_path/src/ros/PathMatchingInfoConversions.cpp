@@ -3,58 +3,54 @@
 
 namespace romea {
 
+
 //-----------------------------------------------------------------------------
-romea_path_msgs::PathPosture2D toROSMsg(const PathPosture2D & posture)
+void toRosMsg(const PathPosture2D & romea_path_posture2d,
+              romea_path_msgs::PathPosture2D & ros_path_posture2d_msg)
 {
-  romea_path_msgs::PathPosture2D msg;
-  msg.x = posture.getX();
-  msg.y = posture.getY();
-  msg.course = posture.getCourse();
-  msg.curvature = posture.getCurvature();
-  msg.dot_curvature = posture.getDotCurvature();
-  return msg;
+  ros_path_posture2d_msg.x = romea_path_posture2d.getX();
+  ros_path_posture2d_msg.y = romea_path_posture2d.getY();
+  ros_path_posture2d_msg.course = romea_path_posture2d.getCourse();
+  ros_path_posture2d_msg.curvature = romea_path_posture2d.getCurvature();
+  ros_path_posture2d_msg.dot_curvature = romea_path_posture2d.getDotCurvature();
 }
 
 //-----------------------------------------------------------------------------
-romea_path_msgs::PathFrenetPose2D toROSMsg(const PathFrenetPose2D & frenet_pose)
+void toRosMsg(const PathFrenetPose2D & romea_frenet_pose2d,
+              romea_path_msgs::PathFrenetPose2D & ros_frenet_pose2d_msg)
 {
-  romea_path_msgs::PathFrenetPose2D msg;
-  msg.curvilinear_abscissa = frenet_pose.getCurvilinearAbscissa();
-  msg.lateral_deviation = frenet_pose.getLateralDeviation();
-  msg.course_deviation = frenet_pose.getCourseDeviation();
+  ros_frenet_pose2d_msg.curvilinear_abscissa = romea_frenet_pose2d.getCurvilinearAbscissa();
+  ros_frenet_pose2d_msg.lateral_deviation = romea_frenet_pose2d.getLateralDeviation();
+  ros_frenet_pose2d_msg.course_deviation = romea_frenet_pose2d.getCourseDeviation();
 
-//  std::copy(frenet_pose.getCovariance().data(),
-//            frenet_pose.getCovariance().data()+9,
-//            msg.covariance.data());
+  //  std::copy(romea_frenet_pose2d.getCovariance().data(),
+  //            romea_frenet_pose2d.getCovariance().data()+9,
+  //            ros_frenet_pose2d_msg.covariance.data());
 
-  return msg;
 }
 
 //-----------------------------------------------------------------------------
-romea_path_msgs::PathMatchedPoint2D toROSMsg(const PathMatchedPoint2D &matched_point)
+void toRosMsg(const PathMatchedPoint2D & romea_matched_point2d,
+              romea_path_msgs::PathMatchedPoint2D & ros_path_matched_point2d_msg)
 {
+  toRosMsg(romea_matched_point2d.getPosture(),ros_path_matched_point2d_msg.posture);
+  toRosMsg(romea_matched_point2d.getFrenetPose(),ros_path_matched_point2d_msg.frenet_pose);
+  ros_path_matched_point2d_msg.nearest_point_index = romea_matched_point2d.getNearestPointIndex();
+}
 
-  romea_path_msgs::PathMatchedPoint2D msg;
-  msg.posture = toROSMsg(matched_point.getPosture());
-  msg.frenet_pose = toROSMsg(matched_point.getFrenetPose());
-//  std::cout << matched_point << std::endl;
-//  std::cout <<matched_point.getNearestPointIndex()<<std::endl;
-  msg.nearest_point_index = matched_point.getNearestPointIndex();
-  return msg;
+
+//-----------------------------------------------------------------------------
+romea_path_msgs::PathMatchingInfo2D toRosMsg(const Duration & duration,
+                                             const PathMatchedPoint2D matched_point,
+                                             const double & path_length,
+                                             const double & future_curvature,
+                                             const Twist2D & twist)
+{
+  return toRosMsg(toROSTime(duration),matched_point,path_length,future_curvature,twist);
 }
 
 //-----------------------------------------------------------------------------
-romea_path_msgs::PathMatchingInfo2D toROSMsg(const Duration & duration,
-                                            const PathMatchedPoint2D matched_point,
-                                            const double & path_length,
-                                            const double & future_curvature,
-                                            const Twist2D & twist)
-{
-  return toROSMsg(toROSTime(duration),matched_point,path_length,future_curvature,twist);
-}
-
-//-----------------------------------------------------------------------------
-romea_path_msgs::PathMatchingInfo2D toROSMsg(const ros::Time & stamp,
+romea_path_msgs::PathMatchingInfo2D toRosMsg(const ros::Time & stamp,
                                              const PathMatchedPoint2D matched_point,
                                              const double & path_length,
                                              const double & future_curvature,
@@ -63,10 +59,10 @@ romea_path_msgs::PathMatchingInfo2D toROSMsg(const ros::Time & stamp,
   romea_path_msgs::PathMatchingInfo2D msg;
   msg.header.frame_id="path";
   msg.header.stamp = stamp;
-  msg.matched_point = toROSMsg(matched_point);
+  toRosMsg(matched_point,msg.matched_point);
   msg.path_length =path_length;
   msg.future_curvature = future_curvature;
-  msg.twist = toROSMsg(twist);
+  toRosMsg(twist,msg.twist);
   return msg;
 
 }

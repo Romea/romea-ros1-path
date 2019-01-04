@@ -189,19 +189,19 @@ bool PathMatching::tryToEvaluteMapToPathTransformation_(const ros::Time &stamp,
   try{
 
 #warning anti date can cause trouble if map reference frame change
-
-    tf_listener_.lookupTransform("world",map_frame_id,stamp-ros::Duration(0.2),tf_world_to_map_);
+    tf_listener_.lookupTransform("world",map_frame_id,stamp - ros::Duration(0.2),tf_world_to_map_);
     tf::transformTFToEigen((tf_world_to_map_*tf_world_to_path_.inverse()).inverse(),tf_map_to_path_);
     diagnostics_.updateLookupTransformStatus(true);
 
-
-    //      tf_map_to_path_msg_.header.stamp = msg->header.stamp;
-    //      tf::transformEigenToMsg(tf_map_to_path_,tf_map_to_path_msg_.transform);
-    //      tf_broadcaster_.sendTransform(tf_world_to_path_msg_);
-    //      tf_broadcaster_.sendTransform(tf_map_to_path_msg_);
-
     std::cout << " tf_map_to_path_ "<< std::endl;
     std::cout <<  tf_map_to_path_.matrix() << std::endl;
+
+    tf_map_to_path_msg_.header.stamp = stamp;
+    tf::transformEigenToMsg(tf_map_to_path_,tf_map_to_path_msg_.transform);
+    tf_broadcaster_.sendTransform(tf_world_to_path_msg_);
+//    tf_broadcaster_.sendTransform(tf_map_to_path_msg_);
+// problem casse ote map to world tf
+
     return true;
   }
   catch (tf::TransformException ex)

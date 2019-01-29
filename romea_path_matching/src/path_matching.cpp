@@ -44,6 +44,8 @@ PathMatching::PathMatching():
 bool PathMatching::init(ros::NodeHandle nh, ros::NodeHandle private_nh)
 {
 
+  ROS_INFO("Init PathMatching");
+
   private_nh.param("display",display_,false);
 
   //maximal_researh_radius
@@ -62,7 +64,10 @@ bool PathMatching::init(ros::NodeHandle nh, ros::NodeHandle private_nh)
   tf_map_to_path_msg_.header.frame_id = "path";
   tf_map_to_path_msg_.child_frame_id = "map";
 
+  ROS_INFO("Subscribe 'filtered_odom' topic");
   odom_sub_ = nh.subscribe<nav_msgs::Odometry>(nh.resolveName("filtered_odom"), 10, &PathMatching::processOdom_,this);
+
+  ROS_INFO("Advertise 'path_matching_info' topic");
   match_pub_ = nh.advertise<romea_path_msgs::PathMatchingInfo2D>(nh.resolveName("path_matching_info"),1);
   initDisplay_();
   return true;
@@ -75,8 +80,9 @@ void PathMatching::reset()
 }
 
 //-----------------------------------------------------------------------------
-bool PathMatching::loadPath(const std::string & filename)
+bool PathMatching::loadPath(const std::string & filename, bool revert)
 {
+  ROS_INFO_STREAM("Load PathMatching path '" << filename << "'");
 
   std::ifstream file(filename);
   std::cout <<" filename "<< filename << std::endl;
@@ -125,6 +131,14 @@ bool PathMatching::loadPath(const std::string & filename)
       path3d_.emplace_back(x,y,0);
     }
 
+    if(revert)
+    {
+      std::reverse(std::begin(points), std::end(points));
+      std::reverse(std::begin(path3d_), std::end(path3d_));
+    }
+
+    std::cout << " path = " << points.front().x() << "..." << points.back().x() << std::endl;
+
     path_.load(points);
 
   }
@@ -139,11 +153,12 @@ void PathMatching::publishTf(const ros::TimerEvent & /*event*/)
   tf_broadcaster_.sendTransform(tf_world_to_path_msg_);
 }
 
+
 //-----------------------------------------------------------------------------
 void PathMatching::processOdom_(const nav_msgs::Odometry::ConstPtr &msg)
 {
 
-  std::cout << msg->header.stamp <<"process odom"<<std::endl;
+  //std::cout << msg->header.stamp <<"process odom"<<std::endl;
 
   if(path_.isLoaded())
   {
@@ -151,7 +166,7 @@ void PathMatching::processOdom_(const nav_msgs::Odometry::ConstPtr &msg)
     std::string map_frame_id, frame_child_id;
     romea::PoseAndTwist3D::Stamped  enuPoseAndBodyTwist3D=romea::toRomea(*msg,map_frame_id,frame_child_id);
     diagnostics_.updateOdomRate(romea::toRomeaDuration(msg->header.stamp));
-    std::cout <<"frame_id "<< map_frame_id <<" "<< frame_child_id<<std::endl;
+    //std::cout <<"frame_id "<< map_frame_id <<" "<< frame_child_id<<std::endl;
 
     if(tryToEvaluteMapToPathTransformation_(msg->header.stamp,map_frame_id))
     {
@@ -193,8 +208,8 @@ bool PathMatching::tryToEvaluteMapToPathTransformation_(const ros::Time &stamp,
     tf::transformTFToEigen((tf_world_to_map_*tf_world_to_path_.inverse()).inverse(),tf_map_to_path_);
     diagnostics_.updateLookupTransformStatus(true);
 
-    std::cout << " tf_map_to_path_ "<< std::endl;
-    std::cout <<  tf_map_to_path_.matrix() << std::endl;
+//    std::cout << " tf_map_to_path_ "<< std::endl;
+//    std::cout <<  tf_map_to_path_.matrix() << std::endl;
 
     tf_map_to_path_msg_.header.stamp = stamp;
     tf::transformEigenToMsg(tf_map_to_path_,tf_map_to_path_msg_.transform);

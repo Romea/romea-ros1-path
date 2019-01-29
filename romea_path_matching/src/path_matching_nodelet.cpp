@@ -1,5 +1,5 @@
 #include "path_matching_nodelet.hpp"
-
+#include <filesystem/FileSystem.hpp>
 
 namespace romea{
 
@@ -12,9 +12,11 @@ PathMatchingNodelet::PathMatchingNodelet()
 //-----------------------------------------------------------------------------
 void PathMatchingNodelet::onInit()
 {
-
   auto & nh = getNodeHandle();
   auto & private_nh = getPrivateNodeHandle();
+
+  // Get common formatted  timestamp
+  std::string timestamp = nh.param("/demo/timestamp", getCurrentTimestamp());
 
   std::cout << " PathMatchingNodelet::onInit() "<< std::endl;
   if(path_matching_.init(nh,private_nh))
@@ -22,11 +24,16 @@ void PathMatchingNodelet::onInit()
     bool autostart;
     private_nh.param("autostart",autostart,true);
 
+    bool revert;
+    private_nh.param("revert",revert,false);
+
     std::string path_filename;
     if(private_nh.getParam("path",path_filename))
     {
+      path_filename = resolvePath(path_filename,timestamp,false);
+
       std::cout << " path_filename "<< path_filename << std::endl;
-      if(!path_matching_.loadPath(path_filename))
+      if(!path_matching_.loadPath(path_filename,revert))
       {
         ROS_ERROR("Unable to load path %s",path_filename.c_str());
         autostart=false;
@@ -44,6 +51,8 @@ void PathMatchingNodelet::onInit()
     fsm_service_ = private_nh.advertiseService("fsm_service",&PathMatchingNodelet::serviceCallback_,this);
 
   }
+  else
+    ROS_ERROR("Cannot init path matching");
 }
 
 
@@ -72,7 +81,7 @@ bool PathMatchingNodelet::serviceCallback_(romea_fsm_msgs::FSMService::Request  
     }
 
     path_matching_.reset();
-    response.success=path_matching_.loadPath(request.command_arguments);
+    response.success=path_matching_.loadPath(request.command_arguments,true);
     if(!response.success)
     {
       response.message= "file "+ request.command_arguments+ " cannot be loaded";

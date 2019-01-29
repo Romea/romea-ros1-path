@@ -31,7 +31,7 @@ public :
 
   bool init(ros::NodeHandle nh, ros::NodeHandle private_nh);
 
-  bool loadPath(const std::string & filename);
+  bool loadPath(const std::string & filename,bool revert);
 
   void publishTf(const ros::TimerEvent & event);
 

@@ -15,9 +15,6 @@ void PathMatchingNodelet::onInit()
   auto & nh = getNodeHandle();
   auto & private_nh = getPrivateNodeHandle();
 
-  // Get common formatted  timestamp
-  std::string timestamp = nh.param("/demo/timestamp", getCurrentTimestamp());
-
   std::cout << " PathMatchingNodelet::onInit() "<< std::endl;
   if(path_matching_.init(nh,private_nh))
   {
@@ -30,8 +27,6 @@ void PathMatchingNodelet::onInit()
     std::string path_filename;
     if(private_nh.getParam("path",path_filename))
     {
-      path_filename = resolvePath(path_filename,timestamp,false);
-
       std::cout << " path_filename "<< path_filename << std::endl;
       if(!path_matching_.loadPath(path_filename,revert))
       {
@@ -81,7 +76,7 @@ bool PathMatchingNodelet::serviceCallback_(romea_fsm_msgs::FSMService::Request  
     }
 
     path_matching_.reset();
-    response.success=path_matching_.loadPath(request.command_arguments,true);
+    response.success=path_matching_.loadPath(request.command_arguments,false);
     if(!response.success)
     {
       response.message= "file "+ request.command_arguments+ " cannot be loaded";

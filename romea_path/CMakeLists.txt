@@ -1,69 +1,46 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(romea_path)
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -std=c++11")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -std=c++11 -O3")
 
-
+#######################
+## Find dependencies ##
+#######################
 set(${PROJECT_NAME}_CATKIN_DEPS roscpp romea romea_path_msgs romea_localisation)
-
-## Find catkin macros and libraries
-## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
-## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS ${${PROJECT_NAME}_CATKIN_DEPS})
 
-## System dependencies are found with CMake's conventions
-find_package(Boost REQUIRED COMPONENTS system)
-
-
-
+find_package( PkgConfig )
+pkg_check_modules( EIGEN3 REQUIRED eigen3 )
 
 ###################################
 ## catkin specific configuration ##
 ###################################
-## The catkin_package macro generates cmake config files for your package
-## Declare things to be passed to dependent projects
-## INCLUDE_DIRS: uncomment this if you package contains header files
-## LIBRARIES: libraries you create in this project that dependent projects also need
-## CATKIN_DEPENDS: catkin_packages dependent projects also need
-## DEPENDS: system dependencies of this project that dependent projects also need
+
 catkin_package(
-  INCLUDE_DIRS include
-  LIBRARIES ${PROJECT_NAME}
-  CATKIN_DEPENDS ${${PROJECT_NAME}_CATKIN_DEPS}
-  #  DEPENDS system_lib
-  )
+    INCLUDE_DIRS include
+    LIBRARIES ${PROJECT_NAME}
+    CATKIN_DEPENDS ${${PROJECT_NAME}_CATKIN_DEPS})
 
 ###########
 ## Build ##
 ###########
 
-## Specify additional locations of header files
-## Your package locations should be listed before other locations
-# include_directories(include)
 include_directories(
-  include
-  SYSTEM ${catkin_INCLUDE_DIRS}
-  SYSTEM /usr/include/eigen3
-  )
+    include
+    SYSTEM ${catkin_INCLUDE_DIRS}
+    SYSTEM ${EIGEN3_INCLUDE_DIRS}
+    )
 
-## Add cmake target dependencies of the library
-## as an example, code may need to be generated before libraries
-## either from message generation or dynamic reconfigure
-# add_dependencies(trackbod_driver ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
-
-# Declare a C++ library
 add_library(romea_path
-  src/Path2D.cpp
-  src/PathCurve2D.cpp
-  src/PathFrenetPose2D.cpp
-  src/PathMatchedPoint2D.cpp
-  src/PathMatching2D.cpp
-  src/PathPosture2D.cpp
-  src/ros/PathMatchingInfoConversions.cpp
-  )
+    src/Path2D.cpp
+    src/PathCurve2D.cpp
+    src/PathFrenetPose2D.cpp
+    src/PathMatchedPoint2D.cpp
+    src/PathMatching2D.cpp
+    src/PathPosture2D.cpp
+    src/ros/PathMatchingInfoConversions.cpp
+    )
 
-
-## Specify libraries to link a library or executable target against
 target_link_libraries(romea_path ${catkin_LIBRARIES} gsl blas)
 
 
@@ -111,8 +88,8 @@ configure_file(test/test_helper.h.in test/test_helper.h)
 include_directories(${CMAKE_CURRENT_BINARY_DIR}/test)
 if(CATKIN_ENABLE_TESTING)
 
- catkin_add_gtest(${PROJECT_NAME}_test_path test/test_path.cpp )
- target_link_libraries(${PROJECT_NAME}_test_path ${PROJECT_NAME})
+    catkin_add_gtest(${PROJECT_NAME}_test_path test/test_path.cpp )
+    target_link_libraries(${PROJECT_NAME}_test_path ${PROJECT_NAME})
 
 
 endif(CATKIN_ENABLE_TESTING)

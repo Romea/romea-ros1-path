@@ -291,7 +291,7 @@ void PathMatching::displayResults_(const Pose2D & vehicle_pose)
       displayInterpolatedPath_();
     }
 
-    rviz_util_.triggerBatchPublish();
+    rviz_util_.trigger();
   }
 
 }

@@ -8,7 +8,7 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -std=c++11 -O3")
 #######################
 set(${PROJECT_NAME}_CATKIN_DEPS roscpp romea romea_path_msgs romea_localisation)
 find_package(catkin REQUIRED COMPONENTS ${${PROJECT_NAME}_CATKIN_DEPS})
-
+find_package(GSL REQUIRED)
 find_package( PkgConfig )
 pkg_check_modules( EIGEN3 REQUIRED eigen3 )
 
@@ -41,7 +41,7 @@ add_library(romea_path
     src/ros/PathMatchingInfoConversions.cpp
     )
 
-target_link_libraries(romea_path ${catkin_LIBRARIES} gsl blas)
+target_link_libraries(romea_path ${catkin_LIBRARIES} gsl)
 
 
 #############

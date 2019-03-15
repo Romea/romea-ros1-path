@@ -41,7 +41,7 @@ add_library(romea_path
     src/ros/PathMatchingInfoConversions.cpp
     )
 
-target_link_libraries(romea_path ${catkin_LIBRARIES} gsl)
+target_link_libraries(romea_path ${catkin_LIBRARIES} gsl blas)
 
 
 #############

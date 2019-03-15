@@ -1,0 +1,10 @@
+- git:
+    local-name: src/romea
+    uri: git@gitlab-ssh.irstea.fr:romea/romea.git
+- git:
+    local-name: src/romea_localisation_msgs
+    uri: git@gitlab-ssh.irstea.fr:romea/ros-localisation/romea_localisation_msgs.git
+- git:
+    local-name: src/romea_fsm
+    uri: git@gitlab-ssh.irstea.fr:romea/romea_fsm.git
+

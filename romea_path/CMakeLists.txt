@@ -9,6 +9,7 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -std=c++11 -O3")
 set(${PROJECT_NAME}_CATKIN_DEPS roscpp romea romea_path_msgs romea_localisation)
 find_package(catkin REQUIRED COMPONENTS ${${PROJECT_NAME}_CATKIN_DEPS})
 find_package(GSL REQUIRED)
+find_package(BLAS REQUIRED)
 find_package( PkgConfig )
 pkg_check_modules( EIGEN3 REQUIRED eigen3 )
 

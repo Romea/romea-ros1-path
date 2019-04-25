@@ -65,10 +65,10 @@ bool PathMatching::init(ros::NodeHandle nh, ros::NodeHandle private_nh)
   tf_map_to_path_msg_.child_frame_id = "map";
 
   ROS_INFO("Subscribe 'filtered_odom' topic");
-  odom_sub_ = nh.subscribe<nav_msgs::Odometry>(nh.resolveName("filtered_odom"), 10, &PathMatching::processOdom_,this);
+  odom_sub_ = nh.subscribe<nav_msgs::Odometry>("filtered_odom", 10, &PathMatching::processOdom_,this);
 
   ROS_INFO("Advertise 'path_matching_info' topic");
-  match_pub_ = nh.advertise<romea_path_msgs::PathMatchingInfo2D>(nh.resolveName("path_matching_info"),1);
+  match_pub_ = nh.advertise<romea_path_msgs::PathMatchingInfo2D>("path_matching_info",1);
   initDisplay_();
   return true;
 }

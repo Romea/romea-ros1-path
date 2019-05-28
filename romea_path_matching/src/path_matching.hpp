@@ -29,7 +29,7 @@ public :
 
   PathMatching();
 
-  bool init(ros::NodeHandle nh, ros::NodeHandle private_nh);
+  void init(ros::NodeHandle nh, ros::NodeHandle private_nh);
 
   bool loadPath(const std::string & filename,bool revert);
 

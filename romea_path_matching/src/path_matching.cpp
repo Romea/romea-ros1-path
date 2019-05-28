@@ -41,12 +41,11 @@ PathMatching::PathMatching():
 }
 
 //-----------------------------------------------------------------------------
-bool PathMatching::init(ros::NodeHandle nh, ros::NodeHandle private_nh)
+void PathMatching::init(ros::NodeHandle nh, ros::NodeHandle private_nh)
 {
 
   ROS_INFO("Init PathMatching");
 
-  private_nh.param("display",display_,false);
 
   //maximal_researh_radius
   double maximal_researh_radius;
@@ -58,19 +57,16 @@ bool PathMatching::init(ros::NodeHandle nh, ros::NodeHandle private_nh)
   private_nh.param("interpolation_window_length",interpolation_window_length,DEFAULT_INTERPOLATION_WINDOW_LENGTH);
   path_.setInterpolationWindowLength(interpolation_window_length);
 
-
   tf_world_to_path_msg_.header.frame_id = "world";
   tf_world_to_path_msg_.child_frame_id = "path";
   tf_map_to_path_msg_.header.frame_id = "path";
   tf_map_to_path_msg_.child_frame_id = "map";
 
-  ROS_INFO("Subscribe 'filtered_odom' topic");
   odom_sub_ = nh.subscribe<nav_msgs::Odometry>("filtered_odom", 10, &PathMatching::processOdom_,this);
-
-  ROS_INFO("Advertise 'path_matching_info' topic");
   match_pub_ = nh.advertise<romea_path_msgs::PathMatchingInfo2D>("path_matching_info",1);
+
+  private_nh.param("display",display_,false);
   initDisplay_();
-  return true;
 }
 
 //-----------------------------------------------------------------------------
@@ -85,7 +81,8 @@ bool PathMatching::loadPath(const std::string & filename, bool revert)
   ROS_INFO_STREAM("Load PathMatching path '" << filename << "'");
 
   std::ifstream file(filename);
-  std::cout <<" filename "<< filename << std::endl;
+  diagnostics_.updatePathStatus(filename,file.is_open());
+
   if(file.is_open())
   {
 
@@ -104,10 +101,6 @@ bool PathMatching::loadPath(const std::string & filename, bool revert)
                                         reference_longitude/180.*M_PI,
                                         reference_altitude);
 
-
-      std::cout << " anchor "<< std::endl;
-      std::cout<<std::setprecision(10)<< anchor <<std::endl;
-      // publish
       tf_world_to_path_= romea::toRosTransform(ENUConverter(anchor));
     }
     else
@@ -137,14 +130,13 @@ bool PathMatching::loadPath(const std::string & filename, bool revert)
       std::reverse(std::begin(path3d_), std::end(path3d_));
     }
 
-    std::cout << " path = " << points.front().x() << "..." << points.back().x() << std::endl;
-
     path_.load(points);
-
+  }
+  else
+  {
+    throw(std::runtime_error("Cannot open path file"+ filename));
   }
 
-  diagnostics_.updatePathStatus(filename,file.is_open());
-  return file.is_open();
 }
 
 //-----------------------------------------------------------------------------

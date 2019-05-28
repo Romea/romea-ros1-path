@@ -1,5 +1,6 @@
 #include "path_matching_nodelet.hpp"
 #include <filesystem/FileSystem.hpp>
+#include <ros/Factory.hpp>
 
 namespace romea{
 
@@ -15,39 +16,23 @@ void PathMatchingNodelet::onInit()
   auto & nh = getNodeHandle();
   auto & private_nh = getPrivateNodeHandle();
 
-  std::cout << " PathMatchingNodelet::onInit() "<< std::endl;
-  if(path_matching_.init(nh,private_nh))
+  try
   {
-    bool autostart;
-    private_nh.param("autostart",autostart,true);
+    std::string path_filename = loadParam<std::string>(private_nh,"path");
+    bool autostart= private_nh.param("autostart",true);
+    bool revert=private_nh.param("revert",false);
 
-    bool revert;
-    private_nh.param("revert",revert,false);
-
-    std::string path_filename;
-    if(private_nh.getParam("path",path_filename))
-    {
-      std::cout << " path_filename "<< path_filename << std::endl;
-      if(!path_matching_.loadPath(path_filename,revert))
-      {
-        ROS_ERROR("Unable to load path %s",path_filename.c_str());
-        autostart=false;
-      }
-    }
-    else
-    {
-      if(autostart)
-      {
-        ROS_ERROR("Cannot load path filename from param server");
-      }
-    }
+    path_matching_.init(nh,private_nh);
+    path_matching_.loadPath(path_filename,revert);
 
     timer_= nh.createTimer(ros::Rate(1),&PathMatching::publishTf,(PathMatching*)&path_matching_,false,autostart);
     fsm_service_ = private_nh.advertiseService("fsm_service",&PathMatchingNodelet::serviceCallback_,this);
 
   }
-  else
-    ROS_ERROR("Cannot init path matching");
+  catch(std::exception & e)
+  {
+    ROS_ERROR_STREAM("PathMatchingNodelet : "<<e.what());
+  }
 }
 
 

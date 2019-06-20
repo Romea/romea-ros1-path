@@ -61,10 +61,15 @@ bool PathMatchingNodelet::serviceCallback_(romea_fsm_msgs::FSMService::Request  
     }
 
     path_matching_.reset();
-    response.success=path_matching_.loadPath(request.command_arguments,false);
-    if(!response.success)
+    try
     {
-      response.message= "file "+ request.command_arguments+ " cannot be loaded";
+      path_matching_.loadPath(request.command_arguments,false);
+      response.success=true;
+    }
+    catch(std::runtime_error & e)
+    {
+      response.message= e.what();
+      response.success= false;
       return false;
     }
 

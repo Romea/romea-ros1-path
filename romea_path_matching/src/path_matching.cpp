@@ -76,7 +76,7 @@ void PathMatching::reset()
 }
 
 //-----------------------------------------------------------------------------
-bool PathMatching::loadPath(const std::string & filename, bool revert)
+void PathMatching::loadPath(const std::string & filename, bool revert)
 {
   ROS_INFO_STREAM("Load PathMatching path '" << filename << "'");
 
@@ -103,9 +103,13 @@ bool PathMatching::loadPath(const std::string & filename, bool revert)
 
       tf_world_to_path_= romea::toRosTransform(ENUConverter(anchor));
     }
-    else
+    else if(header.compare("ENU")==0 || header.compare("PIXEL")==0)
     {
       tf_world_to_path_.setIdentity();
+    }
+    else
+    {
+      throw(std::runtime_error("Failed to read path file "+ filename));
     }
 
     tf_world_to_path_msg_.header.stamp = ros::Time::now();
@@ -134,7 +138,7 @@ bool PathMatching::loadPath(const std::string & filename, bool revert)
   }
   else
   {
-    throw(std::runtime_error("Cannot open path file"+ filename));
+    throw(std::runtime_error("Failed to open path file "+ filename));
   }
 
 }
@@ -142,6 +146,7 @@ bool PathMatching::loadPath(const std::string & filename, bool revert)
 //-----------------------------------------------------------------------------
 void PathMatching::publishTf(const ros::TimerEvent & /*event*/)
 {
+  diagnostics_.publish();
   tf_broadcaster_.sendTransform(tf_world_to_path_msg_);
 }
 

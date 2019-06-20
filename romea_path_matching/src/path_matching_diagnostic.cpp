@@ -131,10 +131,9 @@ PathMatchingDiagnostic::PathMatchingDiagnostic():
   diagnostics_updater_()
 {
   composite_diagnostic_.addTask(&odom_rate_diagnostic_);
-  composite_diagnostic_.addTask(&matching_status_diagnostic_);
   composite_diagnostic_.addTask(&path_status_diagnostic_);
   composite_diagnostic_.addTask(&lookup_transform_status_diagnostic_);
-  composite_diagnostic_.addTask(&path_status_diagnostic_);
+  composite_diagnostic_.addTask(&matching_status_diagnostic_);
   diagnostics_updater_.add(composite_diagnostic_);
 }
 

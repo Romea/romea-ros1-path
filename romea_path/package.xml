@@ -17,5 +17,6 @@
   <depend>romea</depend>
   <depend>romea_localisation</depend>
   <depend>romea_path_msgs</depend>
+  <depend>libgsl</depend>
 
 </package>

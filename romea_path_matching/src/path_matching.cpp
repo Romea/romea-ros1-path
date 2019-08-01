@@ -62,6 +62,7 @@ void PathMatching::init(ros::NodeHandle nh, ros::NodeHandle private_nh)
   tf_map_to_path_msg_.header.frame_id = "path";
   tf_map_to_path_msg_.child_frame_id = "map";
 
+
   odom_sub_ = nh.subscribe<nav_msgs::Odometry>("filtered_odom", 10, &PathMatching::processOdom_,this);
   match_pub_ = nh.advertise<romea_path_msgs::PathMatchingInfo2D>("path_matching_info",1);
 
@@ -179,6 +180,8 @@ void PathMatching::processOdom_(const nav_msgs::Odometry::ConstPtr &msg)
         double future_curvature = path_matching_.computeFutureCurvature(path_,
                                                                         *matched_point_,
                                                                         msg->twist.twist.linear.x);
+
+        std::cout <<" future_curvature "<< future_curvature << std::endl;
         match_pub_.publish(romea::toRosMsg(msg->header.stamp,
                                            *matched_point_,
                                            path_.getLength(),

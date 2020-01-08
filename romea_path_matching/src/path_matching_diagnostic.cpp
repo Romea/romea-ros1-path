@@ -1,5 +1,6 @@
 #include "path_matching_diagnostic.hpp"
 
+namespace romea {
 
 //-----------------------------------------------------------------------------
 DiagnosticMatchingStatus::DiagnosticMatchingStatus(const std::string &name):
@@ -110,7 +111,7 @@ void DiagnosticLookupTransformStatus::run(diagnostic_updater::DiagnosticStatusWr
 
   if(!status_)
   {
-    stat.summary(diagnostic_msgs::DiagnosticStatus::ERROR, "Transformation world to path published published ");
+    stat.summary(diagnostic_msgs::DiagnosticStatus::ERROR, "Transformation world to path published");
   }
   else
   {
@@ -130,6 +131,7 @@ PathMatchingDiagnostic::PathMatchingDiagnostic():
   composite_diagnostic_("_path_matching"),
   diagnostics_updater_()
 {
+  odom_rate_monitoring_.initialize(10);
   composite_diagnostic_.addTask(&odom_rate_diagnostic_);
   composite_diagnostic_.addTask(&path_status_diagnostic_);
   composite_diagnostic_.addTask(&lookup_transform_status_diagnostic_);
@@ -170,3 +172,4 @@ void PathMatchingDiagnostic::publish()
   diagnostics_updater_.update();
 }
 
+}

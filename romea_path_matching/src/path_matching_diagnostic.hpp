@@ -4,12 +4,11 @@
 //ros
 #include <diagnostic_updater/diagnostic_updater.h>
 
-////std
-//#include <atomic>
-
 //romea
 #include <monitoring/RateMonitoring.hpp>
 #include <ros/diagnostics/DiagnosticGreaterThan.hpp>
+
+namespace romea{
 
 class DiagnosticMatchingStatus : public diagnostic_updater::DiagnosticTask
 {
@@ -91,5 +90,7 @@ private :
   diagnostic_updater::Updater diagnostics_updater_;
 
 };
+
+}
 
 #endif

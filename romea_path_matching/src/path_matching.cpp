@@ -26,7 +26,7 @@ PathMatching::PathMatching():
   matched_point_(),
   odom_sub_(),
   match_pub_(),
-  tf_map_to_path_(),
+  map_to_path_(),
   tf_world_to_path_(),
   tf_world_to_map_(),
   tf_listener_(),
@@ -59,9 +59,6 @@ void PathMatching::init(ros::NodeHandle nh, ros::NodeHandle private_nh)
 
   tf_world_to_path_msg_.header.frame_id = "world";
   tf_world_to_path_msg_.child_frame_id = "path";
-  tf_map_to_path_msg_.header.frame_id = "path";
-  tf_map_to_path_msg_.child_frame_id = "map";
-
 
   odom_sub_ = nh.subscribe<nav_msgs::Odometry>("filtered_odom", 10, &PathMatching::processOdom_,this);
   match_pub_ = nh.advertise<romea_path_msgs::PathMatchingInfo2D>("path_matching_info",1);
@@ -145,9 +142,10 @@ void PathMatching::loadPath(const std::string & filename, bool revert)
 }
 
 //-----------------------------------------------------------------------------
-void PathMatching::publishTf(const ros::TimerEvent & /*event*/)
+void PathMatching::publishTf(const ros::TimerEvent & event)
 {
   diagnostics_.publish();
+  tf_world_to_path_msg_.header.stamp=ros::Time::now();
   tf_broadcaster_.sendTransform(tf_world_to_path_msg_);
 }
 
@@ -164,12 +162,10 @@ void PathMatching::processOdom_(const nav_msgs::Odometry::ConstPtr &msg)
     std::string map_frame_id, frame_child_id;
     romea::PoseAndTwist3D::Stamped  enuPoseAndBodyTwist3D=romea::toRomea(*msg,map_frame_id,frame_child_id);
     diagnostics_.updateOdomRate(romea::toRomeaDuration(msg->header.stamp));
-    //std::cout <<"frame_id "<< map_frame_id <<" "<< frame_child_id<<std::endl;
 
     if(tryToEvaluteMapToPathTransformation_(msg->header.stamp,map_frame_id))
     {
-
-      romea::Pose2D vehicle_pose = (tf_map_to_path_*enuPoseAndBodyTwist3D.data.getPose()).toPose2D();
+      romea::Pose2D vehicle_pose = (map_to_path_*enuPoseAndBodyTwist3D.data.getPose()).toPose2D();
       romea::Twist2D vehicle_twist = enuPoseAndBodyTwist3D.data.getTwist().toTwist2D();
 
       if(tryToMatchOnPath_(vehicle_pose))
@@ -202,21 +198,10 @@ bool PathMatching::tryToEvaluteMapToPathTransformation_(const ros::Time &stamp,
                                                         const std::string & map_frame_id)
 {
   try{
-
 #warning anti date can cause trouble if map reference frame change
     tf_listener_.lookupTransform("world",map_frame_id,stamp - ros::Duration(0.2),tf_world_to_map_);
-    tf::transformTFToEigen((tf_world_to_map_*tf_world_to_path_.inverse()).inverse(),tf_map_to_path_);
+    tf::transformTFToEigen((tf_world_to_map_.inverse()*tf_world_to_path_).inverse(),map_to_path_);
     diagnostics_.updateLookupTransformStatus(true);
-
-//    std::cout << " tf_map_to_path_ "<< std::endl;
-//    std::cout <<  tf_map_to_path_.matrix() << std::endl;
-
-    tf_map_to_path_msg_.header.stamp = stamp;
-    tf::transformEigenToMsg(tf_map_to_path_,tf_map_to_path_msg_.transform);
-    tf_broadcaster_.sendTransform(tf_world_to_path_msg_);
-//    tf_broadcaster_.sendTransform(tf_map_to_path_msg_);
-// problem casse ote map to world tf
-
     return true;
   }
   catch (tf::TransformException ex)

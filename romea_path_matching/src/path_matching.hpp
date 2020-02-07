@@ -62,13 +62,12 @@ protected:
   ros::Subscriber odom_sub_;
   ros::Publisher match_pub_;
 
-  Eigen::Affine3d tf_map_to_path_;
+  Eigen::Affine3d map_to_path_;
   tf::Transform tf_world_to_path_;
   tf::StampedTransform tf_world_to_map_;
   tf::TransformListener tf_listener_;
   tf::TransformBroadcaster tf_broadcaster_;
   geometry_msgs::TransformStamped tf_world_to_path_msg_;
-  geometry_msgs::TransformStamped tf_map_to_path_msg_;
 
 
   bool display_;

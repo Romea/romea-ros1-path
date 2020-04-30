@@ -44,7 +44,7 @@ PathMatching::PathMatching():
 void PathMatching::init(ros::NodeHandle nh, ros::NodeHandle private_nh)
 {
 
-  ROS_INFO("Init PathMatching");
+//  ROS_INFO("Init PathMatching");
 
 
   //maximal_researh_radius
@@ -76,7 +76,7 @@ void PathMatching::reset()
 //-----------------------------------------------------------------------------
 void PathMatching::loadPath(const std::string & filename, bool revert)
 {
-  ROS_INFO_STREAM("Load PathMatching path '" << filename << "'");
+//  ROS_INFO_STREAM("Load PathMatching path '" << filename << "'");
 
   std::ifstream file(filename);
   diagnostics_.updatePathStatus(filename,file.is_open());

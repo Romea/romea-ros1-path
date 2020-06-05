@@ -29,7 +29,8 @@ public :
 
   double computeFutureCurvature(const Path2D & path,
                                 const PathMatchedPoint2D & matchedPoint,
-                                const double & linear_speed);
+                                const double & linear_speed,
+                                const double & time_horizon);
 
 private :
 

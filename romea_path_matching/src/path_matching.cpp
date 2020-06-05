@@ -14,6 +14,7 @@
 namespace {
 const double DEFAULT_MAXIMAL_REASEARCH_RADIUS =10;
 const double DEFAULT_INTERPOLATION_WINDOW_LENGTH =3;
+const double DEFAULT_PREDICTION_TIME_HORIZON=0.5;
 }
 
 namespace romea {
@@ -46,22 +47,30 @@ void PathMatching::init(ros::NodeHandle nh, ros::NodeHandle private_nh)
 
 //  ROS_INFO("Init PathMatching");
 
-
   //maximal_researh_radius
   double maximal_researh_radius;
-  private_nh.param("maximal_researh_radius",maximal_researh_radius,DEFAULT_MAXIMAL_REASEARCH_RADIUS);
+  private_nh.param("maximal_researh_radius",
+                   maximal_researh_radius,
+                   DEFAULT_MAXIMAL_REASEARCH_RADIUS);
   path_matching_.setMaximalResearchRadius(maximal_researh_radius);
 
   //maximal_researh_radius
   double interpolation_window_length;
-  private_nh.param("interpolation_window_length",interpolation_window_length,DEFAULT_INTERPOLATION_WINDOW_LENGTH);
+  private_nh.param("interpolation_window_length",
+                   interpolation_window_length,
+                   DEFAULT_INTERPOLATION_WINDOW_LENGTH);
   path_.setInterpolationWindowLength(interpolation_window_length);
+
+
+  private_nh.param("prediction_time_horizon",
+                   prediction_time_horizon_,
+                   DEFAULT_PREDICTION_TIME_HORIZON);
 
   tf_world_to_path_msg_.header.frame_id = "world";
   tf_world_to_path_msg_.child_frame_id = "path";
 
-  odom_sub_ = nh.subscribe<nav_msgs::Odometry>("filtered_odom", 10, &PathMatching::processOdom_,this);
   match_pub_ = nh.advertise<romea_path_msgs::PathMatchingInfo2D>("path_matching_info",1);
+  odom_sub_ = nh.subscribe<nav_msgs::Odometry>("filtered_odom", 10, &PathMatching::processOdom_,this);
 
   private_nh.param("display",display_,false);
   initDisplay_();
@@ -175,7 +184,8 @@ void PathMatching::processOdom_(const nav_msgs::Odometry::ConstPtr &msg)
 
         double future_curvature = path_matching_.computeFutureCurvature(path_,
                                                                         *matched_point_,
-                                                                        msg->twist.twist.linear.x);
+                                                                        msg->twist.twist.linear.x,
+                                                                        prediction_time_horizon_);
 
         std::cout <<" future_curvature "<< future_curvature << std::endl;
         match_pub_.publish(romea::toRosMsg(msg->header.stamp,

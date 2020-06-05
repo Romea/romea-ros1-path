@@ -113,9 +113,12 @@ size_t PathMatching2D::findNearestPointIndex_(const Path2D & path,
 //-----------------------------------------------------------------------------
 double PathMatching2D::computeFutureCurvature(const Path2D & path,
                                               const PathMatchedPoint2D & matchedPoint,
-                                              const double & linear_speed)
+                                              const double & linear_speed,
+                                              const double &time_horizon)
 {
-  double futureCurvilinearAbscissa = matchedPoint.getFrenetPose().getCurvilinearAbscissa()+ linear_speed* 0.5;
+  double futureCurvilinearAbscissa = linear_speed* time_horizon +
+      matchedPoint.getFrenetPose().getCurvilinearAbscissa();
+
   size_t futurePointIndex = path.findNearestIndex(futureCurvilinearAbscissa);
   return path.getCurves()[futurePointIndex].computeCurvature(futureCurvilinearAbscissa);
 }

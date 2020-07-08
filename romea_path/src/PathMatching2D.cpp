@@ -88,17 +88,17 @@ boost::optional<PathMatchedPoint2D> PathMatching2D::findMatchedPoint_(const Path
 //-----------------------------------------------------------------------------
 size_t PathMatching2D::findNearestPointIndex_(const Path2D & path,
                                               const Eigen::Vector2d & vehiclePosition,
-                                              const Range<size_t> indexRange)const
+                                              const Interval<size_t> indexRange)const
 {
 
   //find neareast point on path
   const auto X = path.getX();
   const auto Y = path.getY();
 
-  size_t nearestPointIndex= indexRange.getMax();
+  size_t nearestPointIndex= indexRange.upper();
   double minimalDistance = maximalResearchRadius_;
 
-  for(size_t n=indexRange.getMin();n<indexRange.getMax();n++)
+  for(size_t n=indexRange.lower();n<indexRange.upper();n++)
   {
     double distance = (vehiclePosition-Eigen::Vector2d(X[n],Y[n])).norm();
     if(distance < minimalDistance){
@@ -132,7 +132,7 @@ boost::optional<PathMatchedPoint2D> PathMatching2D::match(const Path2D & path,
 
   //find neareast point on path
   const auto numberOfPoints = path.getX().size();
-  const size_t nearestPointIndex = findNearestPointIndex_(path,vehiclePose.getPosition(),Range<size_t>(0,numberOfPoints));
+  const size_t nearestPointIndex = findNearestPointIndex_(path,vehiclePose.getPosition(),Interval<size_t>(0,numberOfPoints));
 
   //compute matched point
   if(nearestPointIndex!=numberOfPoints)
@@ -154,7 +154,7 @@ boost::optional<PathMatchedPoint2D> PathMatching2D::match(const Path2D & path,
                                                           const double & expectedTravelledDistance)
 {
 
-  Range<size_t> rangeIndex = path.findMinMaxIndexes(previousMatchedPoint.getNearestPointIndex(),
+  Interval<size_t> rangeIndex = path.findMinMaxIndexes(previousMatchedPoint.getNearestPointIndex(),
                                                     expectedTravelledDistance);
 
   size_t nearestPointIndex = findNearestPointIndex_(path,

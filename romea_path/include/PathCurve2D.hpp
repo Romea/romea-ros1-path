@@ -4,7 +4,7 @@
 //romea
 #include <PathPosture2D.hpp>
 #include <PathFrenetPose2D.hpp>
-#include <math/Range.hpp>
+#include <math/Interval.hpp>
 
 //std
 #include <vector>
@@ -26,7 +26,7 @@ public :
   bool estimate(const Vector & X,
                 const Vector & Y,
                 const Vector & S ,
-                const Range<size_t> & indexRange);
+                const Interval<size_t> & indexRange);
 
   bool findNearestCurvilinearAbscissa(const Eigen::Vector2d & vehiclePosition,
                                       double & curvilinearAbscissa) const;
@@ -43,7 +43,7 @@ public :
 
   const double & getMaximalCurvilinearAbscissa()const;
 
-  const Range<size_t> & getIndexRange()const;
+  const Interval<size_t> & getIndexRange()const;
 
 private :
 
@@ -51,7 +51,7 @@ private :
   Eigen::Array3d fyPolynomCoefficient_;
   double minimalCurvilinearAbscissa_;
   double maximalCurvilinearAbscissa_;
-  Range<size_t> indexRange_;
+  Interval<size_t> indexRange_;
 
 
 };

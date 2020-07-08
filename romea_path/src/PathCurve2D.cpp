@@ -77,17 +77,17 @@ PathCurve2D::PathCurve2D():
 bool PathCurve2D::estimate(const Vector & X,
                            const Vector & Y,
                            const Vector & S,
-                           const Range<size_t> &indexRange)
+                           const Interval<size_t> &indexRange)
 {
 
-  assert(indexRange.interval()>2);
-  Eigen::Map<const Eigen::ArrayXd> Xmap(X.data()+indexRange.getMin(),indexRange.interval()+1);
-  Eigen::Map<const Eigen::ArrayXd> Ymap(Y.data()+indexRange.getMin(),indexRange.interval()+1);
-  Eigen::Map<const Eigen::ArrayXd> Smap(S.data()+indexRange.getMin(),indexRange.interval()+1);
+  assert(indexRange.width()>2);
+  Eigen::Map<const Eigen::ArrayXd> Xmap(X.data()+indexRange.lower(),indexRange.width()+1);
+  Eigen::Map<const Eigen::ArrayXd> Ymap(Y.data()+indexRange.lower(),indexRange.width()+1);
+  Eigen::Map<const Eigen::ArrayXd> Smap(S.data()+indexRange.lower(),indexRange.width()+1);
 
   indexRange_ = indexRange;
-  minimalCurvilinearAbscissa_ = S[indexRange.getMin()];
-  maximalCurvilinearAbscissa_ = S[indexRange.getMax()];
+  minimalCurvilinearAbscissa_ = S[indexRange.lower()];
+  maximalCurvilinearAbscissa_ = S[indexRange.upper()];
 
   return (computeSecondDegreePolynomialRegressionLight(Smap, Xmap, fxPolynomCoefficient_) &&
           computeSecondDegreePolynomialRegressionLight(Smap, Ymap, fyPolynomCoefficient_) );
@@ -239,7 +239,7 @@ const double & PathCurve2D::getMaximalCurvilinearAbscissa()const
 }
 
 //-----------------------------------------------------------------------------
-const Range<size_t> & PathCurve2D::getIndexRange()const
+const Interval<size_t> & PathCurve2D::getIndexRange()const
 {
   return indexRange_;
 }

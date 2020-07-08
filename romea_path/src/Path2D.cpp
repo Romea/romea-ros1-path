@@ -61,7 +61,7 @@ void Path2D::load(const VectorOfEigenVector2d &points)
   curves_.resize(numberOfPoints);
   for(size_t n =0 ; n < numberOfPoints; ++n )
   {
-    Range<size_t> indexRange= findMinMaxIndexes(n,interpolationWindowLength_);
+    Interval<size_t> indexRange= findMinMaxIndexes(n,interpolationWindowLength_);
     assert(curves_[n].estimate(X_,Y_,curvilinearAbscissa_,indexRange));
   }
 
@@ -91,7 +91,7 @@ size_t Path2D::findNearestIndex(const double & curvilinearAbscissa) const
 }
 
 //-----------------------------------------------------------------------------
-Range<size_t> Path2D::findMinMaxIndexes(const double & curvilinearAbscissa,
+Interval<size_t> Path2D::findMinMaxIndexes(const double & curvilinearAbscissa,
                                       const double & researchIntervalLength) const
 {
   return findMinMaxIndexes(findNearestIndex(curvilinearAbscissa),
@@ -99,7 +99,7 @@ Range<size_t> Path2D::findMinMaxIndexes(const double & curvilinearAbscissa,
 }
 
 //-----------------------------------------------------------------------------
-Range<size_t> Path2D::findMinMaxIndexes(const size_t & pointIndex,
+Interval<size_t> Path2D::findMinMaxIndexes(const size_t & pointIndex,
                                       const double & researchIntervalLength)const
 {
   size_t minimalIndex = pointIndex;
@@ -118,7 +118,7 @@ Range<size_t> Path2D::findMinMaxIndexes(const size_t & pointIndex,
     maximalIndex++;
   }
 
-  return Range<size_t>(minimalIndex,maximalIndex);
+  return Interval<size_t>(minimalIndex,maximalIndex);
 }
 
 

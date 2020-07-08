@@ -37,7 +37,7 @@ private :
 
   size_t findNearestPointIndex_(const Path2D & path,
                                 const Eigen::Vector2d & vehiclePosition,
-                                const Range<size_t> indexRange)const;
+                                const Interval<size_t> indexRange)const;
 
 
   boost::optional<PathMatchedPoint2D> findMatchedPoint_(const Path2D & path,

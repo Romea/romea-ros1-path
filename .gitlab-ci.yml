@@ -6,7 +6,7 @@ cache:
 before_script:
  # Install ssh-agent if not already installed, it is required by Docker.
  - 'apt-get -qq update -y'
- - 'apt-get -qq install build-essential openssh-client sudo -y'
+ - 'apt-get -qq install git build-essential openssh-client sudo -y'
  - 'apt-get -qq install libgsl0-dev libblas-dev sudo -y'
  # Run ssh-agent (inside the build environment)
  - eval $(ssh-agent -s)
@@ -33,6 +33,14 @@ kinetic:
 # melodic
 melodic:
   image: ros:melodic-robot
+  stage: build
+  script:
+    - catkin build --summarize --no-status --force-color
+    - catkin run_tests --no-status --force-color
+
+# noetic
+noetic_catkin_build:
+  image: ros:noetic-robot
   stage: build
   script:
     - catkin build --summarize --no-status --force-color

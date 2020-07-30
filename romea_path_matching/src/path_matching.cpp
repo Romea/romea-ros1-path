@@ -1,5 +1,6 @@
 //romea
 #include "path_matching.hpp"
+#include <geodesy/ENUConverter.hpp>
 #include <ros/PathMatchingInfoConversions.hpp>
 #include <ros/conversions/TransformConversions.hpp>
 #include <ros/conversions/PoseAndTwist3DConversions.hpp>
@@ -120,8 +121,8 @@ void PathMatching::loadPath(const std::string & filename, bool revert)
       throw(std::runtime_error("Failed to read path file "+ filename));
     }
 
-//    tf_world_to_path_msg_.header.stamp = ros::Time::now();
-//    toRosTransformMsg(world_to_path_,tf_world_to_path_msg_.transform);
+    //    tf_world_to_path_msg_.header.stamp = ros::Time::now();
+    //    toRosTransformMsg(world_to_path_,tf_world_to_path_msg_.transform);
 
     romea::VectorOfEigenVector2d points;
     points.reserve(100000);
@@ -164,19 +165,19 @@ void PathMatching::publishTf(const ros::TimerEvent & event)
 void PathMatching::processOdom_(const nav_msgs::Odometry::ConstPtr &msg)
 {
 
-  //std::cout << msg->header.stamp <<"process odom"<<std::endl;
+  std::cout << msg->header.stamp <<"process odom"<<std::endl;
 
   if(path_.isLoaded())
   {
-
-    std::string map_frame_id, frame_child_id;
-    romea::PoseAndTwist3D::Stamped  enuPoseAndBodyTwist3D=romea::toRomea(*msg,map_frame_id,frame_child_id);
+    PoseAndTwist3D enuPoseAndBodyTwist3D;
+    toRomea(msg->pose,enuPoseAndBodyTwist3D.pose);
+    toRomea(msg->twist,enuPoseAndBodyTwist3D.twist);
     diagnostics_.updateOdomRate(romea::toRomeaDuration(msg->header.stamp));
 
-    if(tryToEvaluteMapToPathTransformation_(msg->header.stamp,map_frame_id))
+    if(tryToEvaluteMapToPathTransformation_(msg->header.stamp,msg->header.frame_id))
     {
-      romea::Pose2D vehicle_pose = (map_to_path_*enuPoseAndBodyTwist3D.data.getPose()).toPose2D();
-      romea::Twist2D vehicle_twist = enuPoseAndBodyTwist3D.data.getTwist().toTwist2D();
+      romea::Pose2D vehicle_pose = toPose2D(map_to_path_*enuPoseAndBodyTwist3D.pose);
+      romea::Twist2D vehicle_twist = toTwist2D(enuPoseAndBodyTwist3D.twist);
 
       if(tryToMatchOnPath_(vehicle_pose))
       {
@@ -204,25 +205,26 @@ void PathMatching::processOdom_(const nav_msgs::Odometry::ConstPtr &msg)
 }
 
 
+
 //-----------------------------------------------------------------------------
 bool PathMatching::tryToEvaluteMapToPathTransformation_(const ros::Time &stamp,
                                                         const std::string & map_frame_id)
 {
-//  try{
-//#warning anti date can cause trouble if map reference frame change
-//    tf_listener_.lookupTransform("world",map_frame_id,stamp - ros::Duration(0.2),tf_world_to_map_);
-//    tf::transformTFToEigen((tf_world_to_map_.inverse()*tf_world_to_path_).inverse(),map_to_path_);
+  //  try{
+  //#warning anti date can cause trouble if map reference frame change
+  //    tf_listener_.lookupTransform("world",map_frame_id,stamp - ros::Duration(0.2),tf_world_to_map_);
+  //    tf::transformTFToEigen((tf_world_to_map_.inverse()*tf_world_to_path_).inverse(),map_to_path_);
 
-//    diagnostics_.updateLookupTransformStatus(true);
-//    return true;
-//  }
-//  catch (tf::TransformException ex)
-//  {
-//    std::cout << " catch " << std::endl;
-//    std::cout <<  ex.what() << std::endl;
-//    diagnostics_.updateLookupTransformStatus(false);
-//    return false;
-//  }
+  //    diagnostics_.updateLookupTransformStatus(true);
+  //    return true;
+  //  }
+  //  catch (tf::TransformException ex)
+  //  {
+  //    std::cout << " catch " << std::endl;
+  //    std::cout <<  ex.what() << std::endl;
+  //    diagnostics_.updateLookupTransformStatus(false);
+  //    return false;
+  //  }
 
   try
   {

@@ -4,20 +4,9 @@
 //eigen
 #include <Eigen/Core>
 
-//boost to replace by std optional
-#include <boost/optional/optional.hpp>
-
-//std
-#include <memory>
-
 namespace romea {
 
 class PathFrenetPose2D {
-
-public :
-
-  using Opt=boost::optional<PathFrenetPose2D> ;
-  using Ptr=std::shared_ptr<PathFrenetPose2D> ;
 
 public :
 

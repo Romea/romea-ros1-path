@@ -42,16 +42,16 @@ boost::optional<PathMatchedPoint2D> PathMatching2D::findMatchedPoint_(const Path
   std::cout <<" path length "<< path.getCurvilinearAbscissa().back()<<std::endl;
 
   const PathCurve2D & pathCurve = path.getCurves()[nearestPointIndex];
-  if(pathCurve.findNearestCurvilinearAbscissa(vehiclePose.getPosition(),nearestCurvilinearAbscissa))
+  if(pathCurve.findNearestCurvilinearAbscissa(vehiclePose.position,nearestCurvilinearAbscissa))
   {
     double xp = pathCurve.computeX(nearestCurvilinearAbscissa);
     double yp = pathCurve.computeY(nearestCurvilinearAbscissa);
     double tangent = pathCurve.computeTangent(nearestCurvilinearAbscissa);
     double curvature = pathCurve.computeCurvature(nearestCurvilinearAbscissa);
 
-    const double & xv = vehiclePose.getPosition().x();
-    const double & yv = vehiclePose.getPosition().y();
-    const double & o = vehiclePose.getYaw();
+    const double & xv = vehiclePose.position.x();
+    const double & yv = vehiclePose.position.y();
+    const double & o = vehiclePose.yaw;
     const double & cost= std::cos(tangent);
     const double & sint = std::sin(tangent);
 
@@ -60,7 +60,7 @@ boost::optional<PathMatchedPoint2D> PathMatching2D::findMatchedPoint_(const Path
 
     Eigen::Matrix3d J=Eigen::Matrix3d::Identity();
     J.block<2,2>(0,0) = eulerAngleToRotation2D(courseDeviation);
-    Eigen::Matrix3d frenetPoseCovariance = J*vehiclePose.getCovariance()*J.transpose();
+    Eigen::Matrix3d frenetPoseCovariance = J*vehiclePose.covariance*J.transpose();
 
     size_t nearestPointIndex = findNearestPointIndex_(path,Eigen::Vector2d(xp,yp),pathCurve.getIndexRange());
 
@@ -132,7 +132,8 @@ boost::optional<PathMatchedPoint2D> PathMatching2D::match(const Path2D & path,
 
   //find neareast point on path
   const auto numberOfPoints = path.getX().size();
-  const size_t nearestPointIndex = findNearestPointIndex_(path,vehiclePose.getPosition(),Interval<size_t>(0,numberOfPoints));
+  const size_t nearestPointIndex = findNearestPointIndex_(path,vehiclePose.position,
+                                                          Interval<size_t>(0,numberOfPoints));
 
   //compute matched point
   if(nearestPointIndex!=numberOfPoints)
@@ -158,7 +159,7 @@ boost::optional<PathMatchedPoint2D> PathMatching2D::match(const Path2D & path,
                                                     expectedTravelledDistance);
 
   size_t nearestPointIndex = findNearestPointIndex_(path,
-                                                    vehiclePose.getPosition(),
+                                                    vehiclePose.position,
                                                     rangeIndex);
 
 

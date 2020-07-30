@@ -4,7 +4,6 @@
 //romea
 #include "PathPosture2D.hpp"
 #include "PathFrenetPose2D.hpp"
-#include <time/Time.hpp>
 
 //boost to replace by std optional
 #include <boost/optional/optional.hpp>
@@ -15,9 +14,7 @@ class PathMatchedPoint2D {
 
 public :
 
-  using Ptr = std::shared_ptr<PathMatchedPoint2D> ;
   using Opt = boost::optional<PathMatchedPoint2D> ;
-  using Stamped = StampedWrapper<Duration,PathMatchedPoint2D> ;
 
 public :
 

@@ -3,30 +3,30 @@
 #include "test_helper.h"
 
 //romea
-#include "PathMatching2D.hpp"
+#include "PathCurve2D.hpp"
 #include "test_utils.hpp"
 
 
-class TestPath : public ::testing::Test
+class TestPathCurve : public ::testing::Test
 {
 public :
 
-  TestPath(){}
+  TestPathCurve(){}
 
   virtual void SetUp() override
   {
-    path.setInterpolationWindowLength(3);
-    path.load(loadPath("/path.txt"));
+    pathPoints=loadPath("path.txt");
   }
 
-  romea::Path2D path;
+  romea::PathCurve2D pathCurve;
+  romea::VectorOfEigenVector2d pathPoints;
 };
 
 
 //-----------------------------------------------------------------------------
-TEST_F(TestPath, isLoadedOK)
+TEST_F(TestPathCurve, isLoadedOK)
 {
-  EXPECT_EQ(path.isLoaded(),true);
+  path.
 }
 
 //-----------------------------------------------------------------------------

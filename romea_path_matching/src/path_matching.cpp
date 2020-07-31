@@ -279,7 +279,7 @@ void PathMatching::initDisplay_()
 //-----------------------------------------------------------------------------
 void PathMatching::displayInterpolatedPath_()
 {
-  const romea::PathCurve2D & pathCurve = path_.getCurves()[matched_point_->getNearestPointIndex()];
+  const romea::PathCurve2D & pathCurve = path_.getCurves()[matched_point_->nearestPointIndex];
   double ss=pathCurve.getMinimalCurvilinearAbscissa();
   double ds=(pathCurve.getMaximalCurvilinearAbscissa()-ss)/30.;
 

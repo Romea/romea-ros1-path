@@ -8,34 +8,34 @@ namespace romea {
 void toRosMsg(const PathPosture2D & romea_path_posture2d,
               romea_path_msgs::PathPosture2D & ros_path_posture2d_msg)
 {
-  ros_path_posture2d_msg.x = romea_path_posture2d.getX();
-  ros_path_posture2d_msg.y = romea_path_posture2d.getY();
-  ros_path_posture2d_msg.course = romea_path_posture2d.getCourse();
-  ros_path_posture2d_msg.curvature = romea_path_posture2d.getCurvature();
-  ros_path_posture2d_msg.dot_curvature = romea_path_posture2d.getDotCurvature();
+  ros_path_posture2d_msg.x = romea_path_posture2d.position.x();
+  ros_path_posture2d_msg.y = romea_path_posture2d.position.y();
+  ros_path_posture2d_msg.course = romea_path_posture2d.course;
+  ros_path_posture2d_msg.curvature = romea_path_posture2d.curvature;
+  ros_path_posture2d_msg.dot_curvature = romea_path_posture2d.dotCurvature;
 }
 
 //-----------------------------------------------------------------------------
 void toRosMsg(const PathFrenetPose2D & romea_frenet_pose2d,
               romea_path_msgs::PathFrenetPose2D & ros_frenet_pose2d_msg)
 {
-  ros_frenet_pose2d_msg.curvilinear_abscissa = romea_frenet_pose2d.getCurvilinearAbscissa();
-  ros_frenet_pose2d_msg.lateral_deviation = romea_frenet_pose2d.getLateralDeviation();
-  ros_frenet_pose2d_msg.course_deviation = romea_frenet_pose2d.getCourseDeviation();
+  ros_frenet_pose2d_msg.curvilinear_abscissa = romea_frenet_pose2d.curvilinearAbscissa;
+  ros_frenet_pose2d_msg.lateral_deviation = romea_frenet_pose2d.lateralDeviation;
+  ros_frenet_pose2d_msg.course_deviation = romea_frenet_pose2d.courseDeviation;
 
-  //  std::copy(romea_frenet_pose2d.getCovariance().data(),
-  //            romea_frenet_pose2d.getCovariance().data()+9,
-  //            ros_frenet_pose2d_msg.covariance.data());
-
+  for(size_t n=0;n<9;++n)
+  {
+    ros_frenet_pose2d_msg.covariance[n]=romea_frenet_pose2d.covariance(n);
+  }
 }
 
 //-----------------------------------------------------------------------------
 void toRosMsg(const PathMatchedPoint2D & romea_matched_point2d,
               romea_path_msgs::PathMatchedPoint2D & ros_path_matched_point2d_msg)
 {
-  toRosMsg(romea_matched_point2d.getPosture(),ros_path_matched_point2d_msg.posture);
-  toRosMsg(romea_matched_point2d.getFrenetPose(),ros_path_matched_point2d_msg.frenet_pose);
-  ros_path_matched_point2d_msg.nearest_point_index = romea_matched_point2d.getNearestPointIndex();
+  toRosMsg(romea_matched_point2d.pathPosture,ros_path_matched_point2d_msg.posture);
+  toRosMsg(romea_matched_point2d.frenetPose,ros_path_matched_point2d_msg.frenet_pose);
+  ros_path_matched_point2d_msg.nearest_point_index = romea_matched_point2d.nearestPointIndex;
 }
 
 
@@ -69,30 +69,57 @@ romea_path_msgs::PathMatchingInfo2D toRosMsg(const ros::Time & stamp,
 
 
 //-----------------------------------------------------------------------------
-PathPosture2D toRomea(const romea_path_msgs::PathPosture2D & posture_msg)
+void toRomea(const romea_path_msgs::PathPosture2D & posture_msg,
+             PathPosture2D & romea_path_posture)
 {
-  return PathPosture2D(posture_msg.x,
-                       posture_msg.y,
-                       posture_msg.course,
-                       posture_msg.curvature,
-                       posture_msg.dot_curvature);
+  romea_path_posture.position.x()=posture_msg.x;
+  romea_path_posture.position.y()=posture_msg.y;
+  romea_path_posture.course=posture_msg.course;
+  romea_path_posture.curvature=posture_msg.curvature;
+  romea_path_posture.dotCurvature=posture_msg.dot_curvature;
 }
 
 //-----------------------------------------------------------------------------
-PathFrenetPose2D toRomea(const romea_path_msgs::PathFrenetPose2D & frenet_pose_msg)
+PathPosture2D toRomea(const romea_path_msgs::PathPosture2D &posture_msg)
 {
-  return PathFrenetPose2D(frenet_pose_msg.curvilinear_abscissa,
-                          frenet_pose_msg.lateral_deviation,
-                          frenet_pose_msg.course_deviation,
-                          Eigen::Matrix3d(frenet_pose_msg.covariance.data()));
+  PathPosture2D romea_path_posture;
+  toRomea(posture_msg,romea_path_posture);
+  return romea_path_posture;
+}
+
+//-----------------------------------------------------------------------------
+void toRomea(const romea_path_msgs::PathFrenetPose2D & frenet_pose_msg,
+             PathFrenetPose2D & romea_frenet_pose)
+{
+  romea_frenet_pose.curvilinearAbscissa=frenet_pose_msg.curvilinear_abscissa;
+  romea_frenet_pose.lateralDeviation=frenet_pose_msg.lateral_deviation;
+  romea_frenet_pose.courseDeviation =frenet_pose_msg.course_deviation;
+  romea_frenet_pose.covariance=Eigen::Matrix3d(frenet_pose_msg.covariance.data());
+}
+
+//-----------------------------------------------------------------------------
+PathFrenetPose2D toRomea(const romea_path_msgs::PathFrenetPose2D &frenet_pose_msg)
+{
+  PathFrenetPose2D romea_frenet_pose;
+  toRomea(frenet_pose_msg,romea_frenet_pose);
+  return romea_frenet_pose;
+}
+
+//-----------------------------------------------------------------------------
+void toRomea(const romea_path_msgs::PathMatchedPoint2D &matched_point_msg,
+             PathMatchedPoint2D & romea_matched_point)
+{
+  toRomea(matched_point_msg.posture,romea_matched_point.pathPosture);
+  toRomea(matched_point_msg.frenet_pose,romea_matched_point.frenetPose);
+  romea_matched_point.nearestPointIndex=matched_point_msg.nearest_point_index;
 }
 
 //-----------------------------------------------------------------------------
 PathMatchedPoint2D toRomea(const romea_path_msgs::PathMatchedPoint2D &matched_point_msg)
 {
-  return PathMatchedPoint2D(toRomea(matched_point_msg.posture),
-                            toRomea(matched_point_msg.frenet_pose),
-                            matched_point_msg.nearest_point_index);
+  PathMatchedPoint2D romea_matched_point;
+  toRomea(matched_point_msg,romea_matched_point);
+  return romea_matched_point;
 }
 
 

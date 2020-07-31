@@ -36,12 +36,20 @@ romea_path_msgs::PathMatchingInfo2D toRosMsg(const ros::Time & stamp,
                                              const Twist2D & twist);
 
 
+void toRomea(const romea_path_msgs::PathPosture2D &posture_msg,
+             PathPosture2D & romea_path_posture);
+
 PathPosture2D toRomea(const romea_path_msgs::PathPosture2D &posture_msg);
 
-PathFrenetPose2D toRomea(const romea_path_msgs::PathFrenetPose2D & frenet_pose_msg);
+void toRomea(const romea_path_msgs::PathFrenetPose2D & frenet_pose_msg,
+             PathFrenetPose2D & romea_frenet_pose);
 
-PathMatchedPoint2D toRomea(const romea_path_msgs::PathMatchedPoint2D & matched_point_msg);
+PathFrenetPose2D toRomea(const romea_path_msgs::PathFrenetPose2D &frenet_pose_msg);
 
+void toRomea(const romea_path_msgs::PathMatchedPoint2D & matched_point_msg,
+             PathMatchedPoint2D & romea_matched_point);
+
+PathMatchedPoint2D toRomea(const romea_path_msgs::PathMatchedPoint2D &matched_point_msg);
 
 }
 

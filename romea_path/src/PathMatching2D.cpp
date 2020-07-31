@@ -70,16 +70,17 @@ boost::optional<PathMatchedPoint2D> PathMatching2D::findMatchedPoint_(const Path
       curvature = 0;
     }
 
-    matchedPoint = PathMatchedPoint2D(xp,
-                                      yp,
-                                      tangent,
-                                      curvature,
-                                      0,
-                                      nearestCurvilinearAbscissa,
-                                      lateralDeviation,
-                                      courseDeviation,
-                                      frenetPoseCovariance,
-                                      nearestPointIndex);
+    PathMatchedPoint2D matchedPointb;
+    matchedPointb.pathPosture.position.x()=xp;
+    matchedPointb.pathPosture.position.y()=yp;
+    matchedPointb.pathPosture.course=tangent;
+    matchedPointb.pathPosture.curvature=curvature;
+    matchedPointb.frenetPose.curvilinearAbscissa=nearestCurvilinearAbscissa;
+    matchedPointb.frenetPose.lateralDeviation=lateralDeviation;
+    matchedPointb.frenetPose.courseDeviation=courseDeviation;
+    matchedPointb.frenetPose.covariance=frenetPoseCovariance;
+    matchedPointb.nearestPointIndex=nearestPointIndex;
+    matchedPoint =matchedPointb;
   }
 
   return matchedPoint;
@@ -117,7 +118,7 @@ double PathMatching2D::computeFutureCurvature(const Path2D & path,
                                               const double &time_horizon)
 {
   double futureCurvilinearAbscissa = linear_speed* time_horizon +
-      matchedPoint.getFrenetPose().getCurvilinearAbscissa();
+      matchedPoint.frenetPose.curvilinearAbscissa;
 
   size_t futurePointIndex = path.findNearestIndex(futureCurvilinearAbscissa);
   return path.getCurves()[futurePointIndex].computeCurvature(futureCurvilinearAbscissa);
@@ -127,18 +128,17 @@ double PathMatching2D::computeFutureCurvature(const Path2D & path,
 boost::optional<PathMatchedPoint2D> PathMatching2D::match(const Path2D & path,
                                                           const Pose2D & vehiclePose)
 {
-
   boost::optional<PathMatchedPoint2D> matchedPoint;
 
   //find neareast point on path
   const auto numberOfPoints = path.getX().size();
-  const size_t nearestPointIndex = findNearestPointIndex_(path,vehiclePose.position,
+  const size_t nearestPointIndex = findNearestPointIndex_(path,
+                                                          vehiclePose.position,
                                                           Interval<size_t>(0,numberOfPoints));
 
   //compute matched point
   if(nearestPointIndex!=numberOfPoints)
   {
-
     matchedPoint = findMatchedPoint_(path,
                                      vehiclePose,
                                      nearestPointIndex);
@@ -154,14 +154,12 @@ boost::optional<PathMatchedPoint2D> PathMatching2D::match(const Path2D & path,
                                                           const PathMatchedPoint2D & previousMatchedPoint,
                                                           const double & expectedTravelledDistance)
 {
-
-  Interval<size_t> rangeIndex = path.findMinMaxIndexes(previousMatchedPoint.getNearestPointIndex(),
-                                                    expectedTravelledDistance);
+  Interval<size_t> rangeIndex =path.findMinMaxIndexes(previousMatchedPoint.nearestPointIndex,
+                                                      expectedTravelledDistance);
 
   size_t nearestPointIndex = findNearestPointIndex_(path,
                                                     vehiclePose.position,
                                                     rangeIndex);
-
 
   return findMatchedPoint_(path,
                            vehiclePose,

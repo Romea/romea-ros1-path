@@ -92,6 +92,12 @@ if(CATKIN_ENABLE_TESTING)
     catkin_add_gtest(${PROJECT_NAME}_test_path test/test_path.cpp )
     target_link_libraries(${PROJECT_NAME}_test_path ${PROJECT_NAME})
 
+    catkin_add_gtest(${PROJECT_NAME}_test_path_matching test/test_path_matching.cpp )
+    target_link_libraries(${PROJECT_NAME}_test_path_matching ${PROJECT_NAME})
+
+    catkin_add_gtest(${PROJECT_NAME}_test_ros_conversion test/test_ros_conversion.cpp )
+    target_link_libraries(${PROJECT_NAME}_test_ros_conversion ${PROJECT_NAME})
+
 
 endif(CATKIN_ENABLE_TESTING)
 

@@ -49,10 +49,10 @@ public :
   size_t findNearestIndex(const double & curvilinearAbscissa) const;
 
   Interval<size_t> findMinMaxIndexes(const double & curvilinearAbscissa,
-                                const double & researchIntervalLength) const;
+                                     const double & researchIntervalLength) const;
 
   Interval<size_t> findMinMaxIndexes(const size_t & pointIndex,
-                                const double & researchIntervalLength) const;
+                                     const double & researchIntervalLength) const;
 
 private :
 

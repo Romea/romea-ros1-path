@@ -165,7 +165,7 @@ void PathMatching::publishTf(const ros::TimerEvent & event)
 void PathMatching::processOdom_(const nav_msgs::Odometry::ConstPtr &msg)
 {
 
-  std::cout << msg->header.stamp <<"process odom"<<std::endl;
+//  std::cout << msg->header.stamp <<"process odom"<<std::endl;
 
   if(path_.isLoaded())
   {
@@ -182,14 +182,14 @@ void PathMatching::processOdom_(const nav_msgs::Odometry::ConstPtr &msg)
       if(tryToMatchOnPath_(vehicle_pose))
       {
 
-        std::cout << *matched_point_ << std::endl;
+//        std::cout << *matched_point_ << std::endl;
 
         double future_curvature = path_matching_.computeFutureCurvature(path_,
                                                                         *matched_point_,
                                                                         msg->twist.twist.linear.x,
                                                                         prediction_time_horizon_);
 
-        std::cout <<" future_curvature "<< future_curvature << std::endl;
+//        std::cout <<" future_curvature "<< future_curvature << std::endl;
         match_pub_.publish(romea::toRosMsg(msg->header.stamp,
                                            *matched_point_,
                                            path_.getLength(),

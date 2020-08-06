@@ -37,9 +37,9 @@ boost::optional<PathMatchedPoint2D> PathMatching2D::findMatchedPoint_(const Path
   boost::optional<PathMatchedPoint2D> matchedPoint;
   double nearestCurvilinearAbscissa = path.getCurvilinearAbscissa()[nearestPointIndex];
 
-  std::cout <<"nearestPointIndex "<<nearestPointIndex<<std::endl;
-  std::cout <<"nearestCurvilinearAbscissa "<<nearestCurvilinearAbscissa<<std::endl;
-  std::cout <<" path length "<< path.getCurvilinearAbscissa().back()<<std::endl;
+//  std::cout <<"nearestPointIndex "<<nearestPointIndex<<std::endl;
+//  std::cout <<"nearestCurvilinearAbscissa "<<nearestCurvilinearAbscissa<<std::endl;
+//  std::cout <<" path length "<< path.getCurvilinearAbscissa().back()<<std::endl;
 
   const PathCurve2D & pathCurve = path.getCurves()[nearestPointIndex];
   if(pathCurve.findNearestCurvilinearAbscissa(vehiclePose.position,nearestCurvilinearAbscissa))

@@ -149,7 +149,7 @@ bool PathCurve2D::findNearestCurvilinearAbscissa(const Eigen::Vector2d & vehicle
   //choice the nearest solution according previous curvilinear abscissa
   if(nb_roots==1)
   {
-    std::cout << " one root "<< root_0 << std::endl;
+//    std::cout << " one root "<< root_0 << std::endl;
     curvilinearAbscissa=root_0;
   }
   else
@@ -158,7 +158,7 @@ bool PathCurve2D::findNearestCurvilinearAbscissa(const Eigen::Vector2d & vehicle
     double diff1 = std::abs(root_1-curvilinearAbscissa);
     double diff2 = std::abs(root_2-curvilinearAbscissa);
 
-    std::cout << diff0 << " "<< diff1 << " "<< diff2 << std::endl;
+//    std::cout << diff0 << " "<< diff1 << " "<< diff2 << std::endl;
     if(diff1 < diff2)
     {
       if(diff1 < diff0)

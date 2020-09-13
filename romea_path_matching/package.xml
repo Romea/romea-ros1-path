@@ -18,10 +18,8 @@
   <depend>roscpp</depend>
   <depend>roslib</depend>
   <depend>nodelet</depend>
-  <depend>tf</depend>
-  <depend>romea</depend>
-  <depend>romea_localisation</depend>
-  <depend>romea_path</depend>
+  <depend>romea_localisation_utils</depend>
+  <depend>romea_path_utils</depend>
   <depend>romea_fsm_msgs</depend>
 
   <export>

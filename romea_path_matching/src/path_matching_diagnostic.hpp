@@ -5,8 +5,8 @@
 #include <diagnostic_updater/diagnostic_updater.h>
 
 //romea
-#include <monitoring/RateMonitoring.hpp>
-#include <ros/diagnostics/DiagnosticGreaterThan.hpp>
+#include <romea_common/monitoring/RateMonitoring.hpp>
+#include <romea_common_utils/diagnostics/DiagnosticGreaterThan.hpp>
 
 namespace romea{
 

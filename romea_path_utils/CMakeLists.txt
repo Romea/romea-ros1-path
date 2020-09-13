@@ -1,12 +1,12 @@
 cmake_minimum_required(VERSION 2.8.3)
-project(romea_path)
+project(romea_path_utils)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -std=c++17 -O3")
 
 #######################
 ## Find dependencies ##
 #######################
-set(${PROJECT_NAME}_CATKIN_DEPS roscpp romea romea_path_msgs romea_localisation)
+set(${PROJECT_NAME}_CATKIN_DEPS romea_path romea_path_msgs romea_localisation_utils)
 find_package(catkin REQUIRED COMPONENTS ${${PROJECT_NAME}_CATKIN_DEPS})
 find_package(GSL REQUIRED)
 find_package(BLAS REQUIRED)
@@ -32,17 +32,11 @@ include_directories(
     SYSTEM ${EIGEN3_INCLUDE_DIRS}
     )
 
-add_library(romea_path
-    src/Path2D.cpp
-    src/PathCurve2D.cpp
-    src/PathFrenetPose2D.cpp
-    src/PathMatchedPoint2D.cpp
-    src/PathMatching2D.cpp
-    src/PathPosture2D.cpp
-    src/ros/PathMatchingInfoConversions.cpp
+add_library(romea_path_utils
+    src/PathMatchingInfoConversions.cpp
     )
 
-target_link_libraries(romea_path ${catkin_LIBRARIES} gsl blas)
+target_link_libraries(romea_path_utils ${catkin_LIBRARIES} gsl blas)
 
 
 #############
@@ -84,20 +78,11 @@ target_link_libraries(romea_path ${catkin_LIBRARIES} gsl blas)
 ## Testing ##
 #############
 
-get_filename_component(TEST_WITH_DATA_TEST_DIR "test/data" ABSOLUTE)
-configure_file(test/test_helper.h.in test/test_helper.h)
 include_directories(${CMAKE_CURRENT_BINARY_DIR}/test)
 if(CATKIN_ENABLE_TESTING)
 
-    catkin_add_gtest(${PROJECT_NAME}_test_path test/test_path.cpp )
-    target_link_libraries(${PROJECT_NAME}_test_path ${PROJECT_NAME})
-
-    catkin_add_gtest(${PROJECT_NAME}_test_path_matching test/test_path_matching.cpp )
-    target_link_libraries(${PROJECT_NAME}_test_path_matching ${PROJECT_NAME})
-
     catkin_add_gtest(${PROJECT_NAME}_test_ros_conversion test/test_ros_conversion.cpp )
     target_link_libraries(${PROJECT_NAME}_test_ros_conversion ${PROJECT_NAME})
-
 
 endif(CATKIN_ENABLE_TESTING)
 

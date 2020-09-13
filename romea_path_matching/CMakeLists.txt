@@ -10,10 +10,8 @@ set(${PROJECT_NAME}_CATKIN_DEPS
     roscpp
     roslib
     nodelet
-    tf
-    romea
-    romea_path
-    romea_localisation
+    romea_path_utils
+    romea_localisation_utils
     romea_fsm_msgs
     )
 

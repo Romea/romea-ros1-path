@@ -1,5 +1,5 @@
 #include "path_matching_nodelet.hpp"
-#include <ros/params/RosParam.hpp>
+#include <romea_common_utils/params/RosParam.hpp>
 
 namespace romea{
 

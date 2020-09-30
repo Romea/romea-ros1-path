@@ -28,6 +28,7 @@ PathMatching::PathMatching():
   matched_point_(),
   odom_sub_(),
   match_pub_(),
+  diagnostic_pub_(),
   map_to_path_(),
   world_to_path_(),
   world_to_map_(),
@@ -71,6 +72,7 @@ void PathMatching::init(ros::NodeHandle nh, ros::NodeHandle private_nh)
   tf_world_to_path_msg_.header.frame_id = "world";
   tf_world_to_path_msg_.child_frame_id = "path";
 
+  diagnostic_pub_.init(nh,"path_matching",1.0);
   match_pub_ = nh.advertise<romea_path_msgs::PathMatchingInfo2D>("path_matching_info",1);
   odom_sub_ = nh.subscribe<nav_msgs::Odometry>("filtered_odom", 10, &PathMatching::processOdom_,this);
 
@@ -90,7 +92,7 @@ void PathMatching::loadPath(const std::string & filename, bool revert)
   //  ROS_INFO_STREAM("Load PathMatching path '" << filename << "'");
 
   std::ifstream file(filename);
-  diagnostics_.updatePathStatus(filename,file.is_open());
+  diagnostics_.setPathFilename(filename);
 
   if(file.is_open())
   {
@@ -98,6 +100,7 @@ void PathMatching::loadPath(const std::string & filename, bool revert)
     std::string header;
     file >> header;
 
+//    ENUConverter enuConverter;
     if(header.compare("WGS84")==0)
     {
       double reference_latitude;
@@ -110,6 +113,7 @@ void PathMatching::loadPath(const std::string & filename, bool revert)
                                         reference_longitude/180.*M_PI,
                                         reference_altitude);
 
+//      enuConverter.setAnchor(anchor);
       world_to_path_= ENUConverter(anchor).getEnuToEcefTransform();
     }
     else if(header.compare("ENU")==0 || header.compare("PIXEL")==0)
@@ -134,6 +138,8 @@ void PathMatching::loadPath(const std::string & filename, bool revert)
       file >> x >> y;
       points.emplace_back(x,y);
       path3d_.emplace_back(x,y,0);
+//      std::cout << std::setprecision(10)<< enuConverter.toWGS84(x,y,0).getLatitude()*180/M_PI <<" ";
+//      std::cout << enuConverter.toWGS84(x,y,0).getLongitude()*180/M_PI <<std::endl;
     }
 
     if(revert)
@@ -154,7 +160,9 @@ void PathMatching::loadPath(const std::string & filename, bool revert)
 //-----------------------------------------------------------------------------
 void PathMatching::publishTf(const ros::TimerEvent & event)
 {
-  diagnostics_.publish();
+  diagnostics_.updatePathStatus(path_.isLoaded());
+  diagnostic_pub_.publish(event.current_real,diagnostics_.getReport());
+
   tf_world_to_path_msg_.header.stamp=event.current_real;
   toRosTransformMsg(world_to_path_,tf_world_to_path_msg_.transform);
   tf_broadcaster_.sendTransform(tf_world_to_path_msg_);
@@ -241,6 +249,7 @@ bool PathMatching::tryToEvaluteMapToPathTransformation_(const ros::Time &stamp,
     std::cout << " catch " << std::endl;
     std::cout <<  ex.what() << std::endl;
     diagnostics_.updateLookupTransformStatus(false);
+    diagnostics_.updateMatchingStatus(false);
     return false;
   }
 }

@@ -18,6 +18,7 @@
 #include <romea_localisation/PoseAndTwist3D.hpp>
 #include <romea_path/PathMatching2D.hpp>
 #include <romea_path/Path2D.hpp>
+#include <romea_common_utils/publishers/DiagnosticPublisher.hpp>
 #include <romea_localisation_utils/RvizDisplay.hpp>
 #include <romea_fsm_msgs/FSMService.h>
 
@@ -63,6 +64,8 @@ protected:
 
   ros::Subscriber odom_sub_;
   ros::Publisher match_pub_;
+  DiagnosticPublisher<DiagnosticReport> diagnostic_pub_;
+
 
   Eigen::Affine3d map_to_path_;
   Eigen::Affine3d world_to_path_;

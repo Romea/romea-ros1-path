@@ -218,22 +218,6 @@ void PathMatching::processOdom_(const nav_msgs::Odometry::ConstPtr &msg)
 bool PathMatching::tryToEvaluteMapToPathTransformation_(const ros::Time &stamp,
                                                         const std::string & map_frame_id)
 {
-  //  try{
-  //#warning anti date can cause trouble if map reference frame change
-  //    tf_listener_.lookupTransform("world",map_frame_id,stamp - ros::Duration(0.2),tf_world_to_map_);
-  //    tf::transformTFToEigen((tf_world_to_map_.inverse()*tf_world_to_path_).inverse(),map_to_path_);
-
-  //    diagnostics_.updateLookupTransformStatus(true);
-  //    return true;
-  //  }
-  //  catch (tf::TransformException ex)
-  //  {
-  //    std::cout << " catch " << std::endl;
-  //    std::cout <<  ex.what() << std::endl;
-  //    diagnostics_.updateLookupTransformStatus(false);
-  //    return false;
-  //  }
-
   try
   {
 #warning anti date can cause trouble if map reference frame change

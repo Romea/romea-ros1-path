@@ -6,19 +6,20 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -std=c++17 -O3")
 #######################
 ## Find dependencies ##
 #######################
-set(${PROJECT_NAME}_CATKIN_DEPS romea_path romea_path_msgs romea_localisation_utils)
+set(${PROJECT_NAME}_CATKIN_DEPS romea_path_msgs romea_localisation_utils)
 find_package(catkin REQUIRED COMPONENTS ${${PROJECT_NAME}_CATKIN_DEPS})
+find_package(romea_common REQUIRED)
+find_package(romea_localisation REQUIRED)
+find_package(romea_path REQUIRED)
 find_package(GSL REQUIRED)
 find_package(BLAS REQUIRED)
-find_package( PkgConfig )
-pkg_check_modules( EIGEN3 REQUIRED eigen3 )
 
 ###################################
 ## catkin specific configuration ##
 ###################################
 
 catkin_package(
-    INCLUDE_DIRS include
+    INCLUDE_DIRS include ${romea_path_INCLUDE_DIRS}
     LIBRARIES ${PROJECT_NAME}
     CATKIN_DEPENDS ${${PROJECT_NAME}_CATKIN_DEPS})
 
@@ -29,14 +30,17 @@ catkin_package(
 include_directories(
     include
     SYSTEM ${catkin_INCLUDE_DIRS}
-    SYSTEM ${EIGEN3_INCLUDE_DIRS}
+    SYSTEM ${romea_path_INCLUDE_DIRS}
     )
 
 add_library(romea_path_utils
     src/PathMatchingInfoConversions.cpp
     )
 
-target_link_libraries(romea_path_utils ${catkin_LIBRARIES} gsl blas)
+target_link_libraries(romea_path_utils
+  ${catkin_LIBRARIES}
+  romea_path::romea_path
+  )
 
 
 #############

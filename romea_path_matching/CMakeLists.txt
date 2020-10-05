@@ -16,6 +16,9 @@ set(${PROJECT_NAME}_CATKIN_DEPS
     )
 
 find_package(catkin REQUIRED COMPONENTS ${${PROJECT_NAME}_CATKIN_DEPS})
+find_package(romea_common REQUIRED)
+find_package(romea_localisation REQUIRED)
+find_package(romea_path REQUIRED)
 
 ###################################
 ## catkin specific configuration ##
@@ -36,6 +39,9 @@ add_library(path_matching_nodelet
 add_executable(path_matching_node
     src/path_matching_node.cpp)
 
-target_link_libraries(path_matching_node ${catkin_LIBRARIES})
-target_link_libraries(path_matching_nodelet ${catkin_LIBRARIES})
+target_link_libraries(path_matching_node
+  ${catkin_LIBRARIES})
+
+target_link_libraries(path_matching_nodelet
+  ${catkin_LIBRARIES})
 

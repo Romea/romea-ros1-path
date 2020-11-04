@@ -2,9 +2,11 @@
 #include <gtest/gtest.h>
 
 //romea
-#include "ros/PathMatchingInfoConversions.hpp"
-#include <romea_path_msgs/PathPosture2D.h>
-#include <romea_path_msgs/PathFrenetPose2D.h>
+#include "romea_path_utils/PathMatchingInfoConversions.hpp"
+#include "romea_path_utils/PathMatchingPoint2DConversions.hpp"
+#include "romea_path_utils/PathFrenetPose2DConversions.hpp"
+#include "romea_path_utils/PathPosture2DConversions.hpp"
+
 
 //-----------------------------------------------------------------------------
 TEST(TestPosture2dConvertion, fromRosMsgToRomea )

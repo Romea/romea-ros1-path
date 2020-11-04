@@ -23,7 +23,10 @@ find_package(romea_path REQUIRED)
 ###################################
 ## catkin specific configuration ##
 ###################################
-catkin_package(CATKIN_DEPENDS ${${PROJECT_NAME}_CATKIN_DEPS})
+catkin_package(
+  CATKIN_DEPENDS ${${PROJECT_NAME}_CATKIN_DEPS}
+  DEPENDS romea_common romea_localisation romea_path
+  )
 
 
 ###########

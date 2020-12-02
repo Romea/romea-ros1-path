@@ -13,6 +13,12 @@ add_message_files(
   PathMatchingInfo2D.msg
   )
 
+add_service_files(
+  DIRECTORY srv
+  FILES
+  LoadPath.srv
+  )
+
 generate_messages(DEPENDENCIES std_msgs romea_localisation_msgs)
 
 catkin_package(CATKIN_DEPENDS ${${PROJECT_NAME}_CATKIN_DEPS})

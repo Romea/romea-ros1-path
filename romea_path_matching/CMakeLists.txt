@@ -12,7 +12,7 @@ set(${PROJECT_NAME}_CATKIN_DEPS
     nodelet
     romea_path_utils
     romea_localisation_utils
-    romea_fsm_msgs
+    romea_lifecycle
     )
 
 find_package(catkin REQUIRED COMPONENTS ${${PROJECT_NAME}_CATKIN_DEPS})
@@ -37,6 +37,7 @@ include_directories(${catkin_INCLUDE_DIRS})
 add_library(path_matching_nodelet
     src/path_matching.cpp
     src/path_matching_diagnostic.cpp
+    src/path_matching_display.cpp
     src/path_matching_nodelet.cpp)
 
 add_executable(path_matching_node

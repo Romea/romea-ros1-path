@@ -20,7 +20,7 @@
   <depend>nodelet</depend>
   <depend>romea_localisation_utils</depend>
   <depend>romea_path_utils</depend>
-  <depend>romea_fsm_msgs</depend>
+  <depend>romea_lifecycle</depend>
 
   <export>
      <nodelet plugin="${prefix}/nodelet.xml"/>

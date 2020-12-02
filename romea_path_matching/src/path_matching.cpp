@@ -36,10 +36,7 @@ PathMatching::PathMatching():
   tf_listener_(tf_buffer_),
   tf_broadcaster_(),
   tf_world_to_path_msg_(),
-  display_(true),
-  rviz_util_("path","matching"),
-  path3d_(),
-  interpolatedPath3d_(30),
+  rviz_(),
   diagnostics_()
 {  
 }
@@ -72,12 +69,15 @@ void PathMatching::init(ros::NodeHandle nh, ros::NodeHandle private_nh)
   tf_world_to_path_msg_.header.frame_id = "world";
   tf_world_to_path_msg_.child_frame_id = "path";
 
+  if(private_nh.param("display",false))
+  {
+    rviz_.enable();
+  }
+
   diagnostic_pub_.init(nh,"path_matching",1.0);
   match_pub_ = nh.advertise<romea_path_msgs::PathMatchingInfo2D>("path_matching_info",1);
   odom_sub_ = nh.subscribe<nav_msgs::Odometry>("filtered_odom", 10, &PathMatching::processOdom_,this);
 
-  private_nh.param("display",display_,false);
-  initDisplay_();
 }
 
 //-----------------------------------------------------------------------------
@@ -90,7 +90,7 @@ void PathMatching::reset()
 void PathMatching::loadPath(const std::string & filename, bool revert)
 {
   //  ROS_INFO_STREAM("Load PathMatching path '" << filename << "'");
-
+  std::cout <<" PathMatching !!!!!! " << filename << std::endl;
   std::ifstream file(filename);
   diagnostics_.setPathFilename(filename);
 
@@ -130,14 +130,12 @@ void PathMatching::loadPath(const std::string & filename, bool revert)
 
     romea::VectorOfEigenVector2d points;
     points.reserve(100000);
-    path3d_.reserve(100000);
 
     double x,y;
     while(!file.eof())
     {
       file >> x >> y;
       points.emplace_back(x,y);
-      path3d_.emplace_back(x,y,0);
 //      std::cout << std::setprecision(10)<< enuConverter.toWGS84(x,y,0).getLatitude()*180/M_PI <<" ";
 //      std::cout << enuConverter.toWGS84(x,y,0).getLongitude()*180/M_PI <<std::endl;
     }
@@ -145,10 +143,10 @@ void PathMatching::loadPath(const std::string & filename, bool revert)
     if(revert)
     {
       std::reverse(std::begin(points), std::end(points));
-      std::reverse(std::begin(path3d_), std::end(path3d_));
     }
 
     path_.load(points);
+    rviz_.configure(path_);
   }
   else
   {
@@ -205,9 +203,13 @@ void PathMatching::processOdom_(const nav_msgs::Odometry::ConstPtr &msg)
                                            vehicle_twist));
 
 
-      }
+        rviz_.display(vehicle_pose,&path_.getCurves()[matched_point_->nearestPointIndex]);
 
-      displayResults_(vehicle_pose);
+      }
+      else
+      {
+        rviz_.display(vehicle_pose,nullptr);
+      }
     }
   }
 }
@@ -255,57 +257,5 @@ bool PathMatching::tryToMatchOnPath_(const Pose2D & vehicle_pose)
   diagnostics_.updateMatchingStatus(matched_point_.is_initialized());
   return matched_point_.is_initialized();
 }
-
-
-//-----------------------------------------------------------------------------
-void PathMatching::initDisplay_()
-{
-  if(display_)
-  {
-    rviz_util_.loadMarkerPub();
-    rviz_util_.deleteAllMarkers();
-    rviz_util_.enableBatchPublishing();
-  }
-}
-
-
-//-----------------------------------------------------------------------------
-void PathMatching::displayInterpolatedPath_()
-{
-  const romea::PathCurve2D & pathCurve = path_.getCurves()[matched_point_->nearestPointIndex];
-  double ss=pathCurve.getMinimalCurvilinearAbscissa();
-  double ds=(pathCurve.getMaximalCurvilinearAbscissa()-ss)/30.;
-
-  for(size_t n=0; n<30; n++)
-  {
-    double s = ss+ n*ds;
-    interpolatedPath3d_[n].x()=pathCurve.computeX(s);
-    interpolatedPath3d_[n].y()=pathCurve.computeY(s);
-    interpolatedPath3d_[n].z()=0.1;
-
-  }
-
-  rviz_util_.publishSpheres(interpolatedPath3d_,rviz_visual_tools::RED,rviz_visual_tools::XXLARGE);
-}
-
-//-----------------------------------------------------------------------------
-void PathMatching::displayResults_(const Pose2D & vehicle_pose)
-{
-  if(display_)
-  {
-    rviz_util_.deleteAllMarkers();
-    rviz_util_.publishSpheres(path3d_,rviz_visual_tools::WHITE,rviz_visual_tools::XXLARGE);
-    romea::publish(rviz_util_,vehicle_pose,rviz_visual_tools::GREEN);
-
-    if(matched_point_.is_initialized())
-    {
-      displayInterpolatedPath_();
-    }
-
-    rviz_util_.trigger();
-  }
-
-}
-
 
 }

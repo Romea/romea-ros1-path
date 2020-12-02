@@ -47,12 +47,6 @@ protected:
 
   bool tryToMatchOnPath_(const Pose2D & vehicle_pose);
 
-  void initDisplay_();
-
-  void displayInterpolatedPath_();
-
-  void displayResults_(const Pose2D & vehicle_pose);
-
 protected:
 
   romea::Path2D path_;

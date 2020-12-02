@@ -15,7 +15,7 @@
     uri: git@gitlab-ssh.irstea.fr:romea-v2/tools/romea_localisation.git
 - git:
     local-name: src/romea_path_core
-    git@gitlab-ssh.irstea.fr:romea-v2/core/romea_path.git
+    uri: git@gitlab-ssh.irstea.fr:romea-v2/core/romea_path.git
 - git:
     local-name: src/romea_lifecycle
     git@gitlab-ssh.irstea.fr:romea-v2/tools/romea_lifecycle.git

@@ -1,6 +1,6 @@
 #include "romea_path_utils/PathMatchingInfoConversions.hpp"
 #include "romea_path_utils/PathMatchingPoint2DConversions.hpp"
-#include <romea_common_utils/conversions/TimeConversions.hpp>
+#include <romea_common_utils/conversions/time_conversions.hpp>
 #include <romea_localisation_utils/conversions/Twist2DConversions.hpp>
 
 namespace romea {

@@ -9,7 +9,7 @@
     uri: git@gitlab-ssh.irstea.fr:romea-v2/core/romea_fsm.git
 - git:
     local-name: src/romea_fsm_ros
-     uri: git@gitlab-ssh.irstea.fr:romea-v2/tools/romea_fsm.git
+    uri: git@gitlab-ssh.irstea.fr:romea-v2/tools/romea_fsm.git
 - git:
     local-name: src/romea_filtering_core
     uri: git@gitlab-ssh.irstea.fr:romea-v2/core/romea_filtering.git

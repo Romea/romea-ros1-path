@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.8.3)
+cmake_minimum_required(VERSION 3.0.2)
 project(romea_path_msgs)
 
 set(${PROJECT_NAME}_CATKIN_DEPS std_msgs romea_localisation_msgs message_generation)

@@ -1,10 +1,10 @@
 //romea
 #include "path_matching.hpp"
 #include <romea_common/geodesy/ENUConverter.hpp>
-#include <romea_path_utils/PathMatchingInfoConversions.hpp>
+#include <romea_path_utils/path_matching_info_conversions.hpp>
 #include <romea_common_utils/conversions/transform_conversions.hpp>
-#include <romea_localisation_utils/conversions/PoseAndTwist3DConversions.hpp>
-#include <romea_localisation_utils/RvizDisplay.hpp>
+#include <romea_localisation_utils/conversions/pose_and_twist3d_conversions.hpp>
+#include <romea_localisation_utils/rviz_display.hpp>
 
 //std
 #include <fstream>

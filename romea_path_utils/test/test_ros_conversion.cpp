@@ -2,10 +2,10 @@
 #include <gtest/gtest.h>
 
 //romea
-#include "romea_path_utils/PathMatchingInfoConversions.hpp"
-#include "romea_path_utils/PathMatchingPoint2DConversions.hpp"
-#include "romea_path_utils/PathFrenetPose2DConversions.hpp"
-#include "romea_path_utils/PathPosture2DConversions.hpp"
+#include "romea_path_utils/path_matching_info_conversions.hpp"
+#include "romea_path_utils/path_matching_point2d_conversions.hpp"
+#include "romea_path_utils/path_frenet_pose2d_conversions.hpp"
+#include "romea_path_utils/path_posture2d_conversions.hpp"
 
 
 //-----------------------------------------------------------------------------

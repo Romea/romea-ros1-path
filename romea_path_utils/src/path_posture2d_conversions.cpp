@@ -1,4 +1,4 @@
-#include "romea_path_utils/PathPosture2DConversions.hpp"
+#include "romea_path_utils/path_posture2d_conversions.hpp"
 
 namespace romea {
 

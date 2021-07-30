@@ -15,7 +15,7 @@ void PathMatchingNodelet::onConfigure()
   auto & nh = getNodeHandle();
   auto & private_nh = getPrivateNodeHandle();
 
-  std::string path_filename = loadParam<std::string>(private_nh,"path");
+  std::string path_filename = load_param<std::string>(private_nh,"path");
   bool revert=private_nh.param("revert",false);
 
   path_matching_.init(nh,private_nh);

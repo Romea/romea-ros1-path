@@ -1,4 +1,4 @@
-#include "romea_path_utils/PathFrenetPose2DConversions.hpp"
+#include "romea_path_utils/path_frenet_pose2d_conversions.hpp"
 
 namespace romea {
 

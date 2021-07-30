@@ -17,7 +17,7 @@
 #include <romea_path/PathMatching2D.hpp>
 #include <romea_path/Path2D.hpp>
 #include <romea_common_utils/publishers/diagnostic_publisher.hpp>
-#include <romea_localisation_utils/RvizDisplay.hpp>
+#include <romea_localisation_utils/rviz_display.hpp>
 
 namespace romea {
 

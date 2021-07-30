@@ -34,10 +34,10 @@ include_directories(
     )
 
 add_library(romea_path_utils
-    src/PathFrenetPose2DConversions.cpp
-    src/PathMatchingInfoConversions.cpp
-    src/PathMatchingPoint2DConversions.cpp
-    src/PathPosture2DConversions.cpp
+    src/path_frenet_pose2d_conversions.cpp
+    src/path_matching_info_conversions.cpp
+    src/path_matching_point2d_conversions.cpp
+    src/path_posture2d_conversions.cpp
     )
 
 target_link_libraries(romea_path_utils

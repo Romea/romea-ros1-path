@@ -3,7 +3,7 @@
     uri: git@gitlab-ssh.irstea.fr:romea-v2/core/romea_common.git
 - git:
     local-name: src/romea_common_ros
-    uri: git@gitlab-ssh.irstea.fr:romea-v2/tools/romea_common.git
+    uri: git@gitlab-ssh.irstea.fr:romea-v2/interfaces/core/romea_common.git
 - git:
     local-name: src/romea_fsm_core
     uri: git@gitlab-ssh.irstea.fr:romea-v2/core/romea_fsm.git
@@ -19,10 +19,10 @@
     uri: git@gitlab-ssh.irstea.fr:romea-v2/core/romea_localisation.git
 - git:
     local-name: src/romea_localisation_ros
-    uri: git@gitlab-ssh.irstea.fr:romea-v2/tools/romea_localisation.git
+    uri: git@gitlab-ssh.irstea.fr:romea-v2/interfaces/core/romea_localisation.git
 - git:
     local-name: src/romea_path_core
     uri: git@gitlab-ssh.irstea.fr:romea-v2/core/romea_path.git
 - git:
     local-name: src/romea_lifecycle
-    uri: git@gitlab-ssh.irstea.fr:romea-v2/tools/romea_lifecycle.git
+    uri: git@gitlab-ssh.irstea.fr:romea-v2/interfaces/core/romea_lifecycle.git

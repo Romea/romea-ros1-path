@@ -36,13 +36,13 @@ void PathMatchingDisplay::configure(const Path2D &path)
 
 
 //-----------------------------------------------------------------------------
-bool PathMatchingDisplay::enable()
+void PathMatchingDisplay::enable()
 {
   enable_=true;
 }
 
 //-----------------------------------------------------------------------------
-bool PathMatchingDisplay::disable()
+void PathMatchingDisplay::disable()
 {
   enable_=false;
 }

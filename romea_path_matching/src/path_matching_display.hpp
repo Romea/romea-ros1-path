@@ -33,9 +33,9 @@ public :
   void display(const Pose2D & vehicle_pose,
                const PathCurve2D * pathCurve);
 
-  bool enable();
+  void enable();
 
-  bool disable();
+  void disable();
 
 private :
 

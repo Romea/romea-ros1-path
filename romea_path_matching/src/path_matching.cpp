@@ -230,7 +230,7 @@ bool PathMatching::tryToEvaluteMapToPathTransformation_(const ros::Time &stamp,
     diagnostics_.updateLookupTransformStatus(true);
     return true;
   }
-  catch (tf2::TransformException ex)
+  catch (const tf2::TransformException & ex)
   {
     std::cout << " catch " << std::endl;
     std::cout <<  ex.what() << std::endl;

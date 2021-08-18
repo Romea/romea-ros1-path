@@ -11,12 +11,14 @@ namespace romea {
 
 
 romea_path_msgs::PathMatchingInfo2D toRosMsg(const Duration & duration,
+                                             const std::string &path_frame_id,
                                              const PathMatchedPoint2D matched_point,
                                              const double &path_length,
                                              const double & future_curvature,
                                              const Twist2D & twist);
 
 romea_path_msgs::PathMatchingInfo2D toRosMsg(const ros::Time & stamp,
+                                             const std::string &path_frame_id,
                                              const PathMatchedPoint2D matched_point,
                                              const double & path_length,
                                              const double & future_curvature,

@@ -16,6 +16,8 @@ namespace {
 const double DEFAULT_MAXIMAL_REASEARCH_RADIUS =10;
 const double DEFAULT_INTERPOLATION_WINDOW_LENGTH =3;
 const double DEFAULT_PREDICTION_TIME_HORIZON=0.5;
+const std::string DEFAULT_PATH_FRAME_ID="path";
+
 }
 
 namespace romea {
@@ -67,7 +69,12 @@ void PathMatching::init(ros::NodeHandle nh, ros::NodeHandle private_nh)
                    DEFAULT_PREDICTION_TIME_HORIZON);
 
   tf_world_to_path_msg_.header.frame_id = "world";
-  tf_world_to_path_msg_.child_frame_id = "path";
+
+  private_nh.param("path_frame_id",
+                   path_frame_id_,
+                   DEFAULT_PATH_FRAME_ID);
+
+  tf_world_to_path_msg_.child_frame_id = path_frame_id_;
 
   if(private_nh.param("display",false))
   {
@@ -197,6 +204,7 @@ void PathMatching::processOdom_(const nav_msgs::Odometry::ConstPtr &msg)
 
 //        std::cout <<" future_curvature "<< future_curvature << std::endl;
         match_pub_.publish(romea::toRosMsg(msg->header.stamp,
+                                           path_frame_id_,
                                            *matched_point_,
                                            path_.getLength(),
                                            future_curvature,

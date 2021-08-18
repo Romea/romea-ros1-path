@@ -53,6 +53,7 @@ protected:
   romea::PathMatching2D path_matching_;
   romea::PathMatchedPoint2D::Opt matched_point_;
   double prediction_time_horizon_;
+  std::string path_frame_id_;
 
   ros::Subscriber odom_sub_;
   ros::Publisher match_pub_;

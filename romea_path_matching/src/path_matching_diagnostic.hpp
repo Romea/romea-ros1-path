@@ -1,30 +1,94 @@
 #ifndef __DiagnosticPathMatching_HPP__
 #define __DiagnosticPathMatching_HPP__
 
+//#include "path_matching_diagnostic_base.hpp"
+
+//namespace romea{
+
+//class DiagnosticPathStatus : public diagnostic_updater::DiagnosticTask
+//{
+//public:
+
+//  DiagnosticPathStatus(const std::string &name);
+
+//  void setPathFilename(const std::string & filename);
+
+//  std::string getPathFilename();
+
+//  void setStatus(const bool &status);
+
+//  bool getStatus() const;
+
+//  virtual void run(diagnostic_updater::DiagnosticStatusWrapper &stat) override;
+
+//private :
+
+//  std::string filename_;
+//  bool status_;
+//};
+
+//class DiagnosticLookupTransformStatus : public diagnostic_updater::DiagnosticTask
+//{
+//public:
+
+//  DiagnosticLookupTransformStatus(const std::string &name);
+
+//  void setStatus(const bool &status);
+
+//  bool getStatus() const;
+
+//  virtual void run(diagnostic_updater::DiagnosticStatusWrapper &stat) override;
+
+//private :
+//  bool status_;
+//};
+
+
+
+
+//class PathMatchingDiagnostic : public PathMatchingDiagnosticBase
+//{
+
+//public:
+
+//  PathMatchingDiagnostic();
+//  virtual ~PathMatchingDiagnostic()=default;
+
+//  void updateLookupTransformStatus(const bool & status);
+//  void updatePathStatus(const std::string & filename, const bool & isOpened);
+
+//private :
+
+//  DiagnosticPathStatus path_status_diagnostic_;
+//  DiagnosticLookupTransformStatus lookup_transform_status_diagnostic_;
+
+//};
+
+//}
+
+
 //romea
-#include <romea_common/diagnostic/CheckupRate.hpp>
+#include "path_matching_diagnostic_base.hpp"
 
 namespace romea{
 
-class PathMatchingDiagnostic
+class PathMatchingDiagnostic : public PathMatchingDiagnosticBase
 {
 public:
 
   PathMatchingDiagnostic();
 
+  virtual ~PathMatchingDiagnostic()=default;
+
   void setPathFilename(const std::string & filename);
-  void updateOdomRate(const romea::Duration & duration);
   void updateLookupTransformStatus(const bool & status);
-  void updateMatchingStatus(const bool & status);
   void updatePathStatus(const bool & isOpened);
-  DiagnosticReport getReport()const;
 
-private :
+  virtual DiagnosticReport getReport()const override;
 
-  CheckupRate odom_rate_diagnostic_;
-  DiagnosticReport matching_report_;
 };
 
 }
 
 #endif
+

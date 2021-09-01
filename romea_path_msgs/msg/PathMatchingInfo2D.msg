@@ -1,5 +1,5 @@
 Header header
-PathMatchedPoint2D matched_point
+PathMatchedPoint2D[] matched_points
+uint32 tracked_matched_point_index
 float64 path_length
-float64 future_curvature
 romea_common_msgs/Twist2D twist

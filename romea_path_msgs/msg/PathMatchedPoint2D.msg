@@ -1,3 +1,6 @@
 PathPosture2D posture
 PathFrenetPose2D frenet_pose
-int64 nearest_point_index
+float64 future_curvature
+float64 desired_speed
+uint64 section_index
+uint64 curve_index

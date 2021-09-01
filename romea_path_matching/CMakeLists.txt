@@ -34,17 +34,33 @@ catkin_package(
 include_directories(${catkin_INCLUDE_DIRS})
 
 add_library(path_matching_nodelet
+    src/path_file.cpp
     src/path_matching.cpp
+    src/path_matching_base.cpp
     src/path_matching_diagnostic.cpp
+    src/path_matching_diagnostic_base.cpp
     src/path_matching_display.cpp
-    src/path_matching_nodelet.cpp)
+    src/path_matching_display_base.cpp
+    src/path_matching_tf.cpp
+    src/path_matching_nodelet.cpp
+    )
 
-add_executable(path_matching_node
-    src/path_matching_node.cpp)
+add_library(on_the_fly_path_matching_nodelet
+    src/path_matching_base.cpp
+    src/path_matching_diagnostic_base.cpp
+    src/path_matching_display_base.cpp
+    src/on_the_fly_path_matching.cpp
+    src/on_the_fly_path_matching_diagnostic.cpp
+    src/on_the_fly_path_matching_display.cpp
+    src/on_the_fly_path_matching_nodelet.cpp
+    )
 
-target_link_libraries(path_matching_node
-  ${catkin_LIBRARIES})
+add_executable(path_matching_node src/path_matching_node.cpp)
+add_executable(on_the_fly_path_matching_node src/on_the_fly_path_matching_node.cpp)
 
-target_link_libraries(path_matching_nodelet
-  ${catkin_LIBRARIES})
+target_link_libraries(path_matching_node ${catkin_LIBRARIES})
+target_link_libraries(path_matching_nodelet ${catkin_LIBRARIES})
+
+target_link_libraries(on_the_fly_path_matching_node ${catkin_LIBRARIES})
+target_link_libraries(on_the_fly_path_matching_nodelet ${catkin_LIBRARIES})
 

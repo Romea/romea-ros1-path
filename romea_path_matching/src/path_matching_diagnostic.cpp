@@ -14,9 +14,11 @@ namespace romea {
 
 //-----------------------------------------------------------------------------
 PathMatchingDiagnostic::PathMatchingDiagnostic():
-  odom_rate_diagnostic_("odom",0),
-  matching_report_()
+  PathMatchingDiagnosticBase ()
 {
+  setPathFilename("");
+  updatePathStatus(false);
+  updateLookupTransformStatus(false);
 }
 
 //-----------------------------------------------------------------------------
@@ -25,12 +27,6 @@ void PathMatchingDiagnostic::setPathFilename(const std::string & filename)
   matching_report_.info[" filename "] =filename;
 }
 
-//-----------------------------------------------------------------------------
-void PathMatchingDiagnostic::updateOdomRate(const romea::Duration & duration)
-{
-  matching_report_.diagnostics.clear();
-  odom_rate_diagnostic_.evaluate(duration);
-}
 
 //-----------------------------------------------------------------------------
 void PathMatchingDiagnostic::updateLookupTransformStatus(const bool & status)
@@ -44,20 +40,6 @@ void PathMatchingDiagnostic::updateLookupTransformStatus(const bool & status)
     matching_report_.diagnostics.push_back(Diagnostic(DiagnosticStatus::OK,"Transformation world to path not published "));
   }
   matching_report_.info[" tf status "]= booleanToString(status);
-}
-
-//-----------------------------------------------------------------------------
-void PathMatchingDiagnostic::updateMatchingStatus(const bool & status)
-{
-  if(status)
-  {
-    matching_report_.diagnostics.push_back(Diagnostic(DiagnosticStatus::OK, "Matching sucessed"));
-  }
-  else
-  {
-    matching_report_.diagnostics.push_back(Diagnostic(DiagnosticStatus::ERROR, "Matching failed"));
-  }
-  matching_report_.info[" matching "] = booleanToString(status);
 }
 
 //-----------------------------------------------------------------------------
@@ -85,3 +67,4 @@ DiagnosticReport PathMatchingDiagnostic::getReport() const
 }
 
 }
+

@@ -7,3 +7,14 @@
   </description>
   </class>
 </library>
+
+
+<library path="libon_the_fly_path_matching_nodelet">
+  <class name="romea_path_matching/OnTheFlyPathMatchingNodelet"
+         type="romea::OnTheFlyPathMatchingNodelet"
+         base_class_type="nodelet::Nodelet">
+  <description>
+  OnTheFlyPathMatching nodelet
+  </description>
+  </class>
+</library>

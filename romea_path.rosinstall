@@ -9,7 +9,7 @@
 - git:
     local-name: src/romea_path_core
     uri: git@gitlab-ssh.irstea.fr:romea-v2/core/romea_path.git
-    version: devel
+    version: uturn
 - git:
     local-name: src/romea_fsm_core
     uri: git@gitlab-ssh.irstea.fr:romea-v2/core/romea_fsm.git

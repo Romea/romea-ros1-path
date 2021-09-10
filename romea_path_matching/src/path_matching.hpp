@@ -15,7 +15,7 @@
 
 
 //romea
-#include <romea_localisation/PoseAndTwist3D.hpp>
+#include <romea_common/geometry/PoseAndTwist3D.hpp>
 #include <romea_path/PathMatching2D.hpp>
 #include <romea_path/Path2D.hpp>
 #include <romea_common_utils/publishers/diagnostic_publisher.hpp>

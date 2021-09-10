@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.0.2)
 project(romea_path_msgs)
 
-set(${PROJECT_NAME}_CATKIN_DEPS std_msgs romea_localisation_msgs message_generation)
+set(${PROJECT_NAME}_CATKIN_DEPS std_msgs romea_common_msgs message_generation)
 find_package(catkin REQUIRED COMPONENTS ${${PROJECT_NAME}_CATKIN_DEPS})
 
 add_message_files(
@@ -19,6 +19,6 @@ add_service_files(
   LoadPath.srv
   )
 
-generate_messages(DEPENDENCIES std_msgs romea_localisation_msgs)
+generate_messages(DEPENDENCIES std_msgs romea_common_msgs)
 
 catkin_package(CATKIN_DEPENDS ${${PROJECT_NAME}_CATKIN_DEPS})

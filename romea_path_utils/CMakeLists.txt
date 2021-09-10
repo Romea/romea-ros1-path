@@ -6,13 +6,17 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -std=c++17 -O3")
 #######################
 ## Find dependencies ##
 #######################
-set(${PROJECT_NAME}_CATKIN_DEPS romea_path_msgs romea_localisation_utils)
+set(${PROJECT_NAME}_CATKIN_DEPS romea_common_utils romea_path_msgs)
 find_package(catkin REQUIRED COMPONENTS ${${PROJECT_NAME}_CATKIN_DEPS})
 find_package(romea_common REQUIRED)
-find_package(romea_localisation REQUIRED)
 find_package(romea_path REQUIRED)
 find_package(GSL REQUIRED)
 find_package(BLAS REQUIRED)
+
+
+find_package( PkgConfig )
+pkg_check_modules( EIGEN3 REQUIRED eigen3 )
+
 
 ###################################
 ## catkin specific configuration ##
@@ -42,6 +46,7 @@ add_library(romea_path_utils
 
 target_link_libraries(romea_path_utils
   ${catkin_LIBRARIES}
+  romea_common::romea_common
   romea_path::romea_path
   )
 

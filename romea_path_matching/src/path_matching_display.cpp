@@ -1,6 +1,6 @@
 //romea
 #include "path_matching_display.hpp"
-#include <romea_localisation_utils/rviz_display.hpp>
+#include <romea_common_utils/rviz_display.hpp>
 
 namespace romea {
 

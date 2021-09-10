@@ -18,9 +18,10 @@
   <depend>roscpp</depend>
   <depend>roslib</depend>
   <depend>nodelet</depend>
-  <depend>romea_localisation_utils</depend>
+<!--  <depend>romea_localisation_utils</depend>-->
   <depend>romea_path_utils</depend>
   <depend>romea_lifecycle</depend>
+  <depend>tf2_eigen</depend>
 
   <export>
      <nodelet plugin="${prefix}/nodelet.xml"/>

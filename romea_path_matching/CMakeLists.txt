@@ -11,13 +11,12 @@ set(${PROJECT_NAME}_CATKIN_DEPS
     roslib
     nodelet
     romea_path_utils
-    romea_localisation_utils
     romea_lifecycle
+    tf2_eigen #hack to include eigen
     )
 
 find_package(catkin REQUIRED COMPONENTS ${${PROJECT_NAME}_CATKIN_DEPS})
 find_package(romea_common REQUIRED)
-find_package(romea_localisation REQUIRED)
 find_package(romea_path REQUIRED)
 
 ###################################
@@ -25,7 +24,7 @@ find_package(romea_path REQUIRED)
 ###################################
 catkin_package(
   CATKIN_DEPENDS ${${PROJECT_NAME}_CATKIN_DEPS}
-  DEPENDS romea_common romea_localisation romea_path
+  DEPENDS romea_common romea_path
   )
 
 

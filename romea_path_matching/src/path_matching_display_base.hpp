@@ -5,7 +5,7 @@
 //romea
 #include <romea_path/PathSection2D.hpp>
 #include <romea_path/PathWayPoint2D.hpp>
-#include <romea_localisation_utils/rviz_display.hpp>
+#include <romea_common_utils/rviz_display.hpp>
 
 namespace romea {
 

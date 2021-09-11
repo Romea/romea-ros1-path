@@ -7,7 +7,7 @@
 //romea
 #include <romea_path/PathMatching2D.hpp>
 #include <romea_path_utils/path_matching_info_conversions.hpp>
-#include <romea_localisation_utils/conversions/pose_and_twist3d_conversions.hpp>
+#include <romea_common_utils/conversions/pose_and_twist3d_conversions.hpp>
 #include <romea_common_utils/publishers/diagnostic_publisher.hpp>
 
 namespace romea {

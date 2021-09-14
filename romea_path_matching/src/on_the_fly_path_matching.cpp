@@ -186,7 +186,7 @@ bool OnTheFlyPathMatching::tryToMatchOnPath_(const Pose2D & vehicle_pose,
   }
 
   double vehicle_speed =vehicle_twist.linearSpeeds.x();
-  if(matched_point_.is_initialized())
+  if(matched_point_.has_value())
   {
     matched_point_ = match(*path_,
                            vehicle_pose,
@@ -205,8 +205,8 @@ bool OnTheFlyPathMatching::tryToMatchOnPath_(const Pose2D & vehicle_pose,
                            maximal_research_radius_);
   }
 
-  diagnostics_.updateMatchingStatus(matched_point_.is_initialized());
-  return matched_point_.is_initialized();
+  diagnostics_.updateMatchingStatus(matched_point_.has_value());
+  return matched_point_.has_value();
 }
 
 //-----------------------------------------------------------------------------
@@ -216,7 +216,7 @@ void OnTheFlyPathMatching::displayResults_(const Pose2D & vehicle_pose)
   display_.deleteMarkers();
   display_.displayPathMarkers(vehicle_pose);
 
-  if(matched_point_.is_initialized())
+  if(matched_point_.has_value())
   {
     const auto & curve = path_->getCurve(matched_point_->curveIndex);
     display_.displayCurveMarkers(curve);

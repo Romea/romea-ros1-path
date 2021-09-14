@@ -48,7 +48,7 @@ protected :
   OnTheFlyPathMatchingDiagnostic diagnostics_;
 
   std::unique_ptr<PathSection2D> path_;
-  romea::PathMatchedPoint2D::Opt matched_point_;
+  std::optional<romea::PathMatchedPoint2D> matched_point_;
 
   ros::Subscriber leader_odom_sub_;
   ros::CallbackQueue leader_odom_callback_queue_;

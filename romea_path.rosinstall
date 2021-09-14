@@ -25,5 +25,5 @@
     version: devel
 - git:
     local-name: src/romea_lifecycle
-    uri: git@gitlab-ssh.irstea.fr:romea-v2/interfaces/core/romea_lifecycle.git
+    uri: git@gitlab-ssh.irstea.fr:romea-v2/tools/romea_lifecycle.git
     version: devel

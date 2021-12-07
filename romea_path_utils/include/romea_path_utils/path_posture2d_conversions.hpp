@@ -2,7 +2,7 @@
 #define _romea_PathPosture2DConversions_hpp_
 
 //romea
-#include <romea_path/PathPosture2D.hpp>
+#include <romea_core_path/PathPosture2D.hpp>
 #include <romea_path_msgs/PathPosture2D.h>
 
 namespace romea {

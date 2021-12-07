@@ -11,8 +11,8 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 #######################
 set(${PROJECT_NAME}_CATKIN_DEPS romea_common_utils romea_path_msgs)
 find_package(catkin REQUIRED COMPONENTS ${${PROJECT_NAME}_CATKIN_DEPS})
-find_package(romea_common REQUIRED)
-find_package(romea_path REQUIRED)
+find_package(romea_core_common REQUIRED)
+find_package(romea_core_path REQUIRED)
 find_package(GSL REQUIRED)
 find_package(BLAS REQUIRED)
 
@@ -37,7 +37,7 @@ catkin_package(
 include_directories(
     include
     SYSTEM ${catkin_INCLUDE_DIRS}
-    SYSTEM ${romea_path_INCLUDE_DIRS}
+    SYSTEM ${romea_core_path_INCLUDE_DIRS}
     )
 
 add_library(romea_path_utils
@@ -49,8 +49,8 @@ add_library(romea_path_utils
 
 target_link_libraries(romea_path_utils
   ${catkin_LIBRARIES}
-  romea_common::romea_common
-  romea_path::romea_path
+  romea_core_common::romea_core_common
+  romea_core_path::romea_core_path
   )
 
 

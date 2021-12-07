@@ -2,7 +2,7 @@
 #define _romea_PathMatchingPoint2DConversions_hpp
 
 //romea
-#include <romea_path/PathMatchedPoint2D.hpp>
+#include <romea_core_path/PathMatchedPoint2D.hpp>
 #include <romea_path_msgs/PathMatchedPoint2D.h>
 
 namespace romea {

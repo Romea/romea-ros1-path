@@ -2,7 +2,7 @@
 #define _romea_PathFrenetPose2D_hpp
 
 //romea
-#include <romea_path/PathFrenetPose2D.hpp>
+#include <romea_core_path/PathFrenetPose2D.hpp>
 #include <romea_path_msgs/PathFrenetPose2D.h>
 
 namespace romea {

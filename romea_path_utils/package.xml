@@ -14,7 +14,7 @@
 
   <buildtool_depend>catkin</buildtool_depend>
   <depend>romea_common_utils</depend>
-  <depend>romea_path</depend>
+  <depend>romea_core_path</depend>
   <depend>romea_path_msgs</depend>
 
 </package>

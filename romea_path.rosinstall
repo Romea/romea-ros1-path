@@ -1,13 +1,13 @@
 - git:
     local-name: src/romea_common_core
-    uri: git@gitlab-ssh.irstea.fr:romea-v2/core/romea_common.git
+    uri: git@gitlab-ssh.irstea.fr:romea_core/romea_common.git
     version: devel
 - git:
     local-name: src/romea_path_core
-    uri: git@gitlab-ssh.irstea.fr:romea-v2/core/romea_path.git
+    uri: git@gitlab-ssh.irstea.fr:romea_core/romea_path.git
     version: uturn
 
 - git:
     local-name: src/romea_common_ros
-    uri: git@gitlab-ssh.irstea.fr:romea-v2/interfaces/core/romea_common.git
+    uri: git@gitlab-ssh.irstea.fr:romea_ros1/interfaces/core/romea_common.git
     version: devel

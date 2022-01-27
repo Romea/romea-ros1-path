@@ -9,7 +9,7 @@
 
 
 //-----------------------------------------------------------------------------
-TEST(TestPosture2dConvertion, fromRosMsgToRomea )
+TEST(TestPosture2dConvertion, fromRosMsgto_romea )
 {
   romea_path_msgs::PathPosture2D ros_posture2d_msg;
   ros_posture2d_msg.x=1;
@@ -18,7 +18,7 @@ TEST(TestPosture2dConvertion, fromRosMsgToRomea )
   ros_posture2d_msg.curvature=4;
   ros_posture2d_msg.dot_curvature=5;
 
-  romea::PathPosture2D romea_path_posture2d=romea::toRomea(ros_posture2d_msg);
+  romea::PathPosture2D romea_path_posture2d=romea::to_romea(ros_posture2d_msg);
 
   EXPECT_DOUBLE_EQ(romea_path_posture2d.position.x(),ros_posture2d_msg.x);
   EXPECT_DOUBLE_EQ(romea_path_posture2d.position.y(),ros_posture2d_msg.y);
@@ -38,7 +38,7 @@ TEST(TestPosture2dConvertion, fromRomeaToRosMsg )
   romea_path_posture2d.dotCurvature=5;
 
   romea_path_msgs::PathPosture2D ros_posture2d_msg;
-  romea::toRosMsg(romea_path_posture2d,ros_posture2d_msg);
+  romea::to_ros_msg(romea_path_posture2d,ros_posture2d_msg);
 
   EXPECT_DOUBLE_EQ(romea_path_posture2d.position.x(),ros_posture2d_msg.x);
   EXPECT_DOUBLE_EQ(romea_path_posture2d.position.y(),ros_posture2d_msg.y);
@@ -48,7 +48,7 @@ TEST(TestPosture2dConvertion, fromRomeaToRosMsg )
 }
 
 //-----------------------------------------------------------------------------
-TEST(TestFrenetPoseConvertion, fromRosMsgToRomea )
+TEST(TestFrenetPoseConvertion, fromRosMsgto_romea )
 {
   romea_path_msgs::PathFrenetPose2D ros_frenet_pose2d_msg;
   ros_frenet_pose2d_msg.curvilinear_abscissa=1;
@@ -59,7 +59,7 @@ TEST(TestFrenetPoseConvertion, fromRosMsgToRomea )
     ros_frenet_pose2d_msg.covariance[n]=n;
   }
 
-  romea::PathFrenetPose2D romea_frenet_pose2d=romea::toRomea(ros_frenet_pose2d_msg);
+  romea::PathFrenetPose2D romea_frenet_pose2d=romea::to_romea(ros_frenet_pose2d_msg);
 
   EXPECT_DOUBLE_EQ(romea_frenet_pose2d.curvilinearAbscissa,ros_frenet_pose2d_msg.curvilinear_abscissa);
   EXPECT_DOUBLE_EQ(romea_frenet_pose2d.lateralDeviation,ros_frenet_pose2d_msg.lateral_deviation);
@@ -83,7 +83,7 @@ TEST(TestFrenetPoseConvertion, fromRomeaToRosMsg )
   }
 
   romea_path_msgs::PathFrenetPose2D ros_frenet_pose2d_msg;
-  romea::toRosMsg(romea_frenet_pose2d,ros_frenet_pose2d_msg);
+  romea::to_ros_msg(romea_frenet_pose2d,ros_frenet_pose2d_msg);
 
   EXPECT_DOUBLE_EQ(romea_frenet_pose2d.curvilinearAbscissa,ros_frenet_pose2d_msg.curvilinear_abscissa);
   EXPECT_DOUBLE_EQ(romea_frenet_pose2d.lateralDeviation,ros_frenet_pose2d_msg.lateral_deviation);

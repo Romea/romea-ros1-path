@@ -8,13 +8,13 @@
 namespace romea {
 
 
-void toRosMsg(const PathMatchedPoint2D & romea_matched_point2d,
+void to_ros_msg(const PathMatchedPoint2D & romea_matched_point2d,
               romea_path_msgs::PathMatchedPoint2D & ros_path_matched_point2d_msg);
 
-void toRomea(const romea_path_msgs::PathMatchedPoint2D & matched_point_msg,
+void to_romea(const romea_path_msgs::PathMatchedPoint2D & matched_point_msg,
              PathMatchedPoint2D & romea_matched_point);
 
-PathMatchedPoint2D toRomea(const romea_path_msgs::PathMatchedPoint2D &matched_point_msg);
+PathMatchedPoint2D to_romea(const romea_path_msgs::PathMatchedPoint2D &matched_point_msg);
 
 }
 

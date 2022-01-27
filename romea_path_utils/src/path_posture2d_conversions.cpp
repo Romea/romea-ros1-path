@@ -3,7 +3,7 @@
 namespace romea {
 
 //-----------------------------------------------------------------------------
-void toRosMsg(const PathPosture2D & romea_path_posture2d,
+void to_ros_msg(const PathPosture2D & romea_path_posture2d,
               romea_path_msgs::PathPosture2D & ros_path_posture2d_msg)
 {
   ros_path_posture2d_msg.x = romea_path_posture2d.position.x();
@@ -14,7 +14,7 @@ void toRosMsg(const PathPosture2D & romea_path_posture2d,
 }
 
 //-----------------------------------------------------------------------------
-void toRomea(const romea_path_msgs::PathPosture2D & posture_msg,
+void to_romea(const romea_path_msgs::PathPosture2D & posture_msg,
              PathPosture2D & romea_path_posture)
 {
   romea_path_posture.position.x()=posture_msg.x;
@@ -25,10 +25,10 @@ void toRomea(const romea_path_msgs::PathPosture2D & posture_msg,
 }
 
 //-----------------------------------------------------------------------------
-PathPosture2D toRomea(const romea_path_msgs::PathPosture2D &posture_msg)
+PathPosture2D to_romea(const romea_path_msgs::PathPosture2D &posture_msg)
 {
   PathPosture2D romea_path_posture;
-  toRomea(posture_msg,romea_path_posture);
+  to_romea(posture_msg,romea_path_posture);
   return romea_path_posture;
 }
 

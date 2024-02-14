@@ -25,27 +25,27 @@ namespace romea {
 //                                             const Twist2D & twist);
 
 
-romea_path_msgs::PathMatchingInfo2D to_ros_msg(const Duration & duration,
-                                             const PathMatchedPoint2D &matched_point,
+romea_path_msgs::PathMatchingInfo2D to_ros_msg(const core::Duration & duration,
+                                             const core::PathMatchedPoint2D &matched_point,
                                              const double &path_length,
-                                             const Twist2D & twist);
+                                             const core::Twist2D & twist);
 
 romea_path_msgs::PathMatchingInfo2D to_ros_msg(const ros::Time & stamp,
-                                             const PathMatchedPoint2D &matched_point,
+                                             const core::PathMatchedPoint2D &matched_point,
                                              const double &path_length,
-                                             const Twist2D & twist);
+                                             const core::Twist2D & twist);
 
-romea_path_msgs::PathMatchingInfo2D to_ros_msg(const Duration & duration,
-                                             const std::vector<PathMatchedPoint2D> &matched_points,
+romea_path_msgs::PathMatchingInfo2D to_ros_msg(const core::Duration & duration,
+                                             const std::vector<core::PathMatchedPoint2D> &matched_points,
                                              const size_t & tracked_matched_point_index,
                                              const double &path_length,
-                                             const Twist2D & twist);
+                                             const core::Twist2D & twist);
 
 romea_path_msgs::PathMatchingInfo2D to_ros_msg(const ros::Time & stamp,
-                                             const std::vector<PathMatchedPoint2D> &matched_points,
+                                             const std::vector<core::PathMatchedPoint2D> &matched_points,
                                              const size_t &tracked_matched_point_index,
                                              const double & path_length,
-                                             const Twist2D & twist);
+                                             const core::Twist2D & twist);
 }
 
 #endif

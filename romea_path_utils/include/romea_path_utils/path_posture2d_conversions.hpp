@@ -7,13 +7,13 @@
 
 namespace romea {
 
-void to_ros_msg(const PathPosture2D & romea_path_posture2d,
+void to_ros_msg(const core::PathPosture2D & romea_path_posture2d,
               romea_path_msgs::PathPosture2D & ros_path_posture2d_msg);
 
 void to_romea(const romea_path_msgs::PathPosture2D &posture_msg,
-             PathPosture2D & romea_path_posture);
+             core::PathPosture2D & romea_path_posture);
 
-PathPosture2D to_romea(const romea_path_msgs::PathPosture2D &posture_msg);
+core::PathPosture2D to_romea(const romea_path_msgs::PathPosture2D &posture_msg);
 
 }
 

@@ -3,4 +3,6 @@ PathFrenetPose2D frenet_pose
 float64 future_curvature
 float64 desired_speed
 uint64 section_index
+float64 section_minimal_curvilinear_abscissa
+float64 section_maximal_curvilinear_abscissa
 uint64 curve_index

@@ -45,6 +45,7 @@ add_library(romea_path_utils
     src/path_matching_info_conversions.cpp
     src/path_matching_point2d_conversions.cpp
     src/path_posture2d_conversions.cpp
+    src/path_builder.cpp
     )
 
 target_link_libraries(romea_path_utils

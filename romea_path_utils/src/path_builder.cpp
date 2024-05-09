@@ -43,6 +43,10 @@ core::Path2D create_path(const nav_msgs::Path & msg, double desired_speed, doubl
     }
 
     push_waypoint(*section_it, *pose_it, (is_forward ? desired_speed : -desired_speed));
+
+    ++pose_it;
+    ++next_pose_it;
+    prev_is_forward = is_forward;
   }
 
   push_waypoint(*section_it, *pose_it, desired_speed);

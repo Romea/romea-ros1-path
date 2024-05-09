@@ -26,7 +26,7 @@ namespace romea
 namespace ros1
 {
 
-core::Path2D create_path(const nav_msgs::Path & msg, double desired_speed);
+core::Path2D create_path(const nav_msgs::Path & msg, double desired_speed, double interp_window);
 
 Eigen::Vector2d direction_from_quat(const geometry_msgs::Quaternion & quat);
 

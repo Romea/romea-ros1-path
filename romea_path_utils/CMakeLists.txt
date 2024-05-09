@@ -26,69 +26,40 @@ pkg_check_modules( EIGEN3 REQUIRED eigen3 )
 ###################################
 
 catkin_package(
-    INCLUDE_DIRS include ${romea_path_INCLUDE_DIRS}
-    LIBRARIES ${PROJECT_NAME}
-    CATKIN_DEPENDS ${${PROJECT_NAME}_CATKIN_DEPS})
-
-###########
-## Build ##
-###########
-
-include_directories(
-    include
-    SYSTEM ${catkin_INCLUDE_DIRS}
-    SYSTEM ${romea_core_path_INCLUDE_DIRS}
-    )
+  INCLUDE_DIRS include ${romea_path_INCLUDE_DIRS}
+  LIBRARIES ${PROJECT_NAME}
+  CATKIN_DEPENDS ${${PROJECT_NAME}_CATKIN_DEPS}
+)
 
 add_library(romea_path_utils
-    src/path_frenet_pose2d_conversions.cpp
-    src/path_matching_info_conversions.cpp
-    src/path_matching_point2d_conversions.cpp
-    src/path_posture2d_conversions.cpp
-    src/path_builder.cpp
-    )
+  src/path_frenet_pose2d_conversions.cpp
+  src/path_matching_info_conversions.cpp
+  src/path_matching_point2d_conversions.cpp
+  src/path_posture2d_conversions.cpp
+  src/path_builder.cpp
+)
 
-target_link_libraries(romea_path_utils
+target_include_directories(romea_path_utils PUBLIC
+  include
+  ${catkin_INCLUDE_DIRS}
+  ${romea_core_path_INCLUDE_DIRS}
+)
+
+target_link_libraries(romea_path_utils PUBLIC
   ${catkin_LIBRARIES}
   romea_core_common::romea_core_common
   romea_core_path::romea_core_path
-  )
+)
 
+install(TARGETS romea_path_utils
+  ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+  LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+  RUNTIME DESTINATION ${CATKIN_GLOBAL_BIN_DESTINATION}
+)
 
-#############
-## Install ##
-#############
-
-# all install targets should use catkin DESTINATION variables
-# See http://ros.org/doc/api/catkin/html/adv_user_guide/variables.html
-
-## Mark executable scripts (Python etc.) for installation
-## in contrast to setup.py, you can choose the destination
-# install(PROGRAMS
-#   scripts/my_python_script
-#   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
-# )
-
-## Mark executables and/or libraries for installation
-# install(TARGETS trackbod_driver trackbod_driver_node
-#   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-#   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-#   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
-# )
-
-## Mark cpp header files for installation
-# install(DIRECTORY include/${PROJECT_NAME}/
-#   DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
-#   FILES_MATCHING PATTERN "*.h"
-#   PATTERN ".svn" EXCLUDE
-# )
-
-## Mark other files for installation (e.g. launch and bag files, etc.)
-# install(FILES
-#   # myfile1
-#   # myfile2
-#   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
-# )
+install(DIRECTORY include/romea_path_utils/
+  DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
+)
 
 #############
 ## Testing ##

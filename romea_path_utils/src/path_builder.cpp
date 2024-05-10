@@ -14,6 +14,8 @@
 
 #include "romea_path_utils/path_builder.hpp"
 
+#include <algorithm>
+
 namespace romea
 {
 namespace ros1
@@ -51,10 +53,10 @@ core::Path2D create_path(const nav_msgs::Path & msg, double desired_speed, doubl
 
   push_waypoint(*section_it, *pose_it, desired_speed);
 
-  // (fix for NARO) remove the last section if it contains less than 3 points
-  if(waypoints.back().size() < 3) {
-    waypoints.erase(waypoints.end() - 1);
-  }
+  // remove all the sections that contain less than 3 points
+  waypoints.erase(
+    std::remove_if(begin(waypoints), end(waypoints), [](const auto & e) { return e.size() < 3; }),
+    end(waypoints));
 
   return core::Path2D(waypoints, interp_windows);
 }

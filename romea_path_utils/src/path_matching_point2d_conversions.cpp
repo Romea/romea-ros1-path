@@ -49,6 +49,7 @@ void to_romea(const romea_path_msgs::PathMatchedPoint2D &matched_point_msg,
   romea_matched_point.sectionMaximalCurvilinearAbscissa =
     matched_point_msg.section_maximal_curvilinear_abscissa;
   romea_matched_point.curveIndex=matched_point_msg.curve_index;
+  romea_matched_point.futureCurvature = matched_point_msg.future_curvature;
 }
 
 
